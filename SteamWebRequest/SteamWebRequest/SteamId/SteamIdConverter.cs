@@ -19,7 +19,7 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when id parameter is negative.
         /// </exception>
-        /// /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentException">
         /// Thrown when string parameter can't be parsed to Int32.
         /// </exception>
         public static string SteamIdTo64(string id32Str)
