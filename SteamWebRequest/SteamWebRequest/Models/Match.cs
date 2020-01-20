@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 
 namespace SteamWebRequest.Models
 {
@@ -12,7 +14,8 @@ namespace SteamWebRequest.Models
         public ulong SequenceNumber { get; set; }
 
         [JsonProperty("start_time")]
-        public ulong StartTime { get; set; }
+        [JsonConverter(typeof(UnixDateTimeConverter))]
+        public DateTime StartTime { get; set; }
 
         [JsonProperty("lobby_type")]
         public ushort LobbyType { get; set; }
