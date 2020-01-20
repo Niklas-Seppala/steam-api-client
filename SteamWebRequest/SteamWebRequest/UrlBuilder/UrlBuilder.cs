@@ -9,32 +9,62 @@ namespace SteamWebRequest
     /// </summary>
     public class UrlBuilder
     {
+        #region [Fields]
         private UriBuilder _uriBuilder;
-        private NameValueCollection _query;
+        private readonly NameValueCollection _query;
+        #endregion
+
+        #region [Properties]
+        public string Query { get => _query.ToString(); }
+        public string Host { get => _uriBuilder.Host; }
+        public int Port 
+        { 
+            get => _uriBuilder.Port;
+            set 
+            {
+                if (value < -1)
+                {
+                    throw new ArgumentOutOfRangeException("Port can't be smaller value than -1");
+                }
+                else
+                {
+                    _uriBuilder.Port = value;
+                }
+            }  
+        }
+        public string Url { get => this.ToString(); }
+        #endregion
+
+        #region [Constructors]
+
+        /// <summary>
+        /// Instantiates UrlBuilder object.
+        /// </summary>
+        public UrlBuilder() {}
 
         /// <summary>
         /// Instatiates UrlBuilder object without
         /// querystring (may be added later).
         /// </summary>
-        /// <param name="baseUrl">base url</param>
+        /// <param name="url">url</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when baseUrl parameter is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Thrown when baseUrl parameter is empty
         /// </exception>
-        public UrlBuilder(string baseUrl)
+        public UrlBuilder(string url, int port = -1)
         {
-            if (string.IsNullOrEmpty(baseUrl))
+            if (string.IsNullOrEmpty(url))
             {
-                throw (baseUrl == null)
+                throw (url == null)
                     ? new ArgumentNullException("Url parameter string can't be null.")
                     : new ArgumentException("Url parameter string can't be empty.");
             }
             else
             {
-                _uriBuilder = new UriBuilder(baseUrl);
-                _uriBuilder.Port = -1;
+                _uriBuilder = new UriBuilder(url);
+                this.Port = port;
                 _query = HttpUtility.ParseQueryString(_uriBuilder.Query);
             }
         }
@@ -43,7 +73,7 @@ namespace SteamWebRequest
         /// Instantiates UrlBuilder object with
         /// querystring.
         /// </summary>
-        /// <param name="baseUrl">base url</param>
+        /// <param name="url">url</param>
         /// <param name="queries">params array of QueryParam objects</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when baseUrl parameter is null.
@@ -51,8 +81,8 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentException">
         /// Thrown when baseUrl parameter is empty
         /// </exception>
-        public UrlBuilder(string baseUrl, params QueryParam[] queries)
-            : this(baseUrl)
+        public UrlBuilder(string url, params QueryParam[] queries)
+            : this(url)
         {
             foreach (QueryParam pair in queries)
             {
@@ -61,11 +91,37 @@ namespace SteamWebRequest
         }
 
         /// <summary>
+        /// Instantiates UrlBuilder object with
+        /// querystring. 
+        /// </summary>
+        /// <param name="url">url</param>
+        /// <param name="port">port</param>
+        /// <param name="queries">params array of QueryParam objects</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when baseUrl parameter is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when baseUrl parameter is empty
+        /// </exception>
+        public UrlBuilder(string url, int port, params QueryParam[] queries)
+            : this(url, port)
+        {
+            foreach (QueryParam pair in queries)
+            {
+                _query[pair.Key] = pair.Value;
+            }
+        }
+
+        #endregion
+
+        #region [Public Methods]
+
+        /// <summary>
         /// Adds key and value to url querystring.
         /// </summary>
         /// <param name="key">parameter key</param>
         /// <param name="value">parameter value</param>
-        public void AddQueryParameter(string key, string value)
+        public void AddQuery(string key, string value)
         {
             _query[key] = value;
         }
@@ -80,5 +136,11 @@ namespace SteamWebRequest
             _uriBuilder.Query = _query.ToString();
             return _uriBuilder.ToString();
         }
+
+        #endregion
+
+        #region [Non-Public Methods]
+
+        #endregion
     }
 }
