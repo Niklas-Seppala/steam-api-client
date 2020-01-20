@@ -24,27 +24,21 @@ namespace SteamWebRequest
         /// Sets and validates developer key. Instantiates static HttpClient object.
         /// </summary>
         /// <param name="key">Private developer key</param>
-        /// <exception cref="Exception">
+        /// <exception cref="HttpClientConfigException">
         /// Thrown when initialization process fails.
         /// </exception>
         public static void ConfigureClient(string developerKey)
         {
-            if (!string.IsNullOrEmpty(_devKey) && _client != null)
-            {
-                throw new HttpClientConfigException() { OptionalMessage = "Client already configured." };
-            }
-            else
+            try
             {
                 _devKey = developerKey;
-                _client = new HttpClient();
-                try
-                {
-                    ValidateDevKey();
-                }
-                catch (Exception ex)
-                {
-                    throw new HttpClientConfigException(inner: ex);
-                }
+                if (_client == null) _client = new HttpClient();
+
+                ValidateDevKey();
+            }
+            catch (Exception ex)
+            {
+                throw new HttpClientConfigException(inner: ex);
             }
         }
 
@@ -56,9 +50,9 @@ namespace SteamWebRequest
         /// </exception>
         private static void ValidateDevKey()
         {
-            UrlBuilder url = new UrlBuilder("http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+            UrlBuilder url = new UrlBuilder("https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/",
                 new QueryParam("key", _devKey),
-                new QueryParam("steamids", "76561197960435530"));
+                new QueryParam("matches_requested", "2"));
 
             HttpResponseMessage resp = _client.GetAsync(url.ToString()).Result;
             if (resp.IsSuccessStatusCode) return;
