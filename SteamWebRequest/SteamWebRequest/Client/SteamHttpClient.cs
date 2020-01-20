@@ -9,15 +9,18 @@
 */
 
 using System;
+using System.Threading.Tasks;
+using System.IO;
 using System.Net.Http;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace SteamWebRequest
 {
     public static partial class SteamHttpClient
     {
         private static string _devKey;
-        private static HttpClient _client;
+        private static readonly HttpClient _client = new HttpClient();
 
         /// <summary>
         /// Initializes SteamHttpClient.
@@ -32,8 +35,6 @@ namespace SteamWebRequest
             try
             {
                 _devKey = developerKey;
-                if (_client == null) _client = new HttpClient();
-
                 ValidateDevKey();
             }
             catch (Exception ex)
@@ -59,6 +60,51 @@ namespace SteamWebRequest
             else throw new HttpRequestException(resp.StatusCode == HttpStatusCode.Forbidden
                 ? $"Response status code: {resp.StatusCode}. Developer key is invalid!"
                 : $"Response status code: {resp.StatusCode}. Something went wrong with key validation.");
+        }
+
+        /// <summary>
+        /// Reads the provided stream.
+        /// </summary>
+        /// <param name="stream">stream</param>
+        /// <returns>stream contents</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when stream is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when stream is write only.
+        /// </exception>
+        private static async Task<string> ReadStreamAsync(Stream stream)
+        {
+            if (stream.CanRead)
+            {
+                using var streamReader = new StreamReader(stream);
+                    return await streamReader.ReadToEndAsync().ConfigureAwait(false);
+            }
+            else throw stream == null
+                ? new ArgumentNullException("Provided stream is null.")
+                : new ArgumentException("Provided stream is write only.");
+        }
+
+        /// <summary>
+        /// Deserializes json stream to defined model
+        /// object.
+        /// </summary>
+        /// <typeparam name="T">Model type</typeparam>
+        /// <param name="stream">json stream</param>
+        /// <returns>Model object</returns>
+        private static T DeserializeJsonStream<T>(Stream stream)
+        {
+            if (stream == null || stream.CanRead == false)
+                throw new ArgumentNullException("Provided stream is null.");
+            else
+            {
+                using (var streamReader = new StreamReader(stream))
+                using (var JsonReader = new JsonTextReader(streamReader))
+                {
+                    var jsonSerializer = new JsonSerializer();
+                    return jsonSerializer.Deserialize<T>(JsonReader);
+                }
+            }
         }
     }
 }
