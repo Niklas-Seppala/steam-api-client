@@ -26,5 +26,4 @@ namespace SteamWebRequest
             return _type == typeof(int);
         }
     }
-
 }

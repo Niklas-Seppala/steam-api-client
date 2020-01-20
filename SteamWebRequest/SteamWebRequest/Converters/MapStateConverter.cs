@@ -2,6 +2,7 @@
 using System;
 using Newtonsoft.Json;
 using System.Linq;
+using SteamWebRequest.Models;
 
 namespace SteamWebRequest
 {
