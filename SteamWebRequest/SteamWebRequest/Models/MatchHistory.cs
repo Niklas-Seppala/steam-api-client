@@ -5,7 +5,7 @@ namespace SteamWebRequest.Models
 {
     public sealed class MatchHistory
     {
-        [JsonProperty("Result")]
+        [JsonProperty("result")]
         public MatchHistoryContent Content { get; set; }
     }
 
