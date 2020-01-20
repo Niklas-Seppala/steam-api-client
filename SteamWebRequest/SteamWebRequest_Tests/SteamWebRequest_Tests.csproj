@@ -17,4 +17,9 @@
     <ProjectReference Include="..\SteamWebRequest\SteamWebRequest.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model_Tests\" />
+    <Folder Include="ConverterTests\" />
+  </ItemGroup>
+
 </Project>
