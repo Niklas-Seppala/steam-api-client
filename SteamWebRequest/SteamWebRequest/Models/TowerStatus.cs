@@ -19,5 +19,4 @@ namespace SteamWebRequest.Models
 
         public TowerStatus(BitVector32 bits) => _bits = bits;
     }
-
 }

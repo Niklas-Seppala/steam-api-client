@@ -25,5 +25,4 @@ namespace SteamWebRequest.Models
 
         public List<PlayerShort> Players { get; set; }
     }
-
 }

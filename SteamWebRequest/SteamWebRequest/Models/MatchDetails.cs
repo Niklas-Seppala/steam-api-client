@@ -48,6 +48,7 @@ namespace SteamWebRequest.Models
 
         [JsonProperty("radiant_win")]
         public bool RadiantWin { get; set; }
+
         public bool DireWin { get => !this.RadiantWin; }
 
         [JsonProperty("human_players")]
@@ -68,5 +69,4 @@ namespace SteamWebRequest.Models
         [JsonProperty("dire_score")]
         public ushort DireScore { get; set; }
     }
-
 }

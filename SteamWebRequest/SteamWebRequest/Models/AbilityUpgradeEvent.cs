@@ -6,5 +6,4 @@
         public uint Time { get; set; }
         public byte Level { get; set; }
     }
-
 }

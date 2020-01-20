@@ -15,13 +15,13 @@ namespace SteamWebRequest.Models
 
         [JsonConverter(typeof(PlayerSlotConverter))]
         [JsonProperty("player_slot")]
-        public BitVector32 PlayerSlot
-        {
-            set => _player_slot = value;
-        }
+        public BitVector32 PlayerSlot { set => _player_slot = value; }
+
         public bool IsDire { get => _player_slot[128]; }
         public bool IsRadiant { get => !this.IsDire; }
-        public byte TeamPosition { get => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1); }
+        public byte TeamPosition 
+        { 
+            get => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        }
     }
-
 }

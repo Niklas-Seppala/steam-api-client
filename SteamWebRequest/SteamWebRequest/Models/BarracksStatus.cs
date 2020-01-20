@@ -18,5 +18,4 @@ namespace SteamWebRequest.Models
             _bits = bits;
         }
     }
-
 }

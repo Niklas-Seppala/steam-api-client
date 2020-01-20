@@ -17,8 +17,10 @@ namespace SteamWebRequest.Models
 
         [JsonProperty("avatar")]
         public string AvatarURL { get; set; }
+
         [JsonProperty("avatarmedium")]
         public string AvatarMediumURL { get; set; }
+
         [JsonProperty("avatarfull")]
         public string AvatarFullURL { get; set; }
 
@@ -31,5 +33,4 @@ namespace SteamWebRequest.Models
         public string LocStateCode { get; set; }
         public short LocCityId { get; set; }
     }
-
 }

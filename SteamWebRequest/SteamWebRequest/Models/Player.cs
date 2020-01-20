@@ -11,13 +11,10 @@ namespace SteamWebRequest.Models
         public BitVector32 Player_slot { set => _player_slot = value; }
         public bool IsDire { get => _player_slot[128]; }
         public bool IsRadiant { get => !this.IsDire; }
-        public byte TeamPosition { get => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1); }
-
-        [JsonProperty("account_id")]
-        public ulong Id { get; set; }
-
-        [JsonProperty("hero_id")]
-        public ushort HeroId { get; set; }
+        public byte TeamPosition 
+        { 
+            get => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        }
 
         public ushort Item_0 { get; set; }
         public ushort Item_1 { get; set; }
@@ -35,19 +32,28 @@ namespace SteamWebRequest.Models
         public byte Deaths { get; set; }
         public float KDA { get => (this.Kills + this.Assists) / this.Deaths; }
 
+        [JsonProperty("account_id")]
+        public ulong Id { get; set; }
+
+        [JsonProperty("hero_id")]
+        public ushort HeroId { get; set; }
+
         [JsonProperty("Leaver_status")]
         public byte Leaver_status { get; set; }
 
         [JsonProperty("last_hits")]
         public ushort LastHits { get; set; }
+
         public ushort Denies { get; set; }
 
         [JsonProperty("Xp_per_min")]
         public ushort XPM { get; set; }
+
         public byte LevelAtEnd { get; set; }
 
         [JsonProperty("hero_damage")]
         public uint Damage { get; set; }
+
         [JsonProperty("scaled_hero_damage")]
         public uint ScaledDamage { get; set; }
 
@@ -56,6 +62,7 @@ namespace SteamWebRequest.Models
 
         [JsonProperty("hero_healing")]
         public uint Healing { get; set; }
+
         [JsonProperty("scaled_hero_healing")]
         public uint ScaledHealing { get; set; }
 
@@ -64,11 +71,11 @@ namespace SteamWebRequest.Models
 
         [JsonProperty("gold_spent")]
         public uint GoldSpent { get; set; }
+
         public uint GoldInPocket { get; set; }
         public uint TotalGoldGained { get => this.GoldInPocket + this.GoldSpent; }
 
         [JsonProperty("ability_upgrades")]
         public List<AbilityUpgradeEvent> AbilityUpgrades { get; set; }
     }
-
 }
