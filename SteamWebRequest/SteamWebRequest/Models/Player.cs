@@ -33,7 +33,7 @@ namespace SteamWebRequest.Models
         public float KDA { get => (this.Kills + this.Assists) / this.Deaths; }
 
         [JsonProperty("account_id")]
-        public ulong Id { get; set; }
+        public uint Id { get; set; }
 
         [JsonProperty("hero_id")]
         public ushort HeroId { get; set; }
