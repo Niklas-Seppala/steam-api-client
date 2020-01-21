@@ -10,34 +10,30 @@ namespace SteamWebRequest
 {
     public static partial class SteamHttpClient
     {
-        
+
+        /// <summary>
+        /// Sends a GET request to https://api.steampowered.com/ for
+        /// universal match history. Request can be cancelled by providing
+        /// CancellationToken.
+        /// </summary>
+        /// <param name="callSize">Match quantity (1-100)</param>
+        /// <param name="token">Cancellation token for API request</param>
+        /// <returns>MatchHistory object</returns>
+        /// <exception cref="HttpRequestException">Thrown when HttpRequest fails</exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="APIException">Thrown if user has private game records.</exception>
         public static async Task<MatchHistory> GetMatchHistoryAsync(byte callSize, CToken token = default)
         {
             UrlBuilder urlBuilder = new UrlBuilder(
                 "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/",
                 new QueryParam("key", _devKey),
                 new QueryParam("matches_requested", callSize.ToString()));
-
-            return await GetMatchHistoryAsync(urlBuilder.Url, token);
-
-            //using (var request = new HttpRequestMessage(HttpMethod.Get, urlBuilder.Url))
-            //using (var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
-            //    .ConfigureAwait(false))
-            //using (Stream stream  = await response.Content.ReadAsStreamAsync())
-            //{
-            //    if (response.IsSuccessStatusCode)
-            //        return DeserializeJsonStream<MatchHistory>(stream);
-            //    else
-            //    {
-            //        string content = await ReadStreamAsync(stream);
-            //        throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
-            //    }
-            //}
+            return await SendGETRequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
 
         /// <summary>
         /// Sends a GET request to https://api.steampowered.com/ for
-        /// Dota 2 palyer's match history. Request can be cancelled by providing
+        /// Dota 2 player's match history. Request can be cancelled by providing
         /// CancellationToken.
         /// </summary>
         /// <param name="id32">Player's steam id in 32-bit</param>
@@ -54,39 +50,26 @@ namespace SteamWebRequest
                 new QueryParam("key", _devKey),
                 new QueryParam("account_id", id32),
                 new QueryParam("matches_requested", callSize.ToString()));
-
-            return await GetMatchHistoryAsync(urlBuilder.Url, token);
-
-            //using (var request = new HttpRequestMessage(HttpMethod.Get, urlBuilder.Url))
-            //using (var response = await _client.SendAsync(request,
-            //    HttpCompletionOption.ResponseHeadersRead, cancelToken).ConfigureAwait(false))
-            //using (Stream stream = await response.Content.ReadAsStreamAsync())
-            //{
-            //    if (response.IsSuccessStatusCode)
-            //        return DeserializeJsonStream<MatchHistory>(stream);
-            //    else
-            //    {
-            //        string content = await ReadStreamAsync(stream);
-            //        throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
-            //    }
-            //}
+            return await SendGETRequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
 
-        private static async Task<MatchHistory> GetMatchHistoryAsync(string url, CToken token = default)
+        /// <summary>
+        /// Sends GET request to https://api.steampowered.com/ for
+        /// Dota 2 match details. Request can be cancelled by providing
+        /// CancellationToken.
+        /// </summary>
+        /// <param name="matchId">Match id</param>
+        /// <param name="token">Cancellation token for API request</param>
+        /// <returns>MatchDetails object</returns>
+        /// <exception cref="HttpRequestException">Thrown when HttpRequest fails</exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<MatchDetails> GetMatchDetailsAsync(string matchId, CToken token = default)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await _client.SendAsync(request,
-                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
-            using (Stream stream = await response.Content.ReadAsStreamAsync())
-            {
-                if (response.IsSuccessStatusCode)
-                    return DeserializeJsonStream<MatchHistory>(stream);
-                else
-                {
-                    string content = await ReadStreamAsync(stream);
-                    throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
-                }
-            }
+            UrlBuilder urlBuilder = new UrlBuilder("" +
+                "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/",
+                new QueryParam("match_id", matchId),
+                new QueryParam("key", _devKey));
+            return await SendGETRequestAndDeserialize<MatchDetails>(urlBuilder.Url, token);
         }
     }
 }
