@@ -75,7 +75,7 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when id parameter is negative.
         /// </exception>
-        public static long SteamIdTo64(int id32)
+        public static long SteamIdTo64(uint id32)
         {
             if (id32 < 0)
             {
@@ -96,9 +96,9 @@ namespace SteamWebRequest
         /// Thrown when id parameter is less than 32-bit and 64-bit
         /// conversion difference (76561197960265728).
         /// </exception>
-        public static int SteamIdTo32(long id64)
+        public static int SteamIdTo32(ulong id64)
         {
-            long difference = 76561197960265728;
+            ulong difference = 76561197960265728;
             if (id64 < difference)
             {
                 throw new ArgumentOutOfRangeException("Id is not valid 64-bit id.");
