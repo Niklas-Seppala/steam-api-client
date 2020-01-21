@@ -1,9 +1,23 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 
 namespace SteamWebRequest.Models
 {
+    public sealed class AccountCollection
+    {
+        [JsonProperty("response")]
+        public AccountCollectionContent Content { get; set; }
+        public List<SteamAccount> Accounts { get => this.Content.Accounts; }
+    }
+
+    public sealed class AccountCollectionContent
+    {
+        [JsonProperty("players")]
+        public List<SteamAccount> Accounts { get; set; }
+    }
+
     public sealed class SteamAccount
     {
         [JsonConverter(typeof(UnixDateTimeConverter))]
