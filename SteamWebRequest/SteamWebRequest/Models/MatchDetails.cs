@@ -7,6 +7,12 @@ namespace SteamWebRequest.Models
 {
     public sealed class MatchDetails
     {
+        [JsonProperty("result")]
+        public MatchDetailsContent Content { get; set; }
+    }
+
+    public sealed class MatchDetailsContent
+    {
         [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan Duration { get; set; }
 
@@ -44,8 +50,6 @@ namespace SteamWebRequest.Models
         [JsonProperty("match_seq_num")]
         public ulong MatchSequenceNum { get; set; }
 
-        public List<Player> Players { get; set; }
-
         [JsonProperty("radiant_win")]
         public bool RadiantWin { get; set; }
 
@@ -68,5 +72,32 @@ namespace SteamWebRequest.Models
 
         [JsonProperty("dire_score")]
         public ushort DireScore { get; set; }
+
+        public List<Player> Players { get; set; }
+        public string[] PlayerIds32
+        { 
+            get
+            {
+                string[] ids = new string[this.Players.Count];
+                for (int i = 0; i < this.Players.Count; i++)
+                {
+                    ids[i] = this.Players[i].Id.ToString();
+                }
+                return ids;
+            }
+        }
+
+        public string[] PlayerIds64
+        {
+            get
+            {
+                string[] ids = new string[this.Players.Count];
+                for (int i = 0; i < this.Players.Count; i++)
+                {
+                    ids[i] = SteamIdConverter.SteamIdTo64(this.Players[i].Id).ToString();
+                }
+                return ids;
+            }
+        }
     }
 }
