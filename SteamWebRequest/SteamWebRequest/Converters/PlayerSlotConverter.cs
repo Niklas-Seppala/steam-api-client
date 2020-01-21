@@ -23,7 +23,7 @@ namespace SteamWebRequest
 
         public override bool CanConvert(Type objectType)
         {
-            return _type == typeof(int);
+            return objectType == _type;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System;
 using Newtonsoft.Json;
-using System.Linq;
 using SteamWebRequest.Models;
 
 namespace SteamWebRequest
@@ -10,7 +9,7 @@ namespace SteamWebRequest
     {
         public override bool CanRead { get => true; }
         public override bool CanWrite { get => false; }
-        private readonly Type[] types = new[] { typeof(int), typeof(short) };
+        private readonly Type _type = typeof(int);
 
         public override object ReadJson(JsonReader reader, Type objectType,
             object existingValue, JsonSerializer serializer)
@@ -30,7 +29,7 @@ namespace SteamWebRequest
 
         public override bool CanConvert(Type objectType)
         {
-            return this.types.Any(t => t == objectType);
+            return _type == objectType;
         }
     }
 }
