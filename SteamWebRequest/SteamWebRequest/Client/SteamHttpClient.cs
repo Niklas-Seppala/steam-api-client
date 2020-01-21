@@ -9,6 +9,7 @@
 */
 
 using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net.Http;
@@ -54,7 +55,7 @@ namespace SteamWebRequest
         /// </exception>
         private static void ValidateDevKey()
         {
-            UrlBuilder url = new UrlBuilder("https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/",
+            UrlBuilder url = new UrlBuilder(GET_MATCH_HISTORY_URL,
                 new QueryParam("key", _devKey),
                 new QueryParam("matches_requested", "2"));
 
@@ -118,7 +119,7 @@ namespace SteamWebRequest
         /// <param name="url">Url for request</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Deserialized json object</returns>
-        private static async Task<T> SendGETRequestAndDeserialize<T>(string url, CToken token = default)
+        private static async Task<T> SendGET_AndDeserialize<T>(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             using (var response = await _client.SendAsync(request,
@@ -131,6 +132,31 @@ namespace SteamWebRequest
                 {
                     string content = await ReadStreamAsync(stream);
                     throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets image from privide url. Request can be cancelled
+        /// by providing cancellation token.
+        /// </summary>
+        /// <param name="url">image url</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Bitmap image</returns>
+        public static async Task<Bitmap> GetImageAsync(string url, CToken token = default)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await _client.SendAsync(request,
+                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
+            using (Stream stream = await response.Content.ReadAsStreamAsync())
+            {
+                if (response.IsSuccessStatusCode)
+                    return new Bitmap(stream);
+                else
+                {
+                    string content = await ReadStreamAsync(stream).ConfigureAwait(false);
+                    throw new APIException("Request for image failed.")
+                    { Content = content, StatusCode = (int)response.StatusCode };
                 }
             }
         }
