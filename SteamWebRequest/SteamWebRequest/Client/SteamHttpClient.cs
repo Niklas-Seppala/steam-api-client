@@ -14,6 +14,8 @@ using System.IO;
 using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json;
+//                               !!ALIAS!!
+using CToken = System.Threading.CancellationToken;
 
 namespace SteamWebRequest
 {
@@ -39,6 +41,7 @@ namespace SteamWebRequest
             }
             catch (Exception ex)
             {
+                _devKey = string.Empty;
                 throw new HttpClientConfigException(inner: ex);
             }
         }
@@ -103,6 +106,31 @@ namespace SteamWebRequest
                 {
                     var jsonSerializer = new JsonSerializer();
                     return jsonSerializer.Deserialize<T>(JsonReader);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends GET request to API and deserializes
+        /// answer to defined model object.
+        /// </summary>
+        /// <typeparam name="T">Model</typeparam>
+        /// <param name="url">Url for request</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Deserialized json object</returns>
+        private static async Task<T> SendGETRequestAndDeserialize<T>(string url, CToken token = default)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await _client.SendAsync(request,
+                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
+            using (Stream stream = await response.Content.ReadAsStreamAsync())
+            {
+                if (response.IsSuccessStatusCode)
+                    return DeserializeJsonStream<T>(stream);
+                else
+                {
+                    string content = await ReadStreamAsync(stream);
+                    throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
                 }
             }
         }
