@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SteamWebRequest.Models;
@@ -10,6 +9,12 @@ namespace SteamWebRequest
 {
     public static partial class SteamHttpClient
     {
+        #region [Base URLs]
+        private const string GET_MATCH_HISTORY_URL = "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/";
+        private const string GET_MATCH_DETAILS_URL = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/";
+        #endregion
+
+        #region [Get Match History]
 
         /// <summary>
         /// Sends a GET request to https://api.steampowered.com/ for
@@ -24,11 +29,10 @@ namespace SteamWebRequest
         /// <exception cref="APIException">Thrown if user has private game records.</exception>
         public static async Task<MatchHistory> GetMatchHistoryAsync(byte callSize, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder(
-                "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/",
+            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
                 new QueryParam("key", _devKey),
                 new QueryParam("matches_requested", callSize.ToString()));
-            return await SendGETRequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
+            return await SendGET_AndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
 
         /// <summary>
@@ -45,13 +49,16 @@ namespace SteamWebRequest
         /// <exception cref="APIException">Thrown if user has private game records.</exception>
         public static async Task<MatchHistory> GetMatchHistoryAsync(string id32, byte callSize, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder(
-                "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/",
+            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
                 new QueryParam("key", _devKey),
                 new QueryParam("account_id", id32),
                 new QueryParam("matches_requested", callSize.ToString()));
-            return await SendGETRequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
+            return await SendGET_AndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
+
+        #endregion
+
+        #region [Get Match Details]
 
         /// <summary>
         /// Sends GET request to https://api.steampowered.com/ for
@@ -65,11 +72,12 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentNullException"></exception>
         public static async Task<MatchDetails> GetMatchDetailsAsync(string matchId, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder("" +
-                "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/",
+            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_DETAILS_URL,
                 new QueryParam("match_id", matchId),
                 new QueryParam("key", _devKey));
-            return await SendGETRequestAndDeserialize<MatchDetails>(urlBuilder.Url, token);
+            return await SendGET_AndDeserialize<MatchDetails>(urlBuilder.Url, token);
         }
+
+        #endregion
     }
 }
