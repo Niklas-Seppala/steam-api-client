@@ -56,18 +56,10 @@ namespace SWR.SteamIdConverter_Tests
         [InlineData(76561197960265726)]
         [InlineData(76561197960265)]
         [InlineData(765611)]
-        public void SteamIdTo32Int32_TooSmallIdInput_ThrowsArgumentOutOfRangeException(long id)
+        public void SteamIdTo32Int32_TooSmallIdInput_ThrowsArgumentOutOfRangeException(ulong id)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => {
                 SteamIdConverter.SteamIdTo32(id);
-            });
-        }
-
-        [Fact]
-        public void SteamIdTo32Int32_NegativeIdInput_ThrowsArgumentOutOfRangeException()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
-                SteamIdConverter.SteamIdTo32(-76561198107435620);
             });
         }
 
@@ -78,7 +70,7 @@ namespace SWR.SteamIdConverter_Tests
         [InlineData(76561197990605499, 30339771)]
         [InlineData(76561198007038949, 46773221)]
         [InlineData(76561197990938353, 30672625)]
-        public void SteamIdTo32Int32_ValidIdInput_ReturnsCorrectResult(long id, int answer)
+        public void SteamIdTo32Int32_ValidIdInput_ReturnsCorrectResult(ulong id, int answer)
         {
             Assert.Equal(answer, SteamIdConverter.SteamIdTo32(id));
         }

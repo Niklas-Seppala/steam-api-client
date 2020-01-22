@@ -42,23 +42,13 @@ namespace SWR.SteamIdConverter_Tests
 
         // ------------------------------------------------------------------ \\
         //                       SteamIdTo64(int id32)                        \\
-        // --------------------------- Wrong usage -------------------------- \\
-
-        [Fact]
-        public void SteamIdTo64Int64_NegativeIdInput_ThrowsArgumenOutOfRangeException()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
-                SteamIdConverter.SteamIdTo64(-147169892); 
-            });
-        }
-
         // -------------------------- Correct usage ------------------------- \\
 
         [Theory]
         [InlineData(147169892, 76561198107435620)]
         [InlineData(30339771, 76561197990605499)]
         [InlineData(46773221, 76561198007038949)]
-        public void SteamIdTo64Int64Arg_ValidIdInput_ReturnsCorrectResult(int id, long answer)
+        public void SteamIdTo64Int64Arg_ValidIdInput_ReturnsCorrectResult(uint id, long answer)
         {
             Assert.Equal(answer, SteamIdConverter.SteamIdTo64(id));
         }
