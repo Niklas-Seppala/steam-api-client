@@ -1,9 +1,7 @@
 ﻿/**
-* This class is spread over three files:
+* This class is spread over two files:
 * SteamHttpClient.cs (this file)
 *     - Configuration and utility methods
-* SteamHttpCLient.Dota2.cs
-*     - Requests for dota2 web API
 *  SteamHttpClient.Steam.cs
 *     - Requests for steam web API
 */
@@ -15,15 +13,15 @@ using System.IO;
 using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json;
-//                               !!ALIAS!!
 using CToken = System.Threading.CancellationToken;
 
 namespace SteamWebRequest
 {
-    public static partial class SteamHttpClient
+    public partial class SteamHttpClient
     {
-        private static string _devKey;
-        private static readonly HttpClient _client = new HttpClient();
+        public static HttpClient Client { get; } = new HttpClient();
+
+        public string DevKey { get; }
 
         /// <summary>
         /// Initializes SteamHttpClient.
@@ -33,16 +31,16 @@ namespace SteamWebRequest
         /// <exception cref="HttpClientConfigException">
         /// Thrown when initialization process fails.
         /// </exception>
-        public static void ConfigureClient(string developerKey)
+        public SteamHttpClient(string developerKey)
         {
             try
             {
-                _devKey = developerKey;
+                DevKey = developerKey;
                 ValidateDevKey();
             }
             catch (Exception ex)
             {
-                _devKey = string.Empty;
+                DevKey = string.Empty;
                 throw new HttpClientConfigException(inner: ex);
             }
         }
@@ -53,13 +51,15 @@ namespace SteamWebRequest
         /// <exception cref="HttpRequestException">
         /// Thrown when validation fails.
         /// </exception>
-        private static void ValidateDevKey()
+        private void ValidateDevKey()
         {
-            UrlBuilder url = new UrlBuilder(GET_MATCH_HISTORY_URL,
-                new QueryParam("key", _devKey),
-                new QueryParam("matches_requested", "2"));
+            var uBuilder = new UrlBuilder(GET_PRODUCTS_URL,
+                new QueryParam("key", this.DevKey),
+                new QueryParam("max_results", "1"));
 
-            HttpResponseMessage resp = _client.GetAsync(url.ToString()).Result;
+            HttpResponseMessage resp = Client.GetAsync(uBuilder.Url)
+                .Result;
+
             if (resp.IsSuccessStatusCode) return;
             else throw new HttpRequestException(resp.StatusCode == HttpStatusCode.Forbidden
                 ? $"Response status code: {resp.StatusCode}. Developer key is invalid!"
@@ -77,7 +77,7 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentException">
         /// Thrown when stream is write only.
         /// </exception>
-        private static async Task<string> ReadStreamAsync(Stream stream)
+        protected async Task<string> ReadStreamAsync(Stream stream)
         {
             if (stream.CanRead)
             {
@@ -96,7 +96,7 @@ namespace SteamWebRequest
         /// <typeparam name="T">Model type</typeparam>
         /// <param name="stream">json stream</param>
         /// <returns>Model object</returns>
-        private static T DeserializeJsonStream<T>(Stream stream)
+        protected T DeserializeJsonStream<T>(Stream stream)
         {
             if (stream == null || stream.CanRead == false)
                 throw new ArgumentNullException("Provided stream is null.");
@@ -119,10 +119,10 @@ namespace SteamWebRequest
         /// <param name="url">Url for request</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Deserialized json object</returns>
-        private static async Task<T> SendGET_AndDeserialize<T>(string url, CToken token = default)
+        public async Task<T> RequestAndDeserialize<T>(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await _client.SendAsync(request,
+            using (var response = await Client.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
@@ -143,10 +143,10 @@ namespace SteamWebRequest
         /// <param name="url">image url</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Bitmap image</returns>
-        public static async Task<Bitmap> GetImageAsync(string url, CToken token = default)
+        public async Task<Bitmap> GetImageAsync(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await _client.SendAsync(request,
+            using (var response = await Client.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
