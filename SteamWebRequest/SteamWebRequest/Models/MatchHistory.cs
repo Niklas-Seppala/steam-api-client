@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
     public sealed class MatchHistory
     {
         [JsonProperty("result")]
-        public MatchHistoryContent Content { get; set; }
+        public MatchHistoryContent History { get; set; }
     }
 
     public sealed class MatchHistoryContent

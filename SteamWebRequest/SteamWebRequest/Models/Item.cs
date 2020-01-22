@@ -1,14 +1,40 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
+    public sealed class GameItems
+    {
+        [JsonProperty("result")]
+        public ItemsContent Content { get; set; }
+
+        public List<Item> Items { get => this.Content.Items; }
+    }
+
+    public sealed class ItemsContent
+    {
+        [JsonProperty("items")]
+        public List<Item> Items { get; set; }
+    }
+
     public sealed class Item
     {
-        [JsonProperty("Localized_name")]
-        public string LocalizedName { get; set; }
-
+        [JsonProperty("id")]
         public int Id { get; set; }
-        public int Cost { get; set; }
+
+        [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("cost")]
+        public int Cost { get; set; }
+
+        [JsonProperty("secret_shop")]
+        public byte SecretShop { get; set; }
+
+        [JsonProperty("side_shop")]
+        public byte SideShop { get; set; }
+
+        [JsonProperty("recipe")]
+        public int Recipe { get; set; }
     }
 }

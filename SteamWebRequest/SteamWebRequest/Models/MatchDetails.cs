@@ -3,12 +3,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
     public sealed class MatchDetails
     {
         [JsonProperty("result")]
-        public MatchDetailsContent Content { get; set; }
+        public MatchDetailsContent Details { get; set; }
     }
 
     public sealed class MatchDetailsContent

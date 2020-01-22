@@ -1,8 +1,8 @@
 ﻿using System.Collections.Specialized;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
-    public readonly struct BarracksStatus
+    public sealed class BarracksStatus
     {
         private readonly BitVector32 _bits;
 

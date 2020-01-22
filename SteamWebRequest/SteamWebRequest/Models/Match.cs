@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
     public sealed class Match
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Specialized;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
-    public readonly struct TowerStatus
+    public sealed class TowerStatus
     {
         private readonly BitVector32 _bits;
         public bool AncientTop { get => _bits[1024]; }

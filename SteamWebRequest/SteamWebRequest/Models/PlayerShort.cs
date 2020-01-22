@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Specialized;
 
-namespace SteamWebRequest.Models
+namespace SteamWebRequest
 {
     public sealed class PlayerShort
     {

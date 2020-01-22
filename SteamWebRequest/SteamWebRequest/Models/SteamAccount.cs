@@ -45,6 +45,6 @@ namespace SteamWebRequest.Models
         public byte PersonaState { get; set; }
         public string LocCountryCode { get; set; }
         public string LocStateCode { get; set; }
-        public short LocCityId { get; set; }
+        public int LocCityId { get; set; }
     }
 }

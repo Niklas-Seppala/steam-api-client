@@ -1,4 +1,4 @@
-﻿namespace SteamWebRequest.Models
+﻿namespace SteamWebRequest
 {
     public sealed class AbilityUpgradeEvent
     {
