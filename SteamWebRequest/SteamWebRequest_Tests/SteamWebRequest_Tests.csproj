@@ -14,12 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SteamWebRequest\SteamWebRequest.csproj" />
+    <Folder Include="Model_Tests\" />
+    <Folder Include="ConverterTests\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model_Tests\" />
-    <Folder Include="ConverterTests\" />
+    <ProjectReference Include="..\SteamWebRequest\SteamApiClient.csproj" />
   </ItemGroup>
 
 </Project>

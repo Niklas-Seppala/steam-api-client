@@ -70,7 +70,7 @@ namespace SWR.SteamIdConverter_Tests
         [InlineData(76561197990605499, 30339771)]
         [InlineData(76561198007038949, 46773221)]
         [InlineData(76561197990938353, 30672625)]
-        public void SteamIdTo32Int32_ValidIdInput_ReturnsCorrectResult(ulong id, int answer)
+        public void SteamIdTo32Int32_ValidIdInput_ReturnsCorrectResult(ulong id, uint answer)
         {
             Assert.Equal(answer, SteamIdConverter.SteamIdTo32(id));
         }

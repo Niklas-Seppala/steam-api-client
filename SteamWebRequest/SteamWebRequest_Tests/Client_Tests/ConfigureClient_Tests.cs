@@ -2,6 +2,7 @@
 using SteamWebRequest;
 using System.Net.Http;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace SWR.Client_Tests
 {
@@ -21,16 +22,7 @@ namespace SWR.Client_Tests
         public void DevKeyValid_FieldsInitialized()
         {
             var client = new SteamHttpClient(SecretVariables.DevKey);
-
-            HttpClient clientField = (HttpClient)typeof(SteamHttpClient)
-                .GetField("_client", BindingFlags.Static | BindingFlags.NonPublic)
-                .GetValue(client);
-
-            string key = (string)typeof(SteamHttpClient)
-                .GetField("_devKey", BindingFlags.Static | BindingFlags.NonPublic)
-                .GetValue(null);
-
-            Assert.NotNull(clientField);
+            Assert.NotNull(SteamHttpClient.Client);
             Assert.Equal(SecretVariables.DevKey, client.DevKey);
         }
     }
