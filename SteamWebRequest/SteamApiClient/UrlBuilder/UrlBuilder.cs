@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Web;
+using System.Collections.Generic;
 
 namespace SteamApiClient
 {
@@ -69,24 +70,42 @@ namespace SteamApiClient
             }
         }
 
+        ///// <summary>
+        ///// Instantiates UrlBuilder object with
+        ///// querystring.
+        ///// </summary>
+        ///// <param name="url">url</param>
+        ///// <param name="queries">params array of QueryParam objects</param>
+        ///// <exception cref="ArgumentNullException">
+        ///// Thrown when baseUrl parameter is null.
+        ///// </exception>
+        ///// <exception cref="ArgumentException">
+        ///// Thrown when baseUrl parameter is empty
+        ///// </exception>
+        //public UrlBuilder(string url, params QueryParam[] queries)
+        //    : this(url)
+        //{
+        //    foreach (QueryParam pair in queries)
+        //    {
+        //        _query[pair.Key] = pair.Value;
+        //    }
+        //}
+
         /// <summary>
         /// Instantiates UrlBuilder object with
         /// querystring.
         /// </summary>
         /// <param name="url">url</param>
-        /// <param name="queries">params array of QueryParam objects</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when baseUrl parameter is null.
-        /// </exception>
+        /// <param name="queries">(string, string) tuple of query parameter</param>
         /// <exception cref="ArgumentException">
         /// Thrown when baseUrl parameter is empty
         /// </exception>
-        public UrlBuilder(string url, params QueryParam[] queries)
+        public UrlBuilder(string url, params (string key, string value)[] queries)
             : this(url)
         {
-            foreach (QueryParam pair in queries)
+            foreach (var pair in queries)
             {
-                _query[pair.Key] = pair.Value;
+                _query[pair.key] = pair.value;
             }
         }
 
@@ -103,12 +122,12 @@ namespace SteamApiClient
         /// <exception cref="ArgumentException">
         /// Thrown when baseUrl parameter is empty
         /// </exception>
-        public UrlBuilder(string url, int port, params QueryParam[] queries)
+        public UrlBuilder(string url, int port, params (string key, string value)[] queries)
             : this(url, port)
         {
-            foreach (QueryParam pair in queries)
+            foreach (var pair in queries)
             {
-                _query[pair.Key] = pair.Value;
+                _query[pair.key] = pair.value;
             }
         }
 
@@ -121,9 +140,9 @@ namespace SteamApiClient
         /// </summary>
         /// <param name="key">parameter key</param>
         /// <param name="value">parameter value</param>
-        public void AddQuery(string key, string value)
+        public void AddQuery((string key, string value) query)
         {
-            _query[key] = value;
+            _query[query.key] = query.value;
         }
 
         /// <summary>
