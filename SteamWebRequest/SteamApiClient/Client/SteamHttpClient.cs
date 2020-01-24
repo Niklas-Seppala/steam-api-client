@@ -53,10 +53,7 @@ namespace SteamApiClient
         /// </exception>
         private void ValidateDevKey()
         {
-            var uBuilder = new UrlBuilder(GET_PRODUCTS_URL,
-                new QueryParam("key", this.DevKey),
-                new QueryParam("max_results", "1"));
-
+            var uBuilder = new UrlBuilder(GET_PRODUCTS_URL, ("key", this.DevKey), ("max_results", "1"));
             HttpResponseMessage resp = Client.GetAsync(uBuilder.Url)
                 .Result;
 

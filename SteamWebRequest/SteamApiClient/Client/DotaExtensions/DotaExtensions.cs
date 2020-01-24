@@ -29,7 +29,7 @@ namespace SteamApiClient.Dota
         public static async Task<GameItems> GetGameItemsAsync(this SteamHttpClient client,
             CToken token = default)
         {
-            var url = new UrlBuilder(GET_ITEMS_URL, new QueryParam("key", client.DevKey));
+            var url = new UrlBuilder(GET_ITEMS_URL, ("key", client.DevKey));
             return await client.RequestAndDeserialize<GameItems>(url.Url, token);
         }
 
@@ -51,8 +51,8 @@ namespace SteamApiClient.Dota
             byte callSize, CToken token = default)
         {
             var urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
-                new QueryParam("key", client.DevKey),
-                new QueryParam("matches_requested", callSize.ToString()));
+                ("key", client.DevKey),
+                ("matches_requested", callSize.ToString()));
             return await client.RequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
 
@@ -71,9 +71,9 @@ namespace SteamApiClient.Dota
             string id32, byte callSize, CToken token = default)
         {
             var urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
-                new QueryParam("key", client.DevKey),
-                new QueryParam("account_id", id32),
-                new QueryParam("matches_requested", callSize.ToString()));
+                ("key", client.DevKey),
+                ("account_id", id32),
+                ("matches_requested", callSize.ToString()));
             return await client.RequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
         }
 
@@ -94,9 +94,9 @@ namespace SteamApiClient.Dota
             string matchId, CToken token = default)
         {
             var urlBuilder = new UrlBuilder(GET_MATCH_DETAILS_URL,
-                new QueryParam("match_id", matchId),
-                new QueryParam("key", client.DevKey),
-                new QueryParam("include_persona_names", "1"));
+                ("match_id", matchId),
+                ("key", client.DevKey),
+                ("include_persona_names", "1"));
             return await client.RequestAndDeserialize<MatchDetails>(urlBuilder.Url, token);
         }
 
