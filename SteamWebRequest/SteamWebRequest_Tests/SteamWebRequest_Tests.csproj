@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SteamWebRequest\SteamApiClient.csproj" />
+    <ProjectReference Include="..\SteamApiClient\SteamApiClient.csproj" />
   </ItemGroup>
 
 </Project>
