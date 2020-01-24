@@ -6,13 +6,13 @@
 *     - Requests for steam web API
 */
 
+using Newtonsoft.Json;
 using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.IO;
-using System.Net.Http;
 using System.Net;
-using Newtonsoft.Json;
+using System.Net.Http;
+using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
 
 namespace SteamWebRequest
@@ -35,12 +35,12 @@ namespace SteamWebRequest
         {
             try
             {
-                DevKey = developerKey;
-                ValidateDevKey();
+                this.DevKey = developerKey;
+                this.ValidateDevKey();
             }
             catch (Exception ex)
             {
-                DevKey = string.Empty;
+                this.DevKey = string.Empty;
                 throw new HttpClientConfigException(inner: ex);
             }
         }
@@ -60,10 +60,16 @@ namespace SteamWebRequest
             HttpResponseMessage resp = Client.GetAsync(uBuilder.Url)
                 .Result;
 
-            if (resp.IsSuccessStatusCode) return;
-            else throw new HttpRequestException(resp.StatusCode == HttpStatusCode.Forbidden
-                ? $"Response status code: {resp.StatusCode}. Developer key is invalid!"
-                : $"Response status code: {resp.StatusCode}. Something went wrong with key validation.");
+            if (resp.IsSuccessStatusCode)
+            {
+                return;
+            }
+            else
+            {
+                throw new HttpRequestException(resp.StatusCode == HttpStatusCode.Forbidden
+                    ? $"Response status code: {resp.StatusCode}. Developer key is invalid!"
+                    : $"Response status code: {resp.StatusCode}. Something went wrong with key validation.");
+            }
         }
 
         /// <summary>
@@ -81,12 +87,17 @@ namespace SteamWebRequest
         {
             if (stream.CanRead)
             {
-                using var streamReader = new StreamReader(stream);
+                using (var streamReader = new StreamReader(stream))
+                {
                     return await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                }
             }
-            else throw stream == null
-                ? new ArgumentNullException("Provided stream is null.")
-                : new ArgumentException("Provided stream is write only.");
+            else
+            {
+                throw stream == null
+                    ? new ArgumentNullException("Provided stream is null.")
+                    : new ArgumentException("Provided stream is write only.");
+            }
         }
 
         /// <summary>
@@ -99,7 +110,11 @@ namespace SteamWebRequest
         protected T DeserializeJsonStream<T>(Stream stream)
         {
             if (stream == null || stream.CanRead == false)
-                throw new ArgumentNullException("Provided stream is null.");
+            {
+                throw stream == null
+                    ? new ArgumentNullException("Provided stream is null.")
+                    : new ArgumentException("Provided stream is write only.");
+            }
             else
             {
                 using (var streamReader = new StreamReader(stream))
@@ -127,10 +142,12 @@ namespace SteamWebRequest
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
                 if (response.IsSuccessStatusCode)
-                    return DeserializeJsonStream<T>(stream);
+                {
+                    return this.DeserializeJsonStream<T>(stream);
+                }
                 else
                 {
-                    string content = await ReadStreamAsync(stream);
+                    string content = await this.ReadStreamAsync(stream);
                     throw new APIException() { Content = content, StatusCode = (int)response.StatusCode };
                 }
             }
@@ -151,10 +168,12 @@ namespace SteamWebRequest
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
                 if (response.IsSuccessStatusCode)
+                {
                     return new Bitmap(stream);
+                }
                 else
                 {
-                    string content = await ReadStreamAsync(stream).ConfigureAwait(false);
+                    string content = await this.ReadStreamAsync(stream).ConfigureAwait(false);
                     throw new APIException("Request for image failed.")
                     { Content = content, StatusCode = (int)response.StatusCode };
                 }

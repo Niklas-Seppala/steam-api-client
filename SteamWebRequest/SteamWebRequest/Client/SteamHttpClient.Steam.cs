@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using SteamWebRequest.Models;
+﻿using SteamWebRequest.Models;
+using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
 
 namespace SteamWebRequest
@@ -31,18 +31,18 @@ namespace SteamWebRequest
             }
             else
             {
-                bool callAll = CallSizeToString(callSize, out string size);
-                var uBuilder = CreateProductQueryString(products, size);
+                bool callAll = this.CallSizeToString(callSize, out string size);
+                var uBuilder = this.CreateProductQueryString(products, size);
                 if (callAll)
                 {
                     SteamProducts chunk;
-                    SteamProducts allProducts = await RequestAndDeserialize<SteamProducts>(uBuilder.Url, token)
+                    SteamProducts allProducts = await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token)
                         .ConfigureAwait(false);
 
                     while (allProducts.Content.MoreResults)
                     {
                         uBuilder.AddQuery("last_appid", allProducts.Content.LastId.ToString());
-                        chunk = await RequestAndDeserialize<SteamProducts>(uBuilder.Url, token).ConfigureAwait(false);
+                        chunk = await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token).ConfigureAwait(false);
                         allProducts.Content.LastId = chunk.Content.LastId;
                         allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
                         allProducts.Content.MoreResults = chunk.Content.MoreResults;
@@ -51,7 +51,7 @@ namespace SteamWebRequest
                 }
                 else
                 {
-                    return await RequestAndDeserialize<SteamProducts>(uBuilder.Url, token);
+                    return await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token);
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace SteamWebRequest
         {
             return new UrlBuilder(GET_PRODUCTS_URL,
                new QueryParam("max_results", size),
-               new QueryParam("key", DevKey),
+               new QueryParam("key", this.DevKey),
                new QueryParam("include_games", products.HasFlag(IncludeProducts.Games) ? "1" : "0"),
                new QueryParam("include_dlc", products.HasFlag(IncludeProducts.DLC) ? "1" : "0"),
                new QueryParam("include_software", products.HasFlag(IncludeProducts.Software) ? "1" : "0"),
@@ -101,9 +101,9 @@ namespace SteamWebRequest
         public async Task<Friendslist> GetFriendslistAsync(string id64, CToken token = default)
         {
             var url = new UrlBuilder(GET_STEAM_USER_FRIENDS_URL,
-                new QueryParam("key", DevKey),
+                new QueryParam("key", this.DevKey),
                 new QueryParam("steamid", id64));
-            return await RequestAndDeserialize<Friendslist>(url.Url, token);
+            return await this.RequestAndDeserialize<Friendslist>(url.Url, token);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace SteamWebRequest
         /// <returns>Friendslist object.</returns>
         public async Task<Friendslist> GetFriendslistAsync(long id64, CToken token = default)
         {
-            return await GetFriendslistAsync(id64.ToString(), token);
+            return await this.GetFriendslistAsync(id64.ToString(), token);
         }
 
         #endregion
@@ -130,10 +130,10 @@ namespace SteamWebRequest
         public async Task<AccountCollection> GetSteamAccountsAsync(params string[] id64)
         {
             var uBuilder = new UrlBuilder(GET_STEAM_ACCOUNT_URL,
-                new QueryParam("key", DevKey),
-                new QueryParam("steamids", string.Join(',', id64)));
+                new QueryParam("key", this.DevKey),
+                new QueryParam("steamids", string.Join(",", id64)));
 
-            return await RequestAndDeserialize<AccountCollection>(uBuilder.Url, CToken.None);
+            return await this.RequestAndDeserialize<AccountCollection>(uBuilder.Url, CToken.None);
         }
 
         /// <summary>
@@ -146,11 +146,11 @@ namespace SteamWebRequest
         /// <returns>Collection of steam accounts</returns>
         public async Task<AccountCollection> GetSteamAccountsAsync(CToken token, params string[] id64)
         {
-            var uBuilder = new UrlBuilder(GET_STEAM_ACCOUNT_URL, 
-                new QueryParam("key", DevKey),
-                new QueryParam("steamids", string.Join(',', id64)));
+            var uBuilder = new UrlBuilder(GET_STEAM_ACCOUNT_URL,
+                new QueryParam("key", this.DevKey),
+                new QueryParam("steamids", string.Join(",", id64)));
 
-            return await RequestAndDeserialize<AccountCollection>(uBuilder.Url, token);
+            return await this.RequestAndDeserialize<AccountCollection>(uBuilder.Url, token);
         }
 
         #endregion

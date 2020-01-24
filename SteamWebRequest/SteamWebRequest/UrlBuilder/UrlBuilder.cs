@@ -10,17 +10,17 @@ namespace SteamWebRequest
     public class UrlBuilder
     {
         #region [Fields]
-        private UriBuilder _uriBuilder;
+        private readonly UriBuilder _uriBuilder;
         private readonly NameValueCollection _query;
         #endregion
 
         #region [Properties]
-        public string Query { get => _query.ToString(); }
-        public string Host { get => _uriBuilder.Host; }
-        public int Port 
-        { 
+        public string Query => _query.ToString();
+        public string Host => _uriBuilder.Host;
+        public int Port
+        {
             get => _uriBuilder.Port;
-            set 
+            set
             {
                 if (value < -1)
                 {
@@ -30,9 +30,9 @@ namespace SteamWebRequest
                 {
                     _uriBuilder.Port = value;
                 }
-            }  
+            }
         }
-        public string Url { get => this.ToString(); }
+        public string Url => this.ToString();
         #endregion
 
         #region [Constructors]
@@ -40,7 +40,7 @@ namespace SteamWebRequest
         /// <summary>
         /// Instantiates UrlBuilder object.
         /// </summary>
-        public UrlBuilder() {}
+        public UrlBuilder() { }
 
         /// <summary>
         /// Instatiates UrlBuilder object without

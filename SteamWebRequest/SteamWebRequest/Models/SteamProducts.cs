@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace SteamWebRequest.Models
 {
@@ -10,7 +10,7 @@ namespace SteamWebRequest.Models
         [JsonProperty("response")]
         public Products Content { get; set; }
 
-        public List<Product> Products { get => this.Content.ProductList; }
+        public List<Product> Products => this.Content.ProductList;
     }
 
     public sealed class Products

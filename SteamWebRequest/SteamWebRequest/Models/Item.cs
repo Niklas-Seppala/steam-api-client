@@ -8,7 +8,7 @@ namespace SteamWebRequest
         [JsonProperty("result")]
         public ItemsContent Content { get; set; }
 
-        public List<Item> Items { get => this.Content.Items; }
+        public List<Item> Items => this.Content.Items;
     }
 
     public sealed class ItemsContent

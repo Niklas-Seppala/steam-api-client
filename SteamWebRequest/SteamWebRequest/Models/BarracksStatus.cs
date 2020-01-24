@@ -6,12 +6,12 @@ namespace SteamWebRequest
     {
         private readonly BitVector32 _bits;
 
-        public bool BottomRanged { get => _bits[32]; }
-        public bool BottomMelee { get => _bits[16]; }
-        public bool MiddleRanged { get => _bits[8]; }
-        public bool MiddleMelee { get => _bits[4]; }
-        public bool TopRanged { get => _bits[2]; }
-        public bool TopMelee { get => _bits[1]; }
+        public bool BottomRanged => _bits[32];
+        public bool BottomMelee => _bits[16];
+        public bool MiddleRanged => _bits[8];
+        public bool MiddleMelee => _bits[4];
+        public bool TopRanged => _bits[2];
+        public bool TopMelee => _bits[1];
 
         public BarracksStatus(BitVector32 bits)
         {

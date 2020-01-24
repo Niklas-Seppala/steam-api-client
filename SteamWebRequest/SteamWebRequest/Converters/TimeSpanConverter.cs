@@ -1,13 +1,13 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
 
 namespace SteamWebRequest
 {
     public class TimeSpanConverter : JsonConverter
     {
-        public override bool CanRead { get => true; }
-        public override bool CanWrite { get => false; }
+        public override bool CanRead => true;
+        public override bool CanWrite => false;
         private readonly Type[] types = new[] { typeof(int), typeof(double) };
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

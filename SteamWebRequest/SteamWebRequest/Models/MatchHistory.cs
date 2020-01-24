@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SteamWebRequest
 {
@@ -20,6 +20,6 @@ namespace SteamWebRequest
         public byte Status { get; set; }
         public string StatusDetail { get; set; }
         public List<Match> Matches { get; set; }
-        public int Count { get => this.Matches.Count; }
+        public int Count => this.Matches.Count;
     }
 }

@@ -30,7 +30,8 @@ namespace SteamWebRequest
                 {
                     throw new ArgumentOutOfRangeException("Id can't be negative.");
                 }
-                checked { return (id32 + 76561197960265728).ToString(); }
+                checked
+                { return (id32 + 76561197960265728).ToString(); }
             }
             throw new ArgumentException("Given string couldn't be parsed to Int32.");
         }
@@ -59,7 +60,8 @@ namespace SteamWebRequest
                 {
                     throw new ArgumentOutOfRangeException("Id is not valid 64-bit id.");
                 }
-                checked { return (id64 - difference).ToString(); }
+                checked
+                { return (id64 - difference).ToString(); }
             }
             throw new ArgumentException("Given string couldn't be parsed to Int64");
         }
@@ -75,13 +77,14 @@ namespace SteamWebRequest
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when id parameter is negative.
         /// </exception>
-        public static long SteamIdTo64(uint id32)
+        public static ulong SteamIdTo64(uint id32)
         {
             if (id32 < 0)
             {
                 throw new ArgumentOutOfRangeException("Id cant be negative");
             }
-            checked { return id32 + 76561197960265728; }
+            checked
+            { return (ulong)id32 + 76561197960265728; }
         }
 
         /// <summary>
@@ -96,14 +99,15 @@ namespace SteamWebRequest
         /// Thrown when id parameter is less than 32-bit and 64-bit
         /// conversion difference (76561197960265728).
         /// </exception>
-        public static int SteamIdTo32(ulong id64)
+        public static uint SteamIdTo32(ulong id64)
         {
             ulong difference = 76561197960265728;
             if (id64 < difference)
             {
                 throw new ArgumentOutOfRangeException("Id is not valid 64-bit id.");
             }
-            checked { return (int)(id64 - difference); }
+            checked
+            { return (uint)(id64 - difference); }
         }
     }
 }

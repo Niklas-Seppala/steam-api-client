@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 
 namespace SteamWebRequest
 {
@@ -53,7 +53,7 @@ namespace SteamWebRequest
         [JsonProperty("radiant_win")]
         public bool RadiantWin { get; set; }
 
-        public bool DireWin { get => !this.RadiantWin; }
+        public bool DireWin => !this.RadiantWin;
 
         [JsonProperty("human_players")]
         public byte HumanPlayers { get; set; }
@@ -75,13 +75,13 @@ namespace SteamWebRequest
 
         public List<Player> Players { get; set; }
         public string[] PlayerIds32
-        { 
+        {
             get
             {
                 string[] ids = new string[this.Players.Count];
                 for (int i = 0; i < this.Players.Count; i++)
                 {
-                    ids[i] = this.Players[i].Id.ToString();
+                    ids[i] = this.Players[i].Id32.ToString();
                 }
                 return ids;
             }
@@ -94,7 +94,7 @@ namespace SteamWebRequest
                 string[] ids = new string[this.Players.Count];
                 for (int i = 0; i < this.Players.Count; i++)
                 {
-                    ids[i] = SteamIdConverter.SteamIdTo64(this.Players[i].Id).ToString();
+                    ids[i] = this.Players[i].Id64.ToString();
                 }
                 return ids;
             }

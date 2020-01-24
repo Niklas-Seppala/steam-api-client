@@ -9,7 +9,7 @@ namespace SteamWebRequest.Models
     {
         [JsonProperty("response")]
         public AccountCollectionContent Content { get; set; }
-        public List<SteamAccount> Accounts { get => this.Content.Accounts; }
+        public List<SteamAccount> Accounts => this.Content.Accounts;
     }
 
     public sealed class AccountCollectionContent

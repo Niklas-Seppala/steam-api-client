@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace SteamWebRequest
@@ -9,12 +9,9 @@ namespace SteamWebRequest
         private BitVector32 _player_slot;
         [JsonConverter(typeof(PlayerSlotConverter))]
         public BitVector32 Player_slot { set => _player_slot = value; }
-        public bool IsDire { get => _player_slot[128]; }
-        public bool IsRadiant { get => !this.IsDire; }
-        public byte TeamPosition 
-        { 
-            get => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
-        }
+        public bool IsDire => _player_slot[128];
+        public bool IsRadiant => !this.IsDire;
+        public byte TeamPosition => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
 
         public ushort Item_0 { get; set; }
         public ushort Item_1 { get; set; }
@@ -30,10 +27,11 @@ namespace SteamWebRequest
         public byte Kills { get; set; }
         public byte Assists { get; set; }
         public byte Deaths { get; set; }
-        public float KDA { get => (this.Kills + this.Assists) / this.Deaths; }
+        public float KDA => (this.Kills + this.Assists) / this.Deaths;
 
         [JsonProperty("account_id")]
-        public uint Id { get; set; }
+        public uint Id32 { get; set; }
+        public ulong Id64 => SteamIdConverter.SteamIdTo64(this.Id32);
 
         [JsonProperty("hero_id")]
         public ushort HeroId { get; set; }
@@ -73,7 +71,10 @@ namespace SteamWebRequest
         public uint GoldSpent { get; set; }
 
         public uint GoldInPocket { get; set; }
-        public uint TotalGoldGained { get => this.GoldInPocket + this.GoldSpent; }
+        public uint TotalGoldGained => this.GoldInPocket + this.GoldSpent;
+
+        [JsonProperty("persona")]
+        public string PersonaName { get; set; }
 
         [JsonProperty("ability_upgrades")]
         public List<AbilityUpgradeEvent> AbilityUpgrades { get; set; }

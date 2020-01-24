@@ -1,13 +1,13 @@
-﻿using System.Collections.Specialized;
+﻿using Newtonsoft.Json;
 using System;
-using Newtonsoft.Json;
+using System.Collections.Specialized;
 
 namespace SteamWebRequest
 {
     public class PlayerSlotConverter : JsonConverter
     {
-        public override bool CanRead { get => true; }
-        public override bool CanWrite { get => false; }
+        public override bool CanRead => true;
+        public override bool CanWrite => false;
         private readonly Type _type = typeof(int);
 
         public override object ReadJson(JsonReader reader, Type objectType,

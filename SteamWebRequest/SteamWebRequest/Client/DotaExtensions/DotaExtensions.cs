@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SteamWebRequest.Models;
 using CToken = System.Threading.CancellationToken;
 
 namespace SteamWebRequest.Dota
@@ -50,7 +49,7 @@ namespace SteamWebRequest.Dota
         public static async Task<MatchHistory> GetLiveMatchHistoryAsync(this SteamHttpClient client,
             byte callSize, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
+            var urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
                 new QueryParam("key", client.DevKey),
                 new QueryParam("matches_requested", callSize.ToString()));
             return await client.RequestAndDeserialize<MatchHistory>(urlBuilder.Url, token);
@@ -70,7 +69,7 @@ namespace SteamWebRequest.Dota
         public static async Task<MatchHistory> GetMatchHistoryAsync(this SteamHttpClient client,
             string id32, byte callSize, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
+            var urlBuilder = new UrlBuilder(GET_MATCH_HISTORY_URL,
                 new QueryParam("key", client.DevKey),
                 new QueryParam("account_id", id32),
                 new QueryParam("matches_requested", callSize.ToString()));
@@ -93,9 +92,10 @@ namespace SteamWebRequest.Dota
         public static async Task<MatchDetails> GetMatchDetailsAsync(this SteamHttpClient client,
             string matchId, CToken token = default)
         {
-            UrlBuilder urlBuilder = new UrlBuilder(GET_MATCH_DETAILS_URL,
+            var urlBuilder = new UrlBuilder(GET_MATCH_DETAILS_URL,
                 new QueryParam("match_id", matchId),
-                new QueryParam("key", client.DevKey));
+                new QueryParam("key", client.DevKey),
+                new QueryParam("include_persona_names", "1"));
             return await client.RequestAndDeserialize<MatchDetails>(urlBuilder.Url, token);
         }
 

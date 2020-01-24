@@ -9,12 +9,12 @@ namespace SteamWebRequest
         private static string baseMessage = "Client configuration failed.\n";
         public string OptionalMessage { get; set; }
 
-        public HttpClientConfigException(): base(baseMessage)
-        {}
-        public HttpClientConfigException(Exception inner) : base(baseMessage, inner) 
-        {}
+        public HttpClientConfigException() : base(baseMessage)
+        { }
+        public HttpClientConfigException(Exception inner) : base(baseMessage, inner)
+        { }
         protected HttpClientConfigException(SerializationInfo info, StreamingContext context)
-            : base(info, context) 
-        {}
+            : base(info, context)
+        { }
     }
 }
