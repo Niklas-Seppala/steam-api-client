@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SteamApiClient.Models;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
-using SteamApiClient.Models;
 
 namespace SteamApiClient.Dota
 {
@@ -10,15 +12,78 @@ namespace SteamApiClient.Dota
     /// Extension methods for SteamHttpClient.
     /// These methods target dota 2 APIs.
     /// </summary>
-    public static class DotaExtensions
+    public static partial class DotaExtensions
     {
         #region [Base URLs]
         private const string GET_MATCH_HISTORY_URL = "https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1/";
         private const string GET_MATCH_DETAILS_URL = "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/v1/";
         private const string GET_ITEMS_URL = "http://api.steampowered.com/IEconDOTA2_570/GetGameItems/v1/";
+        private const string GET_TOP_LIVE_GAMES = "https://api.steampowered.com/IDOTA2Match_570/GetTopLiveGame/v1/";
+        private const string GET_HEROES_URL = "https://api.steampowered.com/IEconDOTA2_570/GetHeroes/v0001/";
+        private const string GET_HEROINFOS_URL = "http://www.dota2.com/jsfeed/heropickerdata";
+        private const string GET_ITEMINFOS_URL = "http://www.dota2.com/jsfeed/itemdata";
+        private const string GET_INT_PRIZEPOOL_URL = "http://www.dota2.com/jsfeed/intlprizepool";
+        private const string GET_HEROPEDIA_DATA_URL = "http://www.dota2.com/jsfeed/heropediadata/";
+
         #endregion
 
+
+        #region [Get Heroes]
+
+        /// <summary>
+        /// Sends GET request for dota heroinfo.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>List of heroinfos</returns>
+        public static async Task<List<HeroInfo>> GetHeroInfoAsync(this SteamHttpClient client)
+        {
+            string response = await SteamHttpClient.Client.GetStringAsync(GET_HEROINFOS_URL).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<List<HeroInfo>>(ProcessHeroInfoResponse(response));
+        }
+
+        /// <summary>
+        /// Sends GET request for dota hero stats.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>List of HeroStats</returns>
+        public static async Task<List<HeroStats>> GetHeroStatsAsync(this SteamHttpClient client)
+        {
+            var uBuilder = new UrlBuilder(GET_HEROPEDIA_DATA_URL, ("feeds", "herodata"));
+            string raw = await SteamHttpClient.Client.GetStringAsync(uBuilder.Url);
+            return JsonConvert.DeserializeObject<List<HeroStats>>(ProcessHeroStatsResponse(raw));
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task<Heroes> GetHeroesAsync(this SteamHttpClient client,
+            CToken token = default)
+        {
+            var uBuilder = new UrlBuilder(GET_HEROES_URL, ("key", client.DevKey));
+            return await client.RequestAndDeserialize<Heroes>(uBuilder.Url, token);
+        }
+
+        #endregion
+
+
         #region [Get Items]
+
+        /// <summary>
+        /// Sends GET request for Dota 2 iteminfo.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>List of iteminfos</returns>
+        public static async Task<List<Item>> GetItemInfoAsync(this SteamHttpClient client)
+        {
+            string response = await SteamHttpClient.Client
+                .GetStringAsync(GET_ITEMINFOS_URL)
+                .ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<List<Item>>(ProcessItemInfoResponse(response));
+        }
 
         /// <summary>
         /// Get Dota 2 game items. Can be cancelled
@@ -26,6 +91,7 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="token">cancellation token.</param>
         /// <returns>dota 2 game items</returns>
+        [Obsolete("Use GetItemInfoAsync()")]
         public static async Task<GameItems> GetGameItemsAsync(this SteamHttpClient client,
             CToken token = default)
         {
@@ -34,6 +100,7 @@ namespace SteamApiClient.Dota
         }
 
         #endregion
+
 
         #region [Get Match History]
 
@@ -79,6 +146,7 @@ namespace SteamApiClient.Dota
 
         #endregion
 
+
         #region [Get Match Details]
 
         /// <summary>
@@ -101,5 +169,47 @@ namespace SteamApiClient.Dota
         }
 
         #endregion
+
+
+        #region [Get Live Games]
+
+        /// <summary>
+        /// Sends GET request for current top live games.
+        /// Request can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="token">cancellation token</param>
+        /// <param name="partner">partner id</param>
+        /// <returns>Top live games</returns>
+        public static async Task<TopLiveGames> GetTopLiveGamesAsync(this SteamHttpClient client,
+            CToken token = default, int partner = 1)
+        {
+            var uBuilder = new UrlBuilder(GET_TOP_LIVE_GAMES,
+                ("key", client.DevKey),
+                ("partner", partner.ToString()));
+
+            return await client.RequestAndDeserialize<TopLiveGames>(uBuilder.Url, token);
+        }
+
+        #endregion
+
+
+        #region [Get Tournament Data]
+
+        /// <summary>
+        /// Sends GET request for Internation pricepool.
+        /// Request can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of currency and money sum</returns>
+        public static async Task<Dictionary<string, uint>> GetIntPrizePoolAsync(this SteamHttpClient client,
+            CToken token = default)
+        {
+            return await client.
+                RequestAndDeserialize<Dictionary<string, uint>>(GET_INT_PRIZEPOOL_URL, token);
+        }
+        #endregion
+
     }
 }
