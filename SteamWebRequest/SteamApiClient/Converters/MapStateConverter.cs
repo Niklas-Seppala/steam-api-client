@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
+using SteamApiClient.Models;
 using System;
 using System.Collections.Specialized;
-using SteamApiClient.Models;
 
 namespace SteamApiClient
 {
