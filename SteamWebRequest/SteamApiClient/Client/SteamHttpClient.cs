@@ -157,7 +157,7 @@ namespace SteamApiClient
         /// <param name="url">image url</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Bitmap image</returns>
-        public async Task<Bitmap> GetImageAsync(string url, CToken token = default)
+        public async Task<Image> GetImageAsync(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             using (var response = await Client.SendAsync(request,
@@ -172,7 +172,7 @@ namespace SteamApiClient
                 {
                     string content = await this.ReadStreamAsync(stream).ConfigureAwait(false);
                     throw new APIException("Request for image failed.")
-                    { Content = content, StatusCode = (int)response.StatusCode };
+                    { Content = content, StatusCode = (int)response.StatusCode, URL = url };
                 }
             }
         }

@@ -13,6 +13,8 @@ namespace SteamApiClient
         private const string GET_PRODUCTS_URL = "https://api.steampowered.com/IStoreService/GetAppList/v1/";
         private const string GET_SERVERINFO_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/";
         private const string GET_API_LIST_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/?";
+
+
         #endregion
 
         #region [Get Api Info]
@@ -181,5 +183,6 @@ namespace SteamApiClient
         }
 
         #endregion
+
     }
 }
