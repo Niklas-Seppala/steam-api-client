@@ -1,22 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
 
 namespace SteamApiClient.Models
 {
-    public sealed class AccountCollection
-    {
-        [JsonProperty("response")]
-        public AccountCollectionContent Content { get; set; }
-        public List<SteamAccount> Accounts => this.Content.Accounts;
-    }
-
-    public sealed class AccountCollectionContent
-    {
-        [JsonProperty("players")]
-        public List<SteamAccount> Accounts { get; set; }
-    }
 
     public sealed class SteamAccount
     {

@@ -8,13 +8,13 @@ namespace SteamApiClient.Models
     public sealed class LiveMatch
     {
         [JsonProperty("activate_time")]
-        public long ActivateTime { get; set; }
+        public ulong ActivateTime { get; set; }
 
         [JsonProperty("deactivate_time")]
-        public long DeactivateTime { get; set; }
+        public ulong DeactivateTime { get; set; }
 
         [JsonProperty("server_steam_id")]
-        public double ServerSteamId { get; set; }
+        public ulong ServerSteamId { get; set; }
 
         [JsonProperty("lobby_id")]
         public ulong LobbyId { get; set; }
@@ -33,13 +33,13 @@ namespace SteamApiClient.Models
         public long GameMode { get; set; }
 
         [JsonProperty("average_mmr")]
-        public short AverageMmr { get; set; }
+        public ushort AverageMMR { get; set; }
 
         [JsonProperty("match_id")]
-        public long MatchId { get; set; }
+        public ulong MatchId { get; set; }
 
         [JsonProperty("series_id")]
-        public long SeriesId { get; set; }
+        public ulong SeriesId { get; set; }
 
         [JsonProperty("team_name_radiant", NullValueHandling = NullValueHandling.Ignore)]
         public string TeamNameRadiant { get; set; }
@@ -48,26 +48,26 @@ namespace SteamApiClient.Models
         public string TeamNameDire { get; set; }
 
         [JsonProperty("team_logo_radiant", NullValueHandling = NullValueHandling.Ignore)]
-        public uint? TeamLogoRadiant { get; set; }
+        public ulong? TeamLogoRadiant { get; set; }
 
         [JsonProperty("team_logo_dire", NullValueHandling = NullValueHandling.Ignore)]
-        public uint? TeamLogoDire { get; set; }
+        public ulong? TeamLogoDire { get; set; }
 
         [JsonProperty("team_id_radiant", NullValueHandling = NullValueHandling.Ignore)]
-        public uint? TeamIdRadiant { get; set; }
+        public ulong? TeamIdRadiant { get; set; }
 
         [JsonProperty("team_id_dire", NullValueHandling = NullValueHandling.Ignore)]
-        public uint? TeamIdDire { get; set; }
+        public ulong? TeamIdDire { get; set; }
 
         [JsonProperty("sort_score")]
-        public int SortScore { get; set; }
+        public uint SortScore { get; set; }
 
         [JsonProperty("last_update_time")]
         [JsonConverter(typeof(UnixDateTimeConverter))]
-        public long LastUpdateTime { get; set; }
+        public DateTime LastUpdateTime { get; set; }
 
         [JsonProperty("radiant_lead")]
-        public short RadiantLead { get; set; }
+        public int RadiantLead { get; set; }
 
         [JsonProperty("radiant_score")]
         public short RadiantScore { get; set; }
@@ -76,12 +76,12 @@ namespace SteamApiClient.Models
         public short DireScore { get; set; }
 
         [JsonProperty("players")]
-        public List<Player> Players { get; set; }
+        public List<PlayerShort> Players { get; set; }
 
         [JsonProperty("building_state")]
-        public long BuildingState { get; set; }
+        public uint BuildingState { get; set; }
 
-        public long Delay { get; set; }
-        public long Spectators { get; set; }
+        public ushort Delay { get; set; }
+        public uint Spectators { get; set; }
     }
 }

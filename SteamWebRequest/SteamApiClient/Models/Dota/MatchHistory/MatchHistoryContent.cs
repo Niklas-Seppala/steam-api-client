@@ -3,12 +3,6 @@ using System.Collections.Generic;
 
 namespace SteamApiClient.Models
 {
-    public sealed class MatchHistory
-    {
-        [JsonProperty("result")]
-        public MatchHistoryContent History { get; set; }
-    }
-
     public sealed class MatchHistoryContent
     {
         [JsonProperty("total_results")]

@@ -5,12 +5,6 @@ using System.Collections.Generic;
 
 namespace SteamApiClient.Models
 {
-    public sealed class MatchDetails
-    {
-        [JsonProperty("result")]
-        public MatchDetailsContent Details { get; set; }
-    }
-
     public sealed class MatchDetailsContent
     {
         [JsonConverter(typeof(TimeSpanConverter))]
