@@ -8,6 +8,7 @@ namespace SteamApiClient
     {
         public string Content { get; set; }
         public int StatusCode { get; set; }
+        public string URL { get; set; }
 
         public APIException() { }
         public APIException(string message) : base(message) { }
