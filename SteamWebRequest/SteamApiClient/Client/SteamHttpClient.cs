@@ -131,7 +131,7 @@ namespace SteamApiClient
         /// <param name="url">Url for request</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Deserialized json object</returns>
-        public async Task<T> RequestAndDeserialize<T>(string url, CToken token = default)
+        internal async Task<T> RequestAndDeserialize<T>(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             using (var response = await Client.SendAsync(request,
