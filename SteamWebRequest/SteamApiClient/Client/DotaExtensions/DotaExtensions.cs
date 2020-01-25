@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
-using SteamApiClient.Models;
+﻿using SteamApiClient.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
 
@@ -24,38 +25,107 @@ namespace SteamApiClient.Dota
         private const string GET_ITEMINFOS_URL = "http://www.dota2.com/jsfeed/itemdata";
         private const string GET_INT_PRIZEPOOL_URL = "http://www.dota2.com/jsfeed/intlprizepool";
         private const string GET_HEROPEDIA_DATA_URL = "http://www.dota2.com/jsfeed/heropediadata/";
+        private const string GET_ABILITY_DATA_URL = "http://www.dota2.com/jsfeed/abilitydata";
+        private const string GET_UNIQUE_USERS_URL = "http://www.dota2.com/jsfeed/uniqueusers";
+        private const string GET_ITEM_IMG_URL = "http://media.steampowered.com/apps/dota2/images/items/";
+        private const string GET_HERO_IMG_URL = "http://media.steampowered.com/apps/dota2/images/heroes/";
+        private const string GET_LEADERBOARD_URL = "http://www.dota2.com/webapi/ILeaderboard/GetDivisionLeaderboard/v0001/";
 
         #endregion
 
+        #region [Leaderboards]
+
+        /// <summary>
+        /// Sends GET request for dota 2 leaderboards. Specify
+        /// region. Request can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="region">leaderboard region</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Leaderboard object</returns>
+        /// <exception cref="APIException">Thrown when api call fails</exception>
+        public static async Task<Leaderboard> GetLeaderboardAsync(this SteamHttpClient client,
+            Models.Region region = default, CToken token = default)
+        {
+            var uBuilder = new UrlBuilder(GET_LEADERBOARD_URL);
+
+            switch (region)
+            {
+                case Models.Region.Europe:
+                    uBuilder.AddQuery(("division", "europe"));
+                    break;
+                case Models.Region.America:
+                    uBuilder.AddQuery(("division", "americas"));
+                    break;
+                case Models.Region.SEA:
+                    uBuilder.AddQuery(("division", "se_asia"));
+                    break;
+                case Models.Region.China:
+                    uBuilder.AddQuery(("division", "china"));
+                    break;
+            }
+            return await client.RequestAndDeserialize<Leaderboard>(
+                uBuilder.Url, token).ConfigureAwait(false);
+        }
+
+
+        #endregion
+
+        #region [Get Abilities]
+
+        /// <summary>
+        /// Sends GET request for dota 2 hero abilities.
+        /// Request can be cancelled providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of abilities</returns>
+        public static async Task<Dictionary<string, Ability>> GetAbilitiesDictAsync(this SteamHttpClient client,
+            CToken token = default)
+        {
+            var abilities = await client.RequestAndDeserialize<Abilities>(GET_ABILITY_DATA_URL, token)
+                .ConfigureAwait(false);
+            return abilities.AbilityDict;
+        }
+
+        #endregion
 
         #region [Get Heroes]
 
         /// <summary>
-        /// Sends GET request for dota heroinfo.
+        /// Sends GET request for dota heroinfo. Request
+        /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="client"></param>
-        /// <returns>List of heroinfos</returns>
-        public static async Task<List<HeroInfo>> GetHeroInfoAsync(this SteamHttpClient client)
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of heroinfos</returns>
+        public static async Task<Dictionary<string, HeroInfo>> GetHeroInfoDictAsync(
+            this SteamHttpClient client, CToken token = default)
         {
-            string response = await SteamHttpClient.Client.GetStringAsync(GET_HEROINFOS_URL).ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<List<HeroInfo>>(ProcessHeroInfoResponse(response));
+            return await client.RequestAndDeserialize<Dictionary<string, HeroInfo>>(GET_HEROINFOS_URL, token)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Sends GET request for dota hero stats.
+        /// Sends GET request for dota 2 hero stats. Requst
+        /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="client"></param>
-        /// <returns>List of HeroStats</returns>
-        public static async Task<List<HeroStats>> GetHeroStatsAsync(this SteamHttpClient client)
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of hero stats</returns>
+        /// <exception cref="APIException">Thrown when API request fails</exception>
+        public static async Task<Dictionary<string, HeroStats>> GetHeroStatsDictAsync(this SteamHttpClient client,
+            CToken token = default)
         {
             var uBuilder = new UrlBuilder(GET_HEROPEDIA_DATA_URL, ("feeds", "herodata"));
-            string raw = await SteamHttpClient.Client.GetStringAsync(uBuilder.Url);
-            return JsonConvert.DeserializeObject<List<HeroStats>>(ProcessHeroStatsResponse(raw));
-
+            var stats = await client.RequestAndDeserialize<HeroStatsContainer>(uBuilder.Url, token)
+                .ConfigureAwait(false);
+            return stats.HeroStats;
         }
 
         /// <summary>
-        /// 
+        /// Sends GET request for dota 2 heroes. Request
+        /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="client"></param>
         /// <param name="token"></param>
@@ -69,20 +139,22 @@ namespace SteamApiClient.Dota
 
         #endregion
 
-
         #region [Get Items]
 
         /// <summary>
-        /// Sends GET request for Dota 2 iteminfo.
+        /// Sends GET request for Dota 2 iteminfo. Request
+        /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="client"></param>
-        /// <returns>List of iteminfos</returns>
-        public static async Task<List<Item>> GetItemInfoAsync(this SteamHttpClient client)
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of item infos</returns>
+        /// <exception cref="APIException">Thrown when api call fails.</exception>
+        public static async Task<Dictionary<string, Item>> GetItemInfoDictAsync(
+            this SteamHttpClient client, CToken token = default)
         {
-            string response = await SteamHttpClient.Client
-                .GetStringAsync(GET_ITEMINFOS_URL)
+            var items = await client.RequestAndDeserialize<ItemDictionary>(GET_ITEMINFOS_URL, token)
                 .ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<List<Item>>(ProcessItemInfoResponse(response));
+            return items.ItemDict;
         }
 
         /// <summary>
@@ -101,6 +173,23 @@ namespace SteamApiClient.Dota
 
         #endregion
 
+        #region [Get Unique Users]
+
+        /// <summary>
+        /// Sends GET request for unique user count. Request
+        /// can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>Dictionary of unique users</returns>
+        public static async Task<Dictionary<string, uint>> GetUniqueUsersAsync(
+            this SteamHttpClient client, CToken token = default)
+        {
+            return await client.RequestAndDeserialize<Dictionary<string, uint>>(
+                GET_UNIQUE_USERS_URL, token).ConfigureAwait(false);
+        }
+
+        #endregion
 
         #region [Get Match History]
 
@@ -146,7 +235,6 @@ namespace SteamApiClient.Dota
 
         #endregion
 
-
         #region [Get Match Details]
 
         /// <summary>
@@ -170,7 +258,6 @@ namespace SteamApiClient.Dota
 
         #endregion
 
-
         #region [Get Live Games]
 
         /// <summary>
@@ -193,7 +280,6 @@ namespace SteamApiClient.Dota
 
         #endregion
 
-
         #region [Get Tournament Data]
 
         /// <summary>
@@ -211,5 +297,57 @@ namespace SteamApiClient.Dota
         }
         #endregion
 
+        #region [Get Images]
+
+        /// <summary>
+        /// Sends GET request for hero image.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="heroName">hero name</param>
+        /// <param name="imgShape">shape of the image</param>
+        /// <returns>hero image</returns>
+        /// <exception cref="APIException">Thrown if api request fails</exception>
+        public static async Task<Image> GetHeroImageAsync(this SteamHttpClient client,
+            string heroName, ImageShape imgShape = ImageShape.Horizontal)
+        {
+            var sBuilder = new StringBuilder(GET_HERO_IMG_URL);
+            sBuilder.Append(heroName);
+
+            switch (imgShape)
+            {
+                case ImageShape.Vertical:
+                    sBuilder.Append("_vert.jpg");
+                    break;
+                case ImageShape.Full:
+                    sBuilder.Append("_full.png");
+                    break;
+                case ImageShape.Horizontal:
+                    sBuilder.Append("_lg.png");
+                    break;
+                case ImageShape.Small:
+                    sBuilder.Append("_sb.png");
+                    break;
+            }
+            return await client.GetImageAsync(sBuilder.ToString());
+        }
+
+        /// <summary>
+        /// Sends GET request for item image.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="imgName">image name</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>item image</returns>
+        /// <exception cref="APIException">Thrown if api request fails</exception>
+        public static async Task<Image> GetItemImageAsync(this SteamHttpClient client,
+            string imgName, CToken token = default)
+        {
+            var sBuilder = new StringBuilder(GET_ITEM_IMG_URL);
+            sBuilder.Append(imgName);
+
+            return await client.GetImageAsync(sBuilder.ToString(), token);
+        }
+
+        #endregion
     }
 }
