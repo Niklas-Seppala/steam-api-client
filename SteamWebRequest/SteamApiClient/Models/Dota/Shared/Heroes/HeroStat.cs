@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SteamApiClient.Models
 {
@@ -53,4 +54,11 @@ namespace SteamApiClient.Models
         [JsonProperty("g")]
         public float Gain { get; set; }
     }
+
+    internal class HeroStatsContainer
+    {
+        [JsonProperty("herodata")]
+        public Dictionary<string, HeroStats> HeroStats { get; set; }
+    }
+
 }
