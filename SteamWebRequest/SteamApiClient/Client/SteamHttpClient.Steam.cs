@@ -11,13 +11,41 @@ namespace SteamApiClient
         private const string GET_STEAM_ACCOUNT_URL = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/";
         private const string GET_STEAM_USER_FRIENDS_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v1";
         private const string GET_PRODUCTS_URL = "https://api.steampowered.com/IStoreService/GetAppList/v1/";
+        private const string GET_SERVERINFO_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/";
+        private const string GET_API_LIST_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/?";
+        #endregion
+
+        #region [Get Api Info]
+
+        /// <summary>
+        /// Sends GET request for Steam serverinfo. Request can be
+        /// cancelled providing CancellationToken.
+        /// </summary>
+        /// <param name="token">Cancellation token</param>
+        /// <returns>SteamServerInfo object.</returns>
+        public async Task<SteamServerInfo> GetSteamServerInfoAsync(CToken token = default)
+        {
+            return await this.RequestAndDeserialize<SteamServerInfo>(GET_SERVERINFO_URL, token);
+        }
+
+        /// <summary>
+        /// Sends GET request for supported Api list. Request can
+        /// be cancelled providing CancellationToken.
+        /// </summary>
+        /// <param name="token">cancellation token</param>
+        /// <returns>ApiList object</returns>
+        public async Task<ApiList> GetApiListAsync(CToken token = default)
+        {
+            return await this.RequestAndDeserialize<ApiList>(GET_API_LIST_URL, token);
+        }
+
         #endregion
 
         #region [Get Steam Products]
 
         /// <summary>
-        /// Get any kinds products on Steam store. Can be cancelled
-        /// by providing cancellation token.
+        /// Sends GET request for any kinds of products in Steam store
+        /// Request can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="products">product flags</param>
         /// <param name="callSize">call size</param>
@@ -92,7 +120,8 @@ namespace SteamApiClient
         #region [Get Steam-user friendslist]
 
         /// <summary>
-        /// Get steam user's friendlist.
+        /// Sends GET request for steam user's friendslist. Request
+        /// can be cancelled providing CancellationToken.
         /// </summary>
         /// <param name="id64">64-bit steamid</param>
         /// <param name="token">cancellation token</param>
@@ -104,7 +133,8 @@ namespace SteamApiClient
         }
 
         /// <summary>
-        /// Get steam user's friendlist.
+        /// Sends GET request for steam user's friendslist. Request
+        /// can be cancelled providing CancellationToken.
         /// </summary>
         /// <param name="id64">64-bit steamid</param>
         /// <param name="token">cancellation token</param>
