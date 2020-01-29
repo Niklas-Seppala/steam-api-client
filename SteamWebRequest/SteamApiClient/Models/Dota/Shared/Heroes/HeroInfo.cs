@@ -12,6 +12,6 @@ namespace SteamApiClient.Models
         public string AttackType { get; set; }
 
         [JsonProperty("roles_l")]
-        public List<string> Roles { get; set; }
+        public IReadOnlyCollection<string> Roles { get; set; }
     }
 }

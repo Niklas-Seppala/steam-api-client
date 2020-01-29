@@ -2,9 +2,9 @@
 
 namespace SteamApiClient.Models
 {
-    internal class GameItems
+    internal class HeroesResponse
     {
         [JsonProperty("result")]
-        public ItemsContent Content { get; set; }
+        public HeroesContent Content { get; set; }
     }
 }

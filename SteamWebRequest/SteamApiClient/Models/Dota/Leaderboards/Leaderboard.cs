@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 
-namespace SteamApiClient.Models
+namespace SteamApiClient.Models.Dota
 {
     public class Leaderboard
     {
@@ -20,6 +20,6 @@ namespace SteamApiClient.Models
         public DateTime ServerTime { get; set; }
 
         [JsonProperty("leaderboard")]
-        public List<RankedPlayer> Players { get; set; }
+        public IReadOnlyCollection<RankedPlayer> Players { get; set; }
     }
 }

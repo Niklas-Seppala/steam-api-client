@@ -1,0 +1,25 @@
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace SteamApiClient.Models.Dota
+{
+    public class StoreMetaDataTab
+    {
+        public string Label { get; set; }
+        public string Id { get; set; }
+
+        [JsonProperty("parent_id")]
+        public ulong ParentId { get; set; }
+
+        public bool Default { get; set; }
+        public bool Home { get; set; }
+
+        [JsonProperty("dropdown_prefab_id")]
+        public ulong DropDownPrefabId { get; set; }
+
+        [JsonProperty("tab_image_override_name")]
+        public string TabImageOverrideName { get; set; }
+
+        public IReadOnlyCollection<IReadOnlyDictionary<string, string>> Children { get; set; }
+    }
+}

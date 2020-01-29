@@ -58,7 +58,7 @@ namespace SteamApiClient.Models
     internal class HeroStatsContainer
     {
         [JsonProperty("herodata")]
-        public Dictionary<string, HeroStats> HeroStats { get; set; }
+        public IReadOnlyDictionary<string, HeroStats> HeroStats { get; set; }
     }
 
 }

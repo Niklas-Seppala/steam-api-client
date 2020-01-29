@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace SteamApiClient.Models
 {
@@ -21,11 +20,5 @@ namespace SteamApiClient.Models
         public string Lore { get; set; }
 
         public string Hurl { get; set; }
-    }
-
-    public class Abilities
-    {
-        [JsonProperty("abilitydata")]
-        public Dictionary<string, Ability> AbilityDict { get; set; }
     }
 }
