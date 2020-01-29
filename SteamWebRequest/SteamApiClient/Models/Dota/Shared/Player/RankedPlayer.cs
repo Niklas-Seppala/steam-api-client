@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SteamApiClient.Models
+namespace SteamApiClient.Models.Dota
 {
     public class RankedPlayer
     {

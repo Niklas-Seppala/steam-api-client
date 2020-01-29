@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 
-namespace SteamApiClient.Models
+namespace SteamApiClient.Models.Dota
 {
     public class AuditEntry
     {

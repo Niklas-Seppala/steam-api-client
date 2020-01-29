@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Specialized;
 
-namespace SteamApiClient.Models
+namespace SteamApiClient.Models.Dota
 {
     public sealed class PlayerShort
     {

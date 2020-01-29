@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamApiClient.Models
+namespace SteamApiClient.Models.Dota
 {
     internal class HeroesContent
     {
