@@ -1,4 +1,5 @@
 ﻿using SteamApiClient.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
 
@@ -12,7 +13,9 @@ namespace SteamApiClient
         private const string GET_STEAM_USER_FRIENDS_URL = "http://api.steampowered.com/ISteamUser/GetFriendList/v1";
         private const string GET_PRODUCTS_URL = "https://api.steampowered.com/IStoreService/GetAppList/v1/";
         private const string GET_SERVERINFO_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/";
-        private const string GET_API_LIST_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/?";
+        private const string GET_API_LIST_URL = "https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/";
+        private const string GET_APP_NEWS_V2 = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/";
+        private const string GET_PLAYER_BANS = "https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/";
 
 
         #endregion
@@ -27,7 +30,8 @@ namespace SteamApiClient
         /// <returns>SteamServerInfo object.</returns>
         public async Task<SteamServerInfo> GetSteamServerInfoAsync(CToken token = default)
         {
-            return await this.RequestAndDeserialize<SteamServerInfo>(GET_SERVERINFO_URL, token);
+            return await this.RequestAndDeserialize<SteamServerInfo>(GET_SERVERINFO_URL, token)
+                .ConfigureAwait(false);
         }
 
         /// <summary>
@@ -35,10 +39,12 @@ namespace SteamApiClient
         /// be cancelled providing CancellationToken.
         /// </summary>
         /// <param name="token">cancellation token</param>
-        /// <returns>ApiList object</returns>
-        public async Task<ApiList> GetApiListAsync(CToken token = default)
+        /// <returns>ReadOnlyCollection of ApiInterface objects</returns>
+        public async Task<IReadOnlyCollection<ApiInterface>> GetApiListAsync(CToken token = default)
         {
-            return await this.RequestAndDeserialize<ApiList>(GET_API_LIST_URL, token);
+            var response = await this.RequestAndDeserialize<ApiListResponse>(GET_API_LIST_URL, token)
+                .ConfigureAwait(false);
+            return response.Apilist.Interfaces;
         }
 
         #endregion
@@ -46,19 +52,19 @@ namespace SteamApiClient
         #region [Get Steam Products]
 
         /// <summary>
-        /// Sends GET request for any kinds of products in Steam store
+        /// Sends GET request for any kinds of products in Steam store.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="products">product flags</param>
         /// <param name="callSize">call size</param>
         /// <param name="token">cancellation token.</param>
-        /// <returns>SteamProduvts object.</returns>
-        public async Task<SteamProducts> GetSteamProductsAsync(
+        /// <returns>ReadOnlyCollection of SteamProduct objects</returns>
+        public async Task<IReadOnlyCollection<SteamProduct>> GetSteamProductsAsync(
             IncludeProducts products, ProductCallSize callSize = ProductCallSize.Default, CToken token = default)
         {
             if (products.Equals(IncludeProducts.None))
             {
-                return new SteamProducts();
+                return new List<SteamProduct>();
             }
             else
             {
@@ -66,23 +72,25 @@ namespace SteamApiClient
                 var uBuilder = this.CreateProductQueryString(products, size);
                 if (callAll)
                 {
-                    SteamProducts chunk;
-                    SteamProducts allProducts = await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token)
+                    SteamProductsContainer chunk;
+                    SteamProductsContainer allProducts = await this.RequestAndDeserialize<SteamProductsContainer>(uBuilder.Url, token)
                         .ConfigureAwait(false);
 
                     while (allProducts.Content.MoreResults)
                     {
                         uBuilder.AddQuery(("last_appid", allProducts.Content.LastId.ToString()));
-                        chunk = await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token).ConfigureAwait(false);
+                        chunk = await this.RequestAndDeserialize<SteamProductsContainer>(uBuilder.Url, token).ConfigureAwait(false);
                         allProducts.Content.LastId = chunk.Content.LastId;
                         allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
                         allProducts.Content.MoreResults = chunk.Content.MoreResults;
                     }
-                    return allProducts;
+                    return allProducts.Content.ProductList;
                 }
                 else
                 {
-                    return await this.RequestAndDeserialize<SteamProducts>(uBuilder.Url, token);
+                    var response = await this.RequestAndDeserialize<SteamProductsContainer>(uBuilder.Url, token)
+                        .ConfigureAwait(false);
+                    return response.Content.ProductList;
                 }
             }
         }
@@ -128,10 +136,13 @@ namespace SteamApiClient
         /// <param name="id64">64-bit steamid</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Friendslist object.</returns>
-        public async Task<Friendslist> GetFriendslistAsync(string id64, CToken token = default)
+        public async Task<IReadOnlyCollection<Friend>> GetFriendslistAsync(string id64, CToken token = default)
         {
-            var url = new UrlBuilder(GET_STEAM_USER_FRIENDS_URL, ("key", this.DevKey), ("steamid", id64));
-            return await this.RequestAndDeserialize<Friendslist>(url.Url, token);
+            var url = new UrlBuilder(GET_STEAM_USER_FRIENDS_URL,
+                ("key", this.DevKey), ("steamid", id64));
+            var response = await this.RequestAndDeserialize<FriendslistResponse>(url.Url, token)
+                .ConfigureAwait(false);
+            return response.Content.Friends;
         }
 
         /// <summary>
@@ -141,7 +152,7 @@ namespace SteamApiClient
         /// <param name="id64">64-bit steamid</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Friendslist object.</returns>
-        public async Task<Friendslist> GetFriendslistAsync(long id64, CToken token = default)
+        public async Task<IReadOnlyCollection<Friend>> GetFriendslistAsync(long id64, CToken token = default)
         {
             return await this.GetFriendslistAsync(id64.ToString(), token);
         }
@@ -150,36 +161,51 @@ namespace SteamApiClient
 
         #region [Get SteamAccounts]
 
+        public async Task<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>> GetSteamAccountBansAsync(
+            CToken token = default, params string[] steamId64s)
+        {
+            UrlBuilder uBuilder = new UrlBuilder(GET_PLAYER_BANS,
+                ("key", this.DevKey),
+                ("steamids", string.Join(",", steamId64s)));
+
+            return await this.RequestAndDeserialize<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(uBuilder.Url, token)
+                .ConfigureAwait(false);
+        }
+
+
         /// <summary>
         /// Sends GET request to http://api.steampowered.com/
         /// for steam accounts.
         /// </summary>
         /// <param name="id64">64-bit ids of accounts you want.</param>
         /// <returns>Collection of steam accounts</returns>
-        public async Task<AccountCollection> GetSteamAccountsAsync(params string[] id64)
+        public async Task<IReadOnlyCollection<SteamAccount>> GetSteamAccountsAsync(
+            CToken token = default, params string[] id64)
         {
             var uBuilder = new UrlBuilder(GET_STEAM_ACCOUNT_URL,
-                ("key", this.DevKey),
-                ("steamids", string.Join(",", id64)));
-
-            return await this.RequestAndDeserialize<AccountCollection>(uBuilder.Url, CToken.None);
+                ("key", this.DevKey), ("steamids", string.Join(",", id64)));
+            var response = await this.RequestAndDeserialize<AccountCollectionResponse>(uBuilder.Url, CToken.None)
+                .ConfigureAwait(false);
+            return response.Content.Accounts;
         }
 
-        /// <summary>
-        /// Sends GET request to http://api.steampowered.com/
-        /// for steam accounts. Request can be cancelled by providing
-        /// cancellation token.
-        /// </summary>
-        /// <param name="token">cancellation token</param>
-        /// <param name="id64">64-bit ids of accounts you want.</param>
-        /// <returns>Collection of steam accounts</returns>
-        public async Task<AccountCollection> GetSteamAccountsAsync(CToken token, params string[] id64)
-        {
-            var uBuilder = new UrlBuilder(GET_STEAM_ACCOUNT_URL,
-                ("key", this.DevKey),
-                ("steamids", string.Join(",", id64)));
+        #endregion
 
-            return await this.RequestAndDeserialize<AccountCollection>(uBuilder.Url, token);
+        #region [Get App news]
+
+        public async Task<AppNewsCollection> GetAppNewsAsync(
+             uint appId, ushort count = 20, long endDateTimestamp = -1, CToken token = default, params string[] tags)
+        {
+            UrlBuilder uBuilder = new UrlBuilder(GET_APP_NEWS_V2,
+                ("appid", appId.ToString()),
+                ("count", count.ToString()),
+                ("enddate", this.GetTimestamp(endDateTimestamp).ToString()),
+                ("tags", string.Join(",", tags)));
+
+            var response = await this.RequestAndDeserialize<AppNewsResponse>(uBuilder.Url, token)
+                .ConfigureAwait(false);
+
+            return response.AppNews;
         }
 
         #endregion
