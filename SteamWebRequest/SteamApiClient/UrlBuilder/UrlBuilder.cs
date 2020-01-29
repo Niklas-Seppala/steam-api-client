@@ -69,27 +69,6 @@ namespace SteamApiClient
             }
         }
 
-        ///// <summary>
-        ///// Instantiates UrlBuilder object with
-        ///// querystring.
-        ///// </summary>
-        ///// <param name="url">url</param>
-        ///// <param name="queries">params array of QueryParam objects</param>
-        ///// <exception cref="ArgumentNullException">
-        ///// Thrown when baseUrl parameter is null.
-        ///// </exception>
-        ///// <exception cref="ArgumentException">
-        ///// Thrown when baseUrl parameter is empty
-        ///// </exception>
-        //public UrlBuilder(string url, params QueryParam[] queries)
-        //    : this(url)
-        //{
-        //    foreach (QueryParam pair in queries)
-        //    {
-        //        _query[pair.Key] = pair.Value;
-        //    }
-        //}
-
         /// <summary>
         /// Instantiates UrlBuilder object with
         /// querystring.
@@ -157,8 +136,20 @@ namespace SteamApiClient
 
         #endregion
 
-        #region [Non-Public Methods]
-
+        #region [Static Methods]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="base_"></param>
+        /// <param name="interface_"></param>
+        /// <param name="method"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        public static string CreateBaseApiUrl(string base_, string interface_, string method, string version)
+        {
+            string result = $"https://{base_}/{interface_}/{method}/{version}/";
+            return result;
+        }
         #endregion
     }
 }

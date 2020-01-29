@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SteamApiClient.Models;
+using SteamApiClient.Models.Dota;
 using System;
 using System.Collections.Specialized;
 
