@@ -176,5 +176,26 @@ namespace SteamApiClient
                 }
             }
         }
+
+        #region [Utility]
+
+        internal ulong GetTimestamp(long timestamp)
+        {
+            if (timestamp < 0)
+            {
+                return (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            }
+            else
+            {
+                return (ulong)timestamp;
+            }
+        }
+
+        internal ulong GetTimestamp(DateTime dateTime)
+        {
+            return (ulong)dateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        #endregion
     }
 }
