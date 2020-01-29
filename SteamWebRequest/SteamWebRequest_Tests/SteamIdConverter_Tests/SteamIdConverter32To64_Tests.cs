@@ -1,11 +1,11 @@
-﻿using System;
+﻿using SteamApiClient;
+using System;
 using Xunit;
-using SteamWebRequest;
 
 namespace SWR.SteamIdConverter_Tests
 {
     public class SteamId32To64_Tests
-    {    
+    {
         // ------------------------------------------------------------------ \\
         //                        SteamIdTo64(string id32)                    \\
         // -------------------------- Wrong usage --------------------------- \\
@@ -23,8 +23,9 @@ namespace SWR.SteamIdConverter_Tests
         [Fact]
         public void SteamIdTo64_NegativeIdInput_ThrowsArgumenOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
-                SteamIdConverter.SteamIdTo64("-46773221"); 
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                SteamIdConverter.SteamIdTo64("-46773221");
             });
         }
 

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SteamApiClient;
+using System;
 using Xunit;
-using SteamWebRequest;
 
 namespace SWR.UrlBuilder_Tests
 {
@@ -57,7 +57,8 @@ namespace SWR.UrlBuilder_Tests
         [Fact]
         public void Property_Port_SetPort_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 var urlBuilder = new UrlBuilder("https://github.com");
                 urlBuilder.Port = -50;
             });
@@ -75,8 +76,8 @@ namespace SWR.UrlBuilder_Tests
         public void Property_Url_GetUrl_ReturnUrl(string url, string fullUrl)
         {
             var urlBuilder = new UrlBuilder(url,
-                new QueryParam("key", "3278382GH"),
-                new QueryParam("name", "Joe"));
+                ("key", "3278382GH"),
+                ("name", "Joe"));
 
             Assert.Equal(fullUrl, urlBuilder.Url);
         }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SteamApiClient;
+using System;
 using System.Collections.Specialized;
-using SteamWebRequest;
-using Xunit;
 using System.Reflection;
+using Xunit;
 
 namespace SWR.UrlBuilder_Tests
 {
@@ -61,8 +61,8 @@ namespace SWR.UrlBuilder_Tests
         {
             Assert.Throws<ArgumentException>(() => new UrlBuilder(
                 string.Empty, port: 10,
-                new QueryParam("name", "John"),
-                new QueryParam("key", "864634DA3")));
+                ("name", "John"),
+                ("key", "864634DA3")));
         }
 
         [Fact]
@@ -70,8 +70,8 @@ namespace SWR.UrlBuilder_Tests
         {
             Assert.Throws<ArgumentNullException>(() => new UrlBuilder(
                 null, port: 10,
-                new QueryParam("name", "John"),
-                new QueryParam("key", "864634DA3")));
+                ("name", "John"),
+                ("key", "864634DA3")));
         }
 
         // -------------------------- Correct usage ------------------------- \\
@@ -80,8 +80,8 @@ namespace SWR.UrlBuilder_Tests
         {
             UrlBuilder url = new UrlBuilder(
                 "https://google.com/", port: -1,
-                new QueryParam("name", "John"),
-                new QueryParam("key", "864634DA3"));
+                ("name", "John"),
+                ("key", "864634DA3"));
 
             UriBuilder builder = (UriBuilder)typeof(UrlBuilder)
                 .GetField("_uriBuilder", BindingFlags.Instance | BindingFlags.NonPublic)

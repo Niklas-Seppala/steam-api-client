@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.IO;
 
 namespace SWR
 {
@@ -21,9 +21,9 @@ namespace SWR
                 }
                 throw new Exception("Keyword not found.");
             }
-            catch 
-            { 
-                throw; 
+            catch
+            {
+                throw;
             }
         }
     }

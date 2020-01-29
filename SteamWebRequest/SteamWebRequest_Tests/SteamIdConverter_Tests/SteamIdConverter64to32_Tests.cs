@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SteamApiClient;
+using System;
 using Xunit;
-using SteamWebRequest;
 
 namespace SWR.SteamIdConverter_Tests
 {
@@ -23,7 +23,8 @@ namespace SWR.SteamIdConverter_Tests
         [Fact]
         public void SteamIdTo32_NegativeIdInput_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 SteamIdConverter.SteamIdTo32("-76561198107435620");
             });
         }
@@ -31,7 +32,8 @@ namespace SWR.SteamIdConverter_Tests
         [Fact]
         public void SteamIdTo32_IdSmallerThanDifference_ThrowsArgumenOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => { 
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 SteamIdConverter.SteamIdTo32("76561197960265726");
             });
         }
@@ -58,7 +60,8 @@ namespace SWR.SteamIdConverter_Tests
         [InlineData(765611)]
         public void SteamIdTo32Int32_TooSmallIdInput_ThrowsArgumentOutOfRangeException(ulong id)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
                 SteamIdConverter.SteamIdTo32(id);
             });
         }

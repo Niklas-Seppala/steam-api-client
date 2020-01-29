@@ -22,4 +22,10 @@
     <ProjectReference Include="..\SteamApiClient\SteamApiClient.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SECRETS.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
