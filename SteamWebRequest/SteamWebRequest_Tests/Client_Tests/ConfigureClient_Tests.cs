@@ -1,8 +1,8 @@
-﻿using Xunit;
-using SteamWebRequest;
-using System.Net.Http;
-using System.Reflection;
+﻿using SteamApiClient;
+using System;
 using System.Diagnostics;
+using Xunit;
+using System.Net.Http;
 
 namespace SWR.Client_Tests
 {
@@ -13,8 +13,17 @@ namespace SWR.Client_Tests
         [InlineData("")]
         public void DevKeyInvalid_ThrowsClientConfigException(string devKey)
         {
-            Assert.Throws<HttpClientConfigException>(() => {
-                SteamHttpClient client = new SteamHttpClient(devKey);
+            Assert.Throws<HttpClientConfigException>(() =>
+            {
+                try
+                {
+                    SteamHttpClient client = new SteamHttpClient(devKey);
+                }
+                catch (Exception ex)
+                {
+                    Assert.IsType<HttpRequestException>(ex.InnerException);
+                    throw;
+                }
             });
         }
 
