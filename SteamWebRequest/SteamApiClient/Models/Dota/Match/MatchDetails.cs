@@ -62,8 +62,8 @@ namespace SteamApiClient.Models.Dota
         [JsonProperty("lobby_type")]
         public byte LobbyType { get; set; }
 
-        [JsonProperty("League_id")]
-        public byte LeagueId { get; set; }
+        [JsonProperty("leagueid")]
+        public uint LeagueId { get; set; }
 
         [JsonProperty("game_mode")]
         public byte GameMode { get; set; }

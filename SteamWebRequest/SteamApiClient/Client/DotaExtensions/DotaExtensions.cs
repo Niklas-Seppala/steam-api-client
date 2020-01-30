@@ -446,18 +446,18 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="client"></param>
         /// <param name="apiInterface">API interface</param>
-        /// <param name="sequenceNum">start sequence number</param>
+        /// <param name="seqNum">the match sequence number to start returning results from</param>
         /// <param name="count">match count</param>
         /// <param name="token">cancellation token</param>
         /// <returns>ReadOnlyCollection of MatchDetails objects.</returns>
         public static async Task<IReadOnlyCollection<MatchDetails>> GetMatchHistoryBySequenceNumAsync(
-            this SteamHttpClient client, string apiInterface = IDOTA2_MATCH_570,
-            ulong sequenceNum = 1, byte count = 50, CToken token = default)
+            this SteamHttpClient client, ulong seqNum, string apiInterface = IDOTA2_MATCH_570,
+            byte count = 50, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_MATCH_HISTORY_SEQ, V1),
                 ("key", client.DevKey),
-                ("start_at_match_seq_num", sequenceNum.ToString()),
+                ("start_at_match_seq_num", seqNum.ToString()),
                 ("matches_requested", count.ToString())).Url;
 
             var response = await client.RequestAndDeserialize<MatchHistoryBySeqResponse>(url, token)
@@ -482,12 +482,10 @@ namespace SteamApiClient.Dota
         /// <param name="startAtId">the minimum match ID to start from</param>
         /// <param name="token">cancellation token</param>
         /// <param name="apiInterface">api interface</param>
-        /// <param name="mode">which game mode to return matches for</param>
         /// <returns>MatchHistoryResponse object</returns>
         public static async Task<MatchHistoryResponse> GetMatchHistoryAsync(this SteamHttpClient client,
-            ulong playerId32 = 0, uint heroId = 0, byte minPlayers = 0, uint leagueId = 0, ulong startAtId = 0,
-            byte count = 25, string apiInterface = IDOTA2_MATCH_570, byte skillLevel = 0,
-            GameMode mode = default, CToken token = default)
+            uint playerId32 = 0, uint heroId = 0, byte minPlayers = 0, uint leagueId = 0, ulong startAtId = 0,
+            byte count = 25, string apiInterface = IDOTA2_MATCH_570, byte skillLevel = 0, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_MATCH_HISTORY, V1),
@@ -498,8 +496,7 @@ namespace SteamApiClient.Dota
                 ("min_players", minPlayers.ToString()),
                 ("league_id", leagueId.ToString()),
                 ("start_at_match_id", startAtId.ToString()),
-                ("skill", skillLevel.ToString()),
-                ("game_mode", ((int)mode).ToString())).Url;
+                ("skill", skillLevel.ToString())).Url;
 
             var response = await client
                 .RequestAndDeserialize<MatchHistoryContainer>(url, token)

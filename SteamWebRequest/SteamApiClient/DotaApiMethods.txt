@@ -37,7 +37,6 @@ IDOTA2Ticket_205790
     GET IDOTA2Ticket_205790/ClaimBadgeReward/v1                     RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
     GET IDOTA2Ticket_205790/GetSteamIDForBadgeID/v1                 RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
     GET IDOTA2Ticket_205790/SteamAccountValidForBadgeType/v1        RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
-    
     GET IDOTA2Ticket_570/ClaimBadgeReward/v1                        RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
     GET IDOTA2Ticket_570/GetSteamIDForBadgeID/v1                    RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
     GET IDOTA2Ticket_570/SteamAccountValidForBadgeType/v1           RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
