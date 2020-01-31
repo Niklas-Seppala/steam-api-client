@@ -23,9 +23,6 @@ IDOTA2StreamSystem_205790
     GET IDOTA2StreamSystem_205790/GetBroadcasterInfo/v1             RECOMMENDED ❌ IMPLEMENTED ✔️ TESTED ❌
 IDOTA2StreamSystem_570
     GET IDOTA2StreamSystem_570/GetBroadcasterInfo/v1                RECOMMENDED ❌ IMPLEMENTED ✔️ TESTED ❌
-IDOTA2Ticket_205790
-    GET IDOTA2Ticket_205790/ClaimBadgeReward/v1                     RECOMMENDED ❌ IMPLEMENTED ❌ TESTED ❌
-    GET IDOTA2Ticket_205790/GetSteamIDForBadgeID/v1                 RECOMMENDED ❌ IMPLEMENTED ❌ TESTED ❌
 IDOTA2Ticket_570
     GET IDOTA2Ticket_570/ClaimBadgeReward/v1                        RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
     GET IDOTA2Ticket_570/GetSteamIDForBadgeID/v1                    RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
@@ -40,7 +37,7 @@ IEconDOTA2_570
     GET IEconDOTA2_570/GetRarities/v1                               RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
     GET IEconDOTA2_570/GetTournamentPrizePool/v1                    RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
 IEconItems_570
-    GET IEconItems_570/GetEquippedPlayerItems/v1                    RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
+    GET IEconItems_570/GetEquippedPlayerItems/v1                    RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️
     GET IEconItems_570/GetPlayerItems/v1                            RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️
-    GET IEconItems_570/GetSchemaURL/v1                              RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
-    GET IEconItems_570/GetStoreMetaData/v1                          RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
+    GET IEconItems_570/GetSchemaURL/v1                              RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️
+    GET IEconItems_570/GetStoreMetaData/v1                          RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️
