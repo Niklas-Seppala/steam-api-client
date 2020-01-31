@@ -15,7 +15,7 @@ GET GetProPlayerList/v1              IMPLEMENTED ❌ TESTED ❌</pre>
 ###### IDOTA2Match_205790
 <pre>GET GetLeagueListing/v1              IMPLEMENTED ✔️ TESTED ❌</pre>
 ###### IDOTA2Match_570
-<pre>GET GetLiveLeagueGames/v1            IMPLEMENTED ✔️ TESTED ❌
+<pre>GET GetLiveLeagueGames/v1            IMPLEMENTED ✔️ TESTED ✔️
 GET GetMatchDetails/v1               IMPLEMENTED ✔️ TESTED ✔️
 GET GetMatchHistory/v1               IMPLEMENTED ✔️ TESTED ✔️ # game_mode
 GET GetMatchHistoryBySequenceNum/v1  IMPLEMENTED ✔️ TESTED ✔️
