@@ -6,11 +6,6 @@ namespace SWR.UrlBuilder_Tests
 {
     public class Properties_Tests
     {
-        // ------------------------------------------------------------------ \\
-        //                         UrlBuilder::Host                           \\
-        //                                                                    \\
-        // ------------------------ Correct usage --------------------------- \\
-
         [Theory]
         [InlineData("https://google.com", "google.com")]
         [InlineData("www.reddit.com/r", "www.reddit.com")]
@@ -20,11 +15,6 @@ namespace SWR.UrlBuilder_Tests
             var urlBuilder = new UrlBuilder(url);
             Assert.Equal(host, urlBuilder.Host);
         }
-
-        // ------------------------------------------------------------------ \\
-        //                         UrlBuilder::Query                          \\
-        //                                                                    \\
-        // ------------------------ Correct usage --------------------------- \\
 
         [Theory]
         [InlineData("www.reddit.com/", "")]
@@ -36,38 +26,6 @@ namespace SWR.UrlBuilder_Tests
             var urlBuilder = new UrlBuilder(url);
             Assert.Equal(query, urlBuilder.Query);
         }
-
-        // ------------------------------------------------------------------ \\
-        //                         UrlBuilder::Port                           \\
-        //                                                                    \\
-        // ------------------------ Correct usage --------------------------- \\
-
-        [Theory]
-        [InlineData(5000, 5000)]
-        [InlineData(8080, 8080)]
-        [InlineData(0, 0)]
-        public void Property_Port_GetPort_ReturnPort(int portSetup, int port)
-        {
-            var urlBuilder = new UrlBuilder("https://github.com", port: portSetup);
-            Assert.Equal(port, urlBuilder.Port);
-        }
-
-        // --------------------------- Wrong usage -------------------------- \\
-
-        [Fact]
-        public void Property_Port_SetPort_ThrowsArgumentOutOfRangeException()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                var urlBuilder = new UrlBuilder("https://github.com");
-                urlBuilder.Port = -50;
-            });
-        }
-
-        // ------------------------------------------------------------------ \\
-        //                         UrlBuilder::Url                            \\
-        //                                                                    \\
-        // ------------------------ Correct usage --------------------------- \\
 
         [Theory]
         [InlineData("https://google.com/", "https://google.com/?key=3278382GH&name=Joe")]

@@ -8,30 +8,17 @@ namespace SWR.UrlBuilder_Tests
 {
     public class Ctor_Tests
     {
-        // ------------------------------------------------------------------ \\
-        //              UrlBuilder::ctor(string url, int port=-1)             \\
-        //                                                                    \\
-        // --------------------------- Wrong usage -------------------------- \\
-
         [Fact]
         public void Url_Port_InvalidInputEmptyString_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new UrlBuilder(string.Empty, port: 10));
+            Assert.Throws<ArgumentException>(() => new UrlBuilder(string.Empty));
         }
 
         [Fact]
         public void Url_Port_InvalidInputNullParam_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new UrlBuilder(null, port: -1));
+            Assert.Throws<ArgumentNullException>(() => new UrlBuilder(null));
         }
-
-        [Fact]
-        public void Url_Port_InvalidPort_ThrowsArgumentOutOfRangeException()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new UrlBuilder("https://google.com", port: -2));
-        }
-
-        // -------------------------- Correct usage ------------------------- \\
 
         [Fact]
         public void Url_Port_ValidInput_ObjectCreated()
@@ -43,24 +30,17 @@ namespace SWR.UrlBuilder_Tests
                 .GetValue(url);
 
             NameValueCollection query = (NameValueCollection)typeof(UrlBuilder)
-                .GetField("_query", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetField("_queryString", BindingFlags.Instance | BindingFlags.NonPublic)
                 .GetValue(url);
 
             Assert.NotNull(builder);
             Assert.NotNull(query);
         }
 
-
-        // ---------------------------------------------------------------------- \\
-        // UrlBuilder::ctor(string url, int port=-1, params QueryParam[] queries) \\
-        //                                                                        \\
-        // ----------------------------- Wrong usage ---------------------------- \\
-
         [Fact]
         public void Url_Port_Queries_InvalidInputEmptyString_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new UrlBuilder(
-                string.Empty, port: 10,
+            Assert.Throws<ArgumentException>(() => new UrlBuilder(string.Empty,
                 ("name", "John"),
                 ("key", "864634DA3")));
         }
@@ -68,27 +48,24 @@ namespace SWR.UrlBuilder_Tests
         [Fact]
         public void Url_Port_Queries_InvalidInputNullParam_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new UrlBuilder(
-                null, port: 10,
+            Assert.Throws<ArgumentNullException>(() => new UrlBuilder(null,
                 ("name", "John"),
                 ("key", "864634DA3")));
         }
 
-        // -------------------------- Correct usage ------------------------- \\
         [Fact]
-        public void Url_Port_Queries_ValidInput_ObjectCreated()
+        public void Url_Queries_ValidInput_ObjectCreated()
         {
-            UrlBuilder url = new UrlBuilder(
-                "https://google.com/", port: -1,
+            UrlBuilder url = new UrlBuilder("https://google.com/",
                 ("name", "John"),
                 ("key", "864634DA3"));
 
             UriBuilder builder = (UriBuilder)typeof(UrlBuilder)
-                .GetField("_uriBuilder", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetField("_uriBuilder", BindingFlags.Instance | BindingFlags.NonPublic) // TODO: can this be improved :D
                 .GetValue(url);
 
             NameValueCollection query = (NameValueCollection)typeof(UrlBuilder)
-                .GetField("_query", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetField("_queryString", BindingFlags.Instance | BindingFlags.NonPublic)
                 .GetValue(url);
 
             Assert.NotNull(builder);

@@ -5,11 +5,6 @@ namespace SWR.UrlBuilder_Tests
 {
     public class PublicMethods_Tests
     {
-        // ------------------------------------------------------------------ \\
-        //                          UrlBuilder::ToString()                    \\
-        //                                                                    \\
-        // -------------------------- Correct usage ------------------------- \\
-
         [Theory]
         [InlineData("https://google.com/", "https://google.com/?key=3278382GH&name=Joe")]
         [InlineData("http://reddit.com/r/", "http://reddit.com/r/?key=3278382GH&name=Joe")]
@@ -22,11 +17,6 @@ namespace SWR.UrlBuilder_Tests
 
             Assert.Equal(fullUrl, urlBuilder.Url);
         }
-
-        // ------------------------------------------------------------------ \\
-        //                          UrlBuilder::AddQuery()                    \\
-        //                                                                    \\
-        // -------------------------- Correct usage ------------------------- \\
 
         [Fact]
         public void AddQuery_AddQueryParamer_BuildsCorrectQueryString()
