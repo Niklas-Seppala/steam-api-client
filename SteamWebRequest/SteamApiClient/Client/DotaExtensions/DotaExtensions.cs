@@ -15,12 +15,9 @@ namespace SteamApiClient.Dota
     /// </summary>
     public static partial class DotaExtensions
     {
-        #region [URL Components]
-
         #region [Base URL]
         private const string URL_ITEM_IMG = "http://media.steampowered.com/apps/dota2/images/items/";
         private const string URL_HERO_IMG = "http://media.steampowered.com/apps/dota2/images/heroes/";
-
         private const string URL_HEROINFOS = "http://www.dota2.com/jsfeed/heropickerdata";
         private const string URL_ITEMINFOS = "http://www.dota2.com/jsfeed/itemdata";
         private const string URL_INT_PRIZEPOOL = "http://www.dota2.com/jsfeed/intlprizepool";
@@ -29,35 +26,21 @@ namespace SteamApiClient.Dota
         private const string URL_UNIQUE_USERS = "http://www.dota2.com/jsfeed/uniqueusers";
         private const string URL_LEADERBOARDS = "http://www.dota2.com/webapi/ILeaderboard/GetDivisionLeaderboard/v1/";
         private const string URL_IDOTA2DPC = "https://www.dota2.com/webapi/IDOTA2DPC/";
-
         private const string STEAMPOWERED = "api.steampowered.com";
         #endregion
 
         #region [Interfaces]
-        // Dota 2 fantasy compendium stats interface
         private const string IDOTA2_FANTASY = "IDOTA2Fantasy_205790";
-
-        // Dota 2 live match stats interfaces
         private const string IDOTA2_MATCH_STATS = "IDOTA2MatchStats_205790";
         private const string IDOTA2_MATCH_STATS_570 = "IDOTA2MatchStats_570";
-
-        // Dota 2 Match Details interfaces
         private const string IDOTA2_MATCH = "IDOTA2Match_205790";
         private const string IDOTA2_MATCH_570 = "IDOTA2Match_570";
-
-        // Dota 2 streaming interfaces
         private const string IDOTA2_SS = "IDOTA2StreamSystem_205790";
         private const string IDOTA2_SS_570 = "IDOTA2StreamSystem_570";
-
-        // Dota 2 event ticket interfaces
         private const string IDOTA2_TICKET = "IDOTA2Ticket_205790";
         private const string IDOTA2_TICKET_570 = "IDOTA2Ticket_570";
-
-        // Dota 2 event stats, game items, heroes, iconpaths etc. interfaces
         private const string IECONDOTA2 = "IEconDOTA2_205790";
         private const string IECONDOTA2_570 = "IEconDOTA2_570";
-
-        // Dota 2 cosmetic items
         private const string IECON_ITEMS = "IEconItems_205790";
         private const string IECON_ITEMS_570 = "IEconItems_570";
         #endregion
@@ -99,8 +82,6 @@ namespace SteamApiClient.Dota
         private const string V2 = "v2";
         #endregion
 
-        #endregion
-
         #region [Get Cosmetic Items]
 
         /// <summary>
@@ -118,11 +99,10 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, ulong steamId64, ushort heroClassId,
             string apiInterface = IECON_ITEMS_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_EQUIPED_P_ITEMS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_EQUIPED_P_ITEMS, V1),
                 ("steamid", steamId64.ToString()),
                 ("class_id", heroClassId.ToString()),
-                ("key", client.DevKey)).Url;
+                ("key", client.DevKey));
 
             var response = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, EquipedCosmeticItems>>(url, token)
@@ -144,10 +124,9 @@ namespace SteamApiClient.Dota
         public static async Task<PlayerInventory> GetPlayerItemsAsync(this SteamHttpClient client,
             ulong steamid64, string apiInterface = IECON_ITEMS_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_PLAYER_ITEMS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_PLAYER_ITEMS, V1),
                 ("key", client.DevKey),
-                ("steamid", steamid64.ToString())).Url;
+                ("steamid", steamid64.ToString()));
 
             var response = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, PlayerInventory>>(url, token)
@@ -166,15 +145,14 @@ namespace SteamApiClient.Dota
         /// <returns>icon path</returns>
         /// <exception cref="APIException">Thrown if icon name not found or type is invalid</exception>
         public static async Task<string> GetItemIconPathAsync(this SteamHttpClient client,
-            string iconName, byte iconType = 0)
+            string iconName, byte iconType = 0, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2, GET_ITEM_ICON_PATH, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IECONDOTA2, GET_ITEM_ICON_PATH, V1),
                 ("key", client.DevKey),
                 ("iconname", iconName),
-                ("icontype", iconType.ToString())).Url;
+                ("icontype", iconType.ToString()));
 
-            dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url)
+            dynamic response = JObject.Parse(await client.GetStringAsync(url, token)
                 .ConfigureAwait(false));
             return response.result.path;
         }
@@ -186,13 +164,12 @@ namespace SteamApiClient.Dota
         /// <param name="apiInterface">api interface</param>
         /// <returns>item schema url</returns>
         public static async Task<string> GetSchemaUrlAsync(this SteamHttpClient client,
-            string apiInterface = IECON_ITEMS_570)
+            string apiInterface = IECON_ITEMS_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_SCHEMA_URL, V1),
-                ("key", client.DevKey)).Url;
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_SCHEMA_URL, V1),
+                ("key", client.DevKey));
 
-            dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url)
+            dynamic response = JObject.Parse(await client.GetStringAsync(url, token)
                 .ConfigureAwait(false));
             return response.result.items_game_url;
         }
@@ -209,9 +186,8 @@ namespace SteamApiClient.Dota
         public static async Task<StoreMetadata> GetStoreMetadataAsync(this SteamHttpClient client,
             string apiInterface = IECON_ITEMS_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_STORE_META_DATA, V1),
-                ("key", client.DevKey)).Url;
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_STORE_META_DATA, V1),
+                ("key", client.DevKey));
 
             var response = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, StoreMetadata>>(url, token)
@@ -231,12 +207,11 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<uint>> GetItemCreatorsAsync(
             this SteamHttpClient client, uint itemDef, CToken token = default)
         {
-            var uBuilder = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2_570, GET_ITEM_CREATORS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IECONDOTA2_570, GET_ITEM_CREATORS, V1),
                 ("key", client.DevKey),
                 ("itemdef", itemDef.ToString()));
 
-            var creators = await client.RequestAndDeserialize<ItemCreators>(uBuilder.Url, token)
+            var creators = await client.RequestAndDeserialize<ItemCreators>(url, token)
                 .ConfigureAwait(false);
 
             return creators.Contributors;
@@ -253,10 +228,9 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<DotaCosmeticRarity>> GetDotaCosmeticRaritiesAsync(
             this SteamHttpClient client, CToken token = default, string apiInterface = IECONDOTA2_570, string lang = "en")
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_ITEM_RARITIES, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_ITEM_RARITIES, V1),
                 ("key", client.DevKey),
-                ("language", lang)).Url;
+                ("language", lang));
 
             var result = await client
                 .RequestAndDeserialize<DotaCosmeticRaritiesResult>(url, token)
@@ -277,7 +251,6 @@ namespace SteamApiClient.Dota
         /// <param name="region">leaderboard region</param>
         /// <param name="token">cancellation token</param>
         /// <returns>Leaderboard object</returns>
-        /// <exception cref="APIException">Thrown when api call fails</exception>
         public static async Task<Leaderboard> GetLeaderboardAsync(this SteamHttpClient client,
             DotaRegion region = default, CToken token = default)
         {
@@ -301,7 +274,6 @@ namespace SteamApiClient.Dota
             return await client.RequestAndDeserialize<Leaderboard>(uBuilder.Url, token)
                 .ConfigureAwait(false);
         }
-
 
         #endregion
 
@@ -370,10 +342,9 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<Hero>> GetHeroesAsync(this SteamHttpClient client,
             string lang = "en", string apiInterface = IECONDOTA2_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_HEROES, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_HEROES, V1),
                 ("key", client.DevKey),
-                ("language", lang)).Url;
+                ("language", lang));
 
             var result = await client.RequestAndDeserialize<HeroesResponse>(url, token)
                 .ConfigureAwait(false);
@@ -384,7 +355,6 @@ namespace SteamApiClient.Dota
         #endregion
 
         #region [Get Items]
-
 
         /// <summary>
         /// Sends GET request to dota2.com for Dota 2 iteminfo. Request
@@ -413,10 +383,9 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<Item>> GetGameItemsAsync(this SteamHttpClient client,
             string lang = "en", string apiInterface = IECONDOTA2_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_GAME_ITEMS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_GAME_ITEMS, V1),
                 ("key", client.DevKey),
-                ("language", lang)).Url;
+                ("language", lang));
 
             var result = await client.RequestAndDeserialize<GameItems>(url, token)
                 .ConfigureAwait(false);
@@ -462,11 +431,10 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, ulong seqNum, string apiInterface = IDOTA2_MATCH_570,
             byte count = 50, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_MATCH_HISTORY_SEQ, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_MATCH_HISTORY_SEQ, V1),
                 ("key", client.DevKey),
                 ("start_at_match_seq_num", seqNum.ToString()),
-                ("matches_requested", count.ToString())).Url;
+                ("matches_requested", count.ToString()));
 
             var response = await client.RequestAndDeserialize<MatchHistoryBySeqResponse>(url, token)
                 .ConfigureAwait(false);
@@ -495,8 +463,7 @@ namespace SteamApiClient.Dota
             uint playerId32 = 0, uint heroId = 0, byte minPlayers = 0, uint leagueId = 0, ulong startAtId = 0,
             byte count = 25, string apiInterface = IDOTA2_MATCH_570, byte skillLevel = 0, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_MATCH_HISTORY, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_MATCH_HISTORY, V1),
                 ("key", client.DevKey),
                 ("account_id", playerId32.ToString()),
                 ("matches_requested", count.ToString()),
@@ -504,7 +471,7 @@ namespace SteamApiClient.Dota
                 ("min_players", minPlayers.ToString()),
                 ("league_id", leagueId.ToString()),
                 ("start_at_match_id", startAtId.ToString()),
-                ("skill", skillLevel.ToString())).Url;
+                ("skill", skillLevel.ToString()));
 
             var response = await client
                 .RequestAndDeserialize<MatchHistoryContainer>(url, token)
@@ -512,7 +479,6 @@ namespace SteamApiClient.Dota
 
             return response.History;
         }
-
 
         #endregion
 
@@ -528,11 +494,10 @@ namespace SteamApiClient.Dota
         public static async Task<MatchDetails> GetMatchDetailsAsync(this SteamHttpClient client,
             string matchId, string apiInterface = IDOTA2_MATCH_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_MATCH_DETAILS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_MATCH_DETAILS, V1),
                 ("match_id", matchId),
                 ("key", client.DevKey),
-                ("include_persona_names", "1")).Url;
+                ("include_persona_names", "1"));
 
             var response = await client.RequestAndDeserialize<MatchDetailsContainer>(url, token)
                 .ConfigureAwait(false);
@@ -555,10 +520,9 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveGamesAsync(this SteamHttpClient client,
             string apiInterface = IDOTA2_MATCH_570, int partner = 1, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOP_LIVE_GAME, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_TOP_LIVE_GAME, V1),
                 ("key", client.DevKey),
-                ("partner", partner.ToString())).Url;
+                ("partner", partner.ToString()));
 
             var response = await client.RequestAndDeserialize<TopLiveGames>(url, token)
                 .ConfigureAwait(false);
@@ -587,17 +551,15 @@ namespace SteamApiClient.Dota
             uint accountId32, uint leagueId32, string apiInterface = IDOTA2_MATCH_570, string methodVersion = V2,
             ushort heroId = 0, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOURNAMENT_P_STATS, methodVersion),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_TOURNAMENT_P_STATS, methodVersion),
                 ("key", client.DevKey),
                 ("account_id", accountId32.ToString()),
                 ("league_id", leagueId32.ToString()),
-                ("hero_id", heroId.ToString())).Url;
+                ("hero_id", heroId.ToString()));
 
             var response = await client.RequestAndDeserialize<TournamentPlayerStatsResponse>(url, token)
                 .ConfigureAwait(false);
             return response.Result;
-
         }
 
         /// <summary>
@@ -613,10 +575,9 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, string serverId, string apiInterface = IDOTA2_MATCH_STATS_570,
             CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_REALTIME_STATS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_REALTIME_STATS, V1),
                 ("server_steam_id", serverId),
-                ("key", client.DevKey)).Url;
+                ("key", client.DevKey));
 
             return await client.RequestAndDeserialize<RealtimeMatchStats>(url, token)
                 .ConfigureAwait(false);
@@ -636,11 +597,10 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<LiveLeagueMatch>> GetLiveLeagueMatchAsync(this SteamHttpClient client,
             ulong matchId = 0, uint leagueId = 0, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_MATCH_570, GET_LIVE_LEAGUE_GAMES, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_MATCH_570, GET_LIVE_LEAGUE_GAMES, V1),
                 ("key", client.DevKey),
                 ("match_id", matchId.ToString()),
-                ("league_id", leagueId.ToString())).Url;
+                ("league_id", leagueId.ToString()));
 
             var response = await client.RequestAndDeserialize<LiveLeagueMatchResponse>(url, token)
                 .ConfigureAwait(false);
@@ -657,9 +617,8 @@ namespace SteamApiClient.Dota
         public static async Task<IReadOnlyCollection<League>> GetLeagueListingAsync(this SteamHttpClient client,
             CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_MATCH, GET_LEAGUE_LISTING, V1),
-                ("key", client.DevKey)).ToString();
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_MATCH, GET_LEAGUE_LISTING, V1),
+                ("key", client.DevKey));
 
             var response = await client.RequestAndDeserialize<LeagueListingResponse>(url, token)
                 .ConfigureAwait(false);
@@ -679,10 +638,9 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, uint leagueId, string apiInterface = IECONDOTA2_570,
             CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOURNAMENT_PRIZE, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_TOURNAMENT_PRIZE, V1),
                 ("key", client.DevKey),
-                ("leagueid", leagueId.ToString())).Url;
+                ("leagueid", leagueId.ToString()));
 
             var result = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, uint>>>(url, token)
@@ -828,11 +786,10 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, ulong startId = 1, uint count = 100,
             string apiInterface = IDOTA2_MATCH_570, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TEAM_INFO_BY_ID, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_TEAM_INFO_BY_ID, V1),
                 ("key", client.DevKey),
                 ("start_at_team_id", startId.ToString()),
-                ("teams_requested", count.ToString())).Url;
+                ("teams_requested", count.ToString()));
 
             var response = await client.RequestAndDeserialize<DotaTeamInfosResponse>(url, token)
                 .ConfigureAwait(false);
@@ -895,9 +852,7 @@ namespace SteamApiClient.Dota
                     sBuilder.Append("_sb.png");
                     break;
             }
-            return await client
-                .GetImageAsync(sBuilder.ToString())
-                .ConfigureAwait(false);
+            return await client.GetImageAsync(sBuilder.ToString()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -913,14 +868,12 @@ namespace SteamApiClient.Dota
             StringBuilder sBuilder = new StringBuilder(URL_ITEM_IMG);
             sBuilder.Append(imgName);
 
-            return await client
-                .GetImageAsync(sBuilder.ToString(), token)
+            return await client.GetImageAsync(sBuilder.ToString(), token)
                 .ConfigureAwait(false);
         }
 
         #endregion
 
-        // TODO: wait for chance to test
         #region [Unfinished] 
 
         /// <summary>
@@ -935,16 +888,15 @@ namespace SteamApiClient.Dota
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (GetSteamAccountValidForBadgeType) Figure out what this method does!
         public static async Task<string> GetSteamAccountValidForBadgeType(this SteamHttpClient client,
-            ulong steamid64, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
+            ulong steamid64, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, GET_ACCOUNT_VALID_FOR_BADGE, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_TICKET_570, GET_ACCOUNT_VALID_FOR_BADGE, V1),
                 ("steamid", steamid64.ToString()),
                 ("ValidBadgeType1", validBadgeType1.ToString()),
                 ("ValidBadgeType2", validBadgeType2.ToString()),
-                ("ValidBadgeType3", validBadgeType3.ToString())).Url;
+                ("ValidBadgeType3", validBadgeType3.ToString()));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -960,16 +912,15 @@ namespace SteamApiClient.Dota
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (ClaimBadgeReward) Figure out what this method does!
         public static async Task<string> ClaimBadgeReward(this SteamHttpClient client,
-            string badgeId, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
+            string badgeId, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, CLAIM_BADGE, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_TICKET_570, CLAIM_BADGE, V1),
                 ("BadgeID", badgeId),
                 ("ValidBadgeType1", validBadgeType1.ToString()),
                 ("ValidBadgeType2", validBadgeType2.ToString()),
-                ("ValidBadgeType3", validBadgeType3.ToString())).Url;
+                ("ValidBadgeType3", validBadgeType3.ToString()));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -982,16 +933,14 @@ namespace SteamApiClient.Dota
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (GetSteamIDForBadgeId) Figure out what this method does!
         public static async Task<string> GetSteamIDForBadgeId(this SteamHttpClient client,
-            string badgeId)
+            string badgeId, CToken token = default)
         {
-            string url = new UrlBuilder(
-                (UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, GET_ID_FOR_BADGE, V1)),
-                ("BadgeID", badgeId)).Url;
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_TICKET_570, GET_ID_FOR_BADGE, V1),
+                ("BadgeID", badgeId));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
-
 
         /// <summary>
         /// Sends GET request to api.steampowered.com for
@@ -1004,17 +953,16 @@ namespace SteamApiClient.Dota
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccount) Figure out response object model
         public static async Task<string> GetEventStatsForAccount(this SteamHttpClient client,
-            uint eventId, uint accountId32, string lang = "en")
+            uint eventId, uint accountId32, string lang = "en", CToken token = default)
         {
 
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2, GET_EVENT_STATS_FOR_ACC, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IECONDOTA2, GET_EVENT_STATS_FOR_ACC, V1),
                 ("key", client.DevKey),
                 ("eventid", eventId.ToString()),
                 ("accountid", accountId32.ToString()),
-                ("language", lang)).Url;
+                ("language", lang));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -1025,13 +973,13 @@ namespace SteamApiClient.Dota
         /// <param name="client"></param>
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (GetProPlayerList) Figure out response object model
-        public static async Task<string> GetProPlayerList(this SteamHttpClient client)
+        public static async Task<string> GetProPlayerList(this SteamHttpClient client,
+            CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_PRO_PLAYERS, V1),
-                ("key", client.DevKey)).Url;
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_FANTASY, GET_PRO_PLAYERS, V1),
+                ("key", client.DevKey));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -1045,19 +993,19 @@ namespace SteamApiClient.Dota
         [Obsolete("This method is incomplete")] // TODO: (GetFantasyPlayerStats) Figure out response object model
         public static async Task<string> GetFantasyPlayerStats(
             this SteamHttpClient client, uint fantasyLeagueId, string startTimestamp = "0",
-            string endTimestamp = "0", ulong matchId = 0, uint seriesId = 0, uint playerId32 = 0)
+            string endTimestamp = "0", ulong matchId = 0, uint seriesId = 0, uint playerId32 = 0,
+            CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_FANTASY_PLAYER_STATS, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_FANTASY, GET_FANTASY_PLAYER_STATS, V1),
                 ("key", client.DevKey),
                 ("StartTime", startTimestamp),
                 ("EndTime", endTimestamp),
                 ("MatchID", matchId.ToString()),
                 ("SeriesID", seriesId.ToString()),
                 ("PlayerAccountID", playerId32.ToString()),
-                ("FantasyLeagueID", fantasyLeagueId.ToString())).Url;
+                ("FantasyLeagueID", fantasyLeagueId.ToString()));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -1074,10 +1022,9 @@ namespace SteamApiClient.Dota
         public static async Task<FantasyPlayerOfficialInfo> GetPlayerOfficialFantasyInfo(
             this SteamHttpClient client, uint accountId32, CToken token = default)
         {
-            string url = new UrlBuilder(
-                (UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_PLAYER_OFF_INFO, V1)),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_FANTASY, GET_PLAYER_OFF_INFO, V1),
                 ("key", client.DevKey),
-                ("accountid", accountId32.ToString())).Url;
+                ("accountid", accountId32.ToString()));
 
             var response = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, FantasyPlayerOfficialInfo>>(url, token)
@@ -1095,15 +1042,14 @@ namespace SteamApiClient.Dota
         /// <returns></returns>
         [Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccountAsync) Figure out response object model
         public static async Task<ushort> GetEventStatsForAccountAsync(this SteamHttpClient client,
-            uint steamId32, uint eventId)
+            uint steamId32, uint eventId, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2_570, GET_EVENT_STATS_FOR_ACC, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IECONDOTA2_570, GET_EVENT_STATS_FOR_ACC, V1),
                 ("key", client.DevKey),
                 ("accountid", steamId32.ToString()),
-                ("eventid", eventId.ToString())).Url;
+                ("eventid", eventId.ToString()));
 
-            dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url)
+            dynamic response = JObject.Parse(await client.GetStringAsync(url, token)
                 .ConfigureAwait(false));
             return response.result.event_points;
         }
@@ -1121,10 +1067,9 @@ namespace SteamApiClient.Dota
             this SteamHttpClient client, string apiInterface = IDOTA2_MATCH_570,
             int partner = 1, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOP_LIVE_EVENT_GAME, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, apiInterface, GET_TOP_LIVE_EVENT_GAME, V1),
                 ("key", client.DevKey),
-                ("partner", partner.ToString())).Url;
+                ("partner", partner.ToString()));
 
             var response = await client.RequestAndDeserialize<TopLiveGames>(url, token)
                 .ConfigureAwait(false);
@@ -1142,15 +1087,14 @@ namespace SteamApiClient.Dota
         /// <returns>JSON string</returns>
         [Obsolete("This method is incomplete")] // TODO: (GetWeekendTourneyGames) Figure out response object model
         public static async Task<string> GetWeekendTourneyGames(this SteamHttpClient client,
-        byte partner = 1, uint homeDivision = 0)
+        byte partner = 1, uint homeDivision = 0, CToken token = default)
         {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_MATCH_570, GET_TOP_WE_TOURNEY_GAMES, V1),
+            string url = UrlBuilder.SteamCompleteUrl((STEAMPOWERED, IDOTA2_MATCH_570, GET_TOP_WE_TOURNEY_GAMES, V1),
                 ("partner", partner.ToString()),
                 ("key", client.DevKey),
-                ("home_division", homeDivision.ToString())).Url;
+                ("home_division", homeDivision.ToString()));
 
-            return await SteamHttpClient.Client.GetStringAsync(url)
+            return await client.GetStringAsync(url, token)
                 .ConfigureAwait(false);
         }
 
@@ -1168,16 +1112,17 @@ namespace SteamApiClient.Dota
         /// <exception cref="APIException"></exception>
         private static UrlBuilder CreateUrlForTournamentInfo(ulong timestamp, byte maxTier, byte minTier)
         {
-            UrlBuilder uBuilder = new UrlBuilder(URL_IDOTA2DPC + "GetLeagueInfoList/v001");
             if (minTier > maxTier)
             {
-                throw new APIException("Minimum tier can't be larger than maximum tier")
-                { URL = uBuilder.Url };
+                throw new APIException("Minimum tier can't be larger than maximum tier");
             }
-            uBuilder.AddQuery(("start_timestamp", timestamp.ToString()));
-            uBuilder.AddQuery(("min_tier", minTier.ToString()));
-            uBuilder.AddQuery(("max_tier", maxTier.ToString()));
-            return uBuilder;
+            else
+            {
+                return new UrlBuilder(URL_IDOTA2DPC + "GetLeagueInfoList/v001",
+                    ("start_timestamp", timestamp.ToString()),
+                    ("min_tier", minTier.ToString()),
+                    ("max_tier", maxTier.ToString()));
+            }
         }
 
         #endregion

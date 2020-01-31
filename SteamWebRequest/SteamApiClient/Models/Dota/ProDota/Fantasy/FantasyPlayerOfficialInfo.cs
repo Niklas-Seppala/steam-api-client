@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SteamApiClient.Models.Dota
+﻿namespace SteamApiClient.Models.Dota
 {
     public class FantasyPlayerOfficialInfo
     {
