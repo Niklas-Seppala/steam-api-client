@@ -97,7 +97,6 @@ namespace SteamApiClient.Dota
         #region [Versions]
         private const string V1 = "v1";
         private const string V2 = "v2";
-        private const string V3 = "v3";
         #endregion
 
         #endregion
@@ -545,22 +544,6 @@ namespace SteamApiClient.Dota
 
         #region [Get Live Games]
 
-        // TODO : Check return JSON object when live games are available.
-        public static async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveEventGamesAsync(
-            this SteamHttpClient client, string apiInterface = IDOTA2_MATCH_570,
-            int partner = 1, CToken token = default)
-        {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOP_LIVE_EVENT_GAME, V1),
-                ("key", client.DevKey),
-                ("partner", partner.ToString())).Url;
-
-            var response = await client.RequestAndDeserialize<TopLiveGames>(url, token)
-                .ConfigureAwait(false);
-
-            return response.Games;
-        }
-
         /// <summary>
         /// Sends GET request for current top live games.
         /// Request can be cancelled by providing cancellation token.
@@ -662,22 +645,6 @@ namespace SteamApiClient.Dota
             var response = await client.RequestAndDeserialize<LiveLeagueMatchResponse>(url, token)
                 .ConfigureAwait(false);
             return response.Result.Games;
-        }
-
-
-        // WAITING FOR TESTING
-        public static async Task<ushort> GetEventStatsForAccountAsync(this SteamHttpClient client,
-            uint steamId32, uint eventId)
-        {
-            string url = new UrlBuilder(
-                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2_570, GET_EVENT_STATS_FOR_ACC, V1),
-                ("key", client.DevKey),
-                ("accountid", steamId32.ToString()),
-                ("eventid", eventId.ToString())).Url;
-
-            // TODO: Figure what json response looks like.
-            dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url).ConfigureAwait(false));
-            return response.result.event_points;
         }
 
         /// <summary>
@@ -948,6 +915,165 @@ namespace SteamApiClient.Dota
 
             return await client
                 .GetImageAsync(sBuilder.ToString(), token)
+                .ConfigureAwait(false);
+        }
+
+        #endregion
+
+        // TODO: wait for chance to test
+        #region [Unfinished] 
+
+        /// <summary>
+        /// Sends GET request to api.steampowered.com for
+        /// event stats for specified account. Returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="eventId">32-bit event id</param>
+        /// <param name="accountId32">32-bit account id</param>
+        /// <param name="lang">ISO 639-1 language code</param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetEventStatsForAccount(this SteamHttpClient client,
+            uint eventId, uint accountId32, string lang = "en")
+        {
+
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2, GET_EVENT_STATS_FOR_ACC, V1),
+                ("key", client.DevKey),
+                ("eventid", eventId.ToString()),
+                ("accountid", accountId32.ToString()),
+                ("language", lang)).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends GET request to api.steampowered.com for
+        /// Fantasy pro player listing. Returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetProPlayerList(this SteamHttpClient client)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_PRO_PLAYERS, V1),
+                ("key", client.DevKey)).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends GET request to api.steampowered for fantasy
+        /// player stats. Returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="fantasyLeagueId">fantasy league id</param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetFantasyPlayerStats(
+            this SteamHttpClient client, uint fantasyLeagueId, string startTimestamp = "0",
+            string endTimestamp = "0", ulong matchId = 0, uint seriesId = 0, uint playerId32 = 0)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_FANTASY_PLAYER_STATS, V1),
+                ("key", client.DevKey),
+                ("StartTime", startTimestamp),
+                ("EndTime", endTimestamp),
+                ("MatchID", matchId.ToString()),
+                ("SeriesID", seriesId.ToString()),
+                ("PlayerAccountID", playerId32.ToString()),
+                ("FantasyLeagueID", fantasyLeagueId.ToString())).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends GET request to api.steampowered.com for
+        /// pro players official fantasy info. Request can
+        /// be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="accountId32">Pro player 32-bit id</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>FantasyPlayerOfficialInfo object</returns>
+        public static async Task<FantasyPlayerOfficialInfo> GetPlayerOfficialFantasyInfo(
+            this SteamHttpClient client, uint accountId32, CToken token = default)
+        {
+            string url = new UrlBuilder(
+                (UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_FANTASY, GET_PLAYER_OFF_INFO, V1)),
+                ("key", client.DevKey),
+                ("accountid", accountId32.ToString())).Url;
+
+            var response = await client
+                .RequestAndDeserialize<IReadOnlyDictionary<string, FantasyPlayerOfficialInfo>>(url, token)
+                .ConfigureAwait(false);
+
+            return response["result"];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="steamId32"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        public static async Task<ushort> GetEventStatsForAccountAsync(this SteamHttpClient client,
+            uint steamId32, uint eventId)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2_570, GET_EVENT_STATS_FOR_ACC, V1),
+                ("key", client.DevKey),
+                ("accountid", steamId32.ToString()),
+                ("eventid", eventId.ToString())).Url;
+
+            dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false));
+            return response.result.event_points;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="apiInterface"></param>
+        /// <param name="partner"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveEventGamesAsync(
+            this SteamHttpClient client, string apiInterface = IDOTA2_MATCH_570,
+            int partner = 1, CToken token = default)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOP_LIVE_EVENT_GAME, V1),
+                ("key", client.DevKey),
+                ("partner", partner.ToString())).Url;
+
+            var response = await client.RequestAndDeserialize<TopLiveGames>(url, token)
+                .ConfigureAwait(false);
+
+            return response.Games;
+        }
+
+        /// <summary>
+        /// Sends GET request to api.steampowered.com for weekend
+        /// tournament games. Returns json string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="partner">partner id</param>
+        /// <param name="homeDivision">home division id</param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetWeekendTourneyGames(this SteamHttpClient client,
+        byte partner = 1, uint homeDivision = 0)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_MATCH_570, GET_TOP_WE_TOURNEY_GAMES, V1),
+                ("partner", partner.ToString()),
+                ("key", client.DevKey),
+                ("home_division", homeDivision.ToString())).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
                 .ConfigureAwait(false);
         }
 
