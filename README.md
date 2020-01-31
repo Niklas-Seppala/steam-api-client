@@ -5,9 +5,9 @@ RESTful APIs targeting netstandard 2.0.
 ## API Methods
 ### Dota 2
 ###### IDOTA2Fantasy_205790
-<pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ❌ TESTED ❌
-GET GetPlayerOfficialInfo/v1         IMPLEMENTED ❌ TESTED ❌
-GET GetProPlayerList/v1              IMPLEMENTED ❌ TESTED ❌</pre>
+<pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
+GET GetPlayerOfficialInfo/v1         IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
+GET GetProPlayerList/v1              IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test</pre>
 ###### IDOTA2MatchStats_205790
 <pre>GET GetRealtimeStats/v1              IMPLEMENTED ✔️ TESTED ❌</pre>
 ###### IDOTA2MatchStats_570
@@ -22,7 +22,7 @@ GET GetMatchHistoryBySequenceNum/v1  IMPLEMENTED ✔️ TESTED ✔️
 GET GetTeamInfoByTeamID/v1           IMPLEMENTED ✔️ TESTED ✔️
 GET GetTopLiveEventGame/v1           IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetTopLiveGame/v1                IMPLEMENTED ✔️ TESTED ✔️
-GET GetTopWeekendTourneyGames/v1     IMPLEMENTED ❌ TESTED ❌
+GET GetTopWeekendTourneyGames/v1     IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetTournamentPlayerStats/v1      IMPLEMENTED ✔️ TESTED ❌
 GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️ TESTED ✔️ # match_id, time_frame</pre>
 ###### IDOTA2StreamSystem_205790
@@ -36,7 +36,7 @@ GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ❌ TESTED ❌</pre>
 ###### IEconDOTA2_205790
 <pre>GET GetItemIconPath/v1               IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IEconDOTA2_570
-<pre>GET GetEventStatsForAccount/v1       IMPLEMENTED ❌ TESTED ❌ # waiting for chance to test
+<pre>GET GetEventStatsForAccount/v1       IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetGameItems/v1                  IMPLEMENTED ✔️ TESTED ✔️
 GET GetHeroes/v1                     IMPLEMENTED ✔️ TESTED ✔️
 GET GetItemCreators/v1               IMPLEMENTED ✔️ TESTED ✔️
