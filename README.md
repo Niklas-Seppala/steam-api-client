@@ -40,8 +40,8 @@ GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ❌ TESTED ❌</pre>
 GET GetGameItems/v1                  IMPLEMENTED ✔️ TESTED ✔️
 GET GetHeroes/v1                     IMPLEMENTED ✔️ TESTED ✔️
 GET GetItemCreators/v1               IMPLEMENTED ✔️ TESTED ✔️
-GET GetRarities/v1                   IMPLEMENTED ✔️ TESTED ❌
-GET GetTournamentPrizePool/v1        IMPLEMENTED ✔️ TESTED ❌</pre>
+GET GetRarities/v1                   IMPLEMENTED ✔️ TESTED ✔️
+GET GetTournamentPrizePool/v1        IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IEconItems_570
 <pre>GET GetEquippedPlayerItems/v1        IMPLEMENTED ✔️ TESTED ✔️
 GET GetPlayerItems/v1                IMPLEMENTED ✔️ TESTED ✔️
