@@ -1,35 +1,10 @@
-﻿using SteamApiClient;
-using SteamApiClient.Dota;
-using SWR;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using SteamApiClient.Dota;
 using Xunit;
 
 namespace SWR.Client_Tests
 {
-    public class GetMatchDetails_Tests
+    public class GetMatchDetails_Tests : SteamHttpClient_Tests
     {
-        private readonly SteamHttpClient _client;
-        // Not not bombard api with requests
-        private readonly bool _sleepAfterTest;
-        private int _sleepTimeMs = 500;
-
-        public GetMatchDetails_Tests()
-        {
-            _client = new SteamHttpClient(SecretVariables.DevKey);
-            _sleepAfterTest = true;
-        }
-        
-        private void SleepAfterApiCall()
-        {
-            if (_sleepAfterTest)
-            {
-                Thread.Sleep(_sleepTimeMs);
-            }
-        }
-
         [Theory]
         [InlineData("5215439388")]
         [InlineData("5214286157")]
@@ -41,10 +16,9 @@ namespace SWR.Client_Tests
         {
             var details = _client.GetMatchDetailsAsync(matchId)
                 .Result;
+            this.Sleep();
 
             Assert.Equal(matchId, details.MatchId.ToString());
-
-            SleepAfterApiCall();
         }
     }
 }

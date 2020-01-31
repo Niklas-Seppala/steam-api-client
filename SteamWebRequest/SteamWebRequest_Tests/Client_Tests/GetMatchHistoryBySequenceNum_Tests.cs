@@ -1,64 +1,41 @@
-﻿using SteamApiClient;
-using SteamApiClient.Dota;
-using System;
-using System.Collections.Generic;
+﻿using SteamApiClient.Dota;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using Xunit;
 
 namespace SWR.Client_Tests
 {
-    public class GetMatchHistoryBySequenceNum_Tests
+    public class GetMatchHistoryBySequenceNum_Tests : SteamHttpClient_Tests
     {
-        private readonly SteamHttpClient _client;
-        // Not not bombard api with requests
-        private readonly bool _sleepAfterTest;
-        private int _sleepTimeMs = 500;
-
-        public GetMatchHistoryBySequenceNum_Tests()
-        {
-            _client = new SteamHttpClient(SecretVariables.DevKey);
-            _sleepAfterTest = true;
-        }
-
-        private void SleepAfterApiCall()
-        {
-            if (_sleepAfterTest)
-            {
-                Thread.Sleep(_sleepTimeMs);
-            }
-        }
-
         [Theory]
-        [InlineData(666666, 666666)]
-        [InlineData(50505000, 50505000)]
-        [InlineData(400, 400)]
-        [InlineData(0, 200)]
+        [InlineData(666666, 666667)]
+        [InlineData(808089, 808089)]
+        [InlineData(400, 401)]
+        [InlineData(100, 240)] // starts at 240 for some reason
+        [InlineData(0, 240)]
         public void ValidSeqNum_ReturnsMatchesStartingFromSeqNum(ulong seqNum, ulong resultStartSeqNum)
         {
-            var matches = _client.GetMatchHistoryBySequenceNumAsync(seqNum: seqNum, count:1)
+            var matches = GlobalSetup.Client.GetMatchHistoryBySequenceNumAsync(seqNum: seqNum, count: 1)
                 .Result;
-            SleepAfterApiCall();
+            this.Sleep();
 
             Assert.Equal(resultStartSeqNum, matches.ElementAt(0).MatchSequenceNum);
         }
 
         [Theory]
-        [InlineData(5)]
-        [InlineData(25)]
-        [InlineData(200)]
-        [InlineData(60)]
-        [InlineData(1)]
-        public void CountDefined_ReturnsCorrectAmountOfGames(byte count)
+        [InlineData(5, 5)]
+        [InlineData(25, 25)]
+        [InlineData(200, 100)]
+        [InlineData(60, 60)]
+        [InlineData(1, 1)]
+        public void CountDefined_ReturnsCorrectAmountOfGames(byte count, byte actualCount)
         {
             ulong seqNum = 55555050;
 
-            var matches = _client.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
+            var matches = GlobalSetup.Client.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
                 .Result;
-            SleepAfterApiCall();
+            this.Sleep();
 
-            Assert.Equal(count, matches.Count);
+            Assert.Equal(actualCount, matches.Count);
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using SteamApiClient;
 using System;
-using System.Diagnostics;
-using Xunit;
 using System.Net.Http;
+using Xunit;
 
 namespace SWR.Client_Tests
 {
@@ -30,9 +29,9 @@ namespace SWR.Client_Tests
         [Fact]
         public void DevKeyValid_FieldsInitialized()
         {
-            var client = new SteamHttpClient(SecretVariables.DevKey);
+            var client = new SteamHttpClient(GlobalSetup.DevKey);
             Assert.NotNull(SteamHttpClient.Client);
-            Assert.Equal(SecretVariables.DevKey, client.DevKey);
+            Assert.Equal(GlobalSetup.DevKey, client.DevKey);
         }
     }
 }
