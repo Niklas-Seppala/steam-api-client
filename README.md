@@ -25,7 +25,7 @@ RESTful APIs using .net core 3.1.
 **GET** GetTopLiveGame/v1                RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️
 **GET** GetTopWeekendTourneyGames/v1     RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌
 **GET** GetTournamentPlayerStats/v1      RECOMMENDED ❌ IMPLEMENTED ✔️ TESTED ❌
-**GET** GetTournamentPlayerStats/v2      RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️ # match_id, time_frame doesn't work</pre>
+**GET** GetTournamentPlayerStats/v2      RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ✔️ # match_id, time_frame</pre>
 #### IDOTA2StreamSystem_205790
 <pre>**GET** GetBroadcasterInfo/v1            RECOMMENDED ❌ IMPLEMENTED ✔️ TESTED ❌</pre>
 #### IDOTA2StreamSystem_570
@@ -37,7 +37,7 @@ RESTful APIs using .net core 3.1.
 #### IEconDOTA2_205790
 <pre>**GET** GetItemIconPath/v1               RECOMMENDED ❌ IMPLEMENTED ✔️ TESTED ❌</pre>
 #### IEconDOTA2_570
-<pre>**GET** GetEventStatsForAccount/v1       RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌ # waiting for chance to test</pre>
+<pre>**GET** GetEventStatsForAccount/v1       RECOMMENDED ✔️ IMPLEMENTED ❌ TESTED ❌ # waiting for chance to test
 **GET** GetGameItems/v1                  RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌ # obsolete
 **GET** GetHeroes/v1                     RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
 **GET** GetItemCreators/v1               RECOMMENDED ✔️ IMPLEMENTED ✔️ TESTED ❌
