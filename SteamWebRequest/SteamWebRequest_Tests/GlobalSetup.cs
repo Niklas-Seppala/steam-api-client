@@ -1,11 +1,16 @@
-﻿using System;
+﻿using SteamApiClient;
+using System;
 using System.IO;
+using System.Threading;
 
 namespace SWR
 {
-    internal static class SecretVariables
+    internal static class GlobalSetup
     {
         public static string DevKey { get; } = ReadFromFile("devkey");
+        public static SteamHttpClient Client { get; } = new SteamHttpClient(DevKey);
+        public static bool SleepAfterApiCall { get; set; } = true;
+        public static int Timeout { get; set; } = 300;
 
         private static string ReadFromFile(string keyword)
         {
