@@ -6,7 +6,7 @@ namespace SWR.Client_Tests
     public class GetTopLiveEventGame_Tests : SteamHttpClient_Tests
     {
         [Fact]
-        public void test()
+        public void DefaultParams_ReturnsTopLiveEventGames()
         {
             var topEventGames = _client.GetTopLiveEventGamesAsync()
                 .Result;
