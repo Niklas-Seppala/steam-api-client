@@ -6,8 +6,12 @@ namespace SteamApiClient.Models.Dota
     public class StoreMetadata
     {
         public IReadOnlyCollection<StoreMetaDataTab> Tabs { get; set; }
+
         public IReadOnlyCollection<StoreMetaDataFilter> Filters { get; set; }
+
         public StoreMetaDataSorting Sorting { get; set; }
+
+        [JsonProperty("dropdown_data")]
         public StoreMetaDataDropdownData DropDownData { get; set; }
 
         [JsonProperty("player_class_data")]
