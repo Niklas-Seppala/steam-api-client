@@ -78,7 +78,7 @@ namespace SteamApiClient.Dota
         private const string GET_TOP_WE_TOURNEY_GAMES = "GetTopWeekendTourneyGames";
         private const string GET_TOURNAMENT_P_STATS = "GetTournamentPlayerStats";
         private const string GET_BC_INFO = "GetBroadcasterInfo";
-        private const string GET_CLAIM_BADGE = "ClaimBadgeReward";
+        private const string CLAIM_BADGE = "ClaimBadgeReward";
         private const string GET_ID_FOR_BADGE = "GetSteamIDForBadgeID";
         private const string GET_ACCOUNT_VALID_FOR_BADGE = "SteamAccountValidForBadgeType";
         private const string GET_EVENT_STATS_FOR_ACC = "GetEventStatsForAccount";
@@ -922,6 +922,73 @@ namespace SteamApiClient.Dota
 
         // TODO: wait for chance to test
         #region [Unfinished] 
+
+        /// <summary>
+        /// Really don't know what this do :). In case
+        /// you know, returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="steamid64">64-bit account id</param>
+        /// <param name="validBadgeType1"></param>
+        /// <param name="validBadgeType2"></param>
+        /// <param name="validBadgeType3"></param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetSteamAccountValidForBadgeType(this SteamHttpClient client,
+            ulong steamid64, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, GET_ACCOUNT_VALID_FOR_BADGE, V1),
+                ("steamid", steamid64.ToString()),
+                ("ValidBadgeType1", validBadgeType1.ToString()),
+                ("ValidBadgeType2", validBadgeType2.ToString()),
+                ("ValidBadgeType3", validBadgeType3.ToString())).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Really don't know what this do :). In case
+        /// you know, returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="badgeId"></param>
+        /// <param name="validBadgeType1"></param>
+        /// <param name="validBadgeType2"></param>
+        /// <param name="validBadgeType3"></param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> ClaimBadgeReward(this SteamHttpClient client,
+            string badgeId, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
+        {
+            string url = new UrlBuilder(
+                UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, CLAIM_BADGE, V1),
+                ("BadgeID", badgeId),
+                ("ValidBadgeType1", validBadgeType1.ToString()),
+                ("ValidBadgeType2", validBadgeType2.ToString()),
+                ("ValidBadgeType3", validBadgeType3.ToString())).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Really don't know what this do :). In case
+        /// you know, returns JSON string.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="badgeId"></param>
+        /// <returns>JSON string</returns>
+        public static async Task<string> GetSteamIDForBadgeId(this SteamHttpClient client,
+            string badgeId)
+        {
+            string url = new UrlBuilder(
+                (UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IDOTA2_TICKET_570, GET_ID_FOR_BADGE, V1)),
+                ("BadgeID", badgeId)).Url;
+
+            return await SteamHttpClient.Client.GetStringAsync(url)
+                .ConfigureAwait(false);
+        }
+
 
         /// <summary>
         /// Sends GET request to api.steampowered.com for
