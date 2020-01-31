@@ -933,6 +933,7 @@ namespace SteamApiClient.Dota
         /// <param name="validBadgeType2"></param>
         /// <param name="validBadgeType3"></param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetSteamAccountValidForBadgeType) Figure out what this method does!
         public static async Task<string> GetSteamAccountValidForBadgeType(this SteamHttpClient client,
             ulong steamid64, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
         {
@@ -957,6 +958,7 @@ namespace SteamApiClient.Dota
         /// <param name="validBadgeType2"></param>
         /// <param name="validBadgeType3"></param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (ClaimBadgeReward) Figure out what this method does!
         public static async Task<string> ClaimBadgeReward(this SteamHttpClient client,
             string badgeId, uint validBadgeType1, uint validBadgeType2, uint validBadgeType3)
         {
@@ -978,6 +980,7 @@ namespace SteamApiClient.Dota
         /// <param name="client"></param>
         /// <param name="badgeId"></param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetSteamIDForBadgeId) Figure out what this method does!
         public static async Task<string> GetSteamIDForBadgeId(this SteamHttpClient client,
             string badgeId)
         {
@@ -999,6 +1002,7 @@ namespace SteamApiClient.Dota
         /// <param name="accountId32">32-bit account id</param>
         /// <param name="lang">ISO 639-1 language code</param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccount) Figure out response object model
         public static async Task<string> GetEventStatsForAccount(this SteamHttpClient client,
             uint eventId, uint accountId32, string lang = "en")
         {
@@ -1020,6 +1024,7 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="client"></param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetProPlayerList) Figure out response object model
         public static async Task<string> GetProPlayerList(this SteamHttpClient client)
         {
             string url = new UrlBuilder(
@@ -1037,6 +1042,7 @@ namespace SteamApiClient.Dota
         /// <param name="client"></param>
         /// <param name="fantasyLeagueId">fantasy league id</param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetFantasyPlayerStats) Figure out response object model
         public static async Task<string> GetFantasyPlayerStats(
             this SteamHttpClient client, uint fantasyLeagueId, string startTimestamp = "0",
             string endTimestamp = "0", ulong matchId = 0, uint seriesId = 0, uint playerId32 = 0)
@@ -1064,6 +1070,7 @@ namespace SteamApiClient.Dota
         /// <param name="accountId32">Pro player 32-bit id</param>
         /// <param name="token">cancellation token</param>
         /// <returns>FantasyPlayerOfficialInfo object</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetPlayerOfficialFantasyInfo) Figure out response object model
         public static async Task<FantasyPlayerOfficialInfo> GetPlayerOfficialFantasyInfo(
             this SteamHttpClient client, uint accountId32, CToken token = default)
         {
@@ -1086,6 +1093,7 @@ namespace SteamApiClient.Dota
         /// <param name="steamId32"></param>
         /// <param name="eventId"></param>
         /// <returns></returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccountAsync) Figure out response object model
         public static async Task<ushort> GetEventStatsForAccountAsync(this SteamHttpClient client,
             uint steamId32, uint eventId)
         {
@@ -1108,6 +1116,7 @@ namespace SteamApiClient.Dota
         /// <param name="partner"></param>
         /// <param name="token"></param>
         /// <returns></returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetTopLiveEventGamesAsync) Figure out response object model
         public static async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveEventGamesAsync(
             this SteamHttpClient client, string apiInterface = IDOTA2_MATCH_570,
             int partner = 1, CToken token = default)
@@ -1131,6 +1140,7 @@ namespace SteamApiClient.Dota
         /// <param name="partner">partner id</param>
         /// <param name="homeDivision">home division id</param>
         /// <returns>JSON string</returns>
+        [Obsolete("This method is incomplete")] // TODO: (GetWeekendTourneyGames) Figure out response object model
         public static async Task<string> GetWeekendTourneyGames(this SteamHttpClient client,
         byte partner = 1, uint homeDivision = 0)
         {
