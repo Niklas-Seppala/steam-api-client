@@ -4,34 +4,18 @@ using System.Web;
 
 namespace SteamApiClient
 {
+    // TODO: Update Tests
     /// <summary>
     /// Simpliefies url querystring creation.
     /// </summary>
     public class UrlBuilder
     {
-        #region [Fields]
         private readonly UriBuilder _uriBuilder;
-        private readonly NameValueCollection _query;
-        #endregion
+        private readonly NameValueCollection _queryString;
 
         #region [Properties]
-        public string Query => _query.ToString();
+        public string Query => _queryString.ToString();
         public string Host => _uriBuilder.Host;
-        public int Port
-        {
-            get => _uriBuilder.Port;
-            set
-            {
-                if (value < -1)
-                {
-                    throw new ArgumentOutOfRangeException("Port can't be smaller value than -1");
-                }
-                else
-                {
-                    _uriBuilder.Port = value;
-                }
-            }
-        }
         public string Url => this.ToString();
         #endregion
 
@@ -47,13 +31,9 @@ namespace SteamApiClient
         /// querystring (may be added later).
         /// </summary>
         /// <param name="url">url</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when baseUrl parameter is null.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// Thrown when baseUrl parameter is empty
-        /// </exception>
-        public UrlBuilder(string url, int port = -1)
+        /// <exception cref="ArgumentNullException">baseUrl parameter is null</exception>
+        /// <exception cref="ArgumentException">baseUrl parameter is empty</exception>
+        public UrlBuilder(string url)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -63,9 +43,8 @@ namespace SteamApiClient
             }
             else
             {
-                _uriBuilder = new UriBuilder(url);
-                this.Port = port;
-                _query = HttpUtility.ParseQueryString(_uriBuilder.Query);
+                _uriBuilder = new UriBuilder(url) { Port = -1};
+                _queryString = HttpUtility.ParseQueryString(_uriBuilder.Query);
             }
         }
 
@@ -75,37 +54,13 @@ namespace SteamApiClient
         /// </summary>
         /// <param name="url">url</param>
         /// <param name="queries">(string, string) tuple of query parameter</param>
-        /// <exception cref="ArgumentException">
-        /// Thrown when baseUrl parameter is empty
-        /// </exception>
+        /// <exception cref="ArgumentException">baseUrl parameter is empty</exception>
         public UrlBuilder(string url, params (string key, string value)[] queries)
             : this(url)
         {
             foreach (var pair in queries)
             {
-                _query[pair.key] = pair.value;
-            }
-        }
-
-        /// <summary>
-        /// Instantiates UrlBuilder object with
-        /// querystring. 
-        /// </summary>
-        /// <param name="url">url</param>
-        /// <param name="port">port</param>
-        /// <param name="queries">params array of QueryParam objects</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when baseUrl parameter is null.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// Thrown when baseUrl parameter is empty
-        /// </exception>
-        public UrlBuilder(string url, int port, params (string key, string value)[] queries)
-            : this(url, port)
-        {
-            foreach (var pair in queries)
-            {
-                _query[pair.key] = pair.value;
+                _queryString[pair.key] = pair.value;
             }
         }
 
@@ -120,7 +75,7 @@ namespace SteamApiClient
         /// <param name="value">parameter value</param>
         public void AddQuery((string key, string value) query)
         {
-            _query[query.key] = query.value;
+            _queryString[query.key] = query.value;
         }
 
         /// <summary>
@@ -130,26 +85,67 @@ namespace SteamApiClient
         /// <returns>complete url</returns>
         public override string ToString()
         {
-            _uriBuilder.Query = _query.ToString();
+            _uriBuilder.Query = _queryString.ToString();
             return _uriBuilder.ToString();
         }
 
         #endregion
 
         #region [Static Methods]
+
         /// <summary>
-        /// 
+        /// Creates url based on steam api schema.
         /// </summary>
-        /// <param name="base_"></param>
-        /// <param name="interface_"></param>
-        /// <param name="method"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public static string CreateBaseApiUrl(string base_, string interface_, string method, string version)
+        /// <param name="domain">domain name</param>
+        /// <param name="iFace">interface name</param>
+        /// <param name="method">method name</param>
+        /// <param name="version">method version</param>
+        /// <returns>complete Steam api url</returns>
+        public static string SteamCompleteUrl((string domain, string iFace, string method, string version) comp,
+            params (string key, string value)[] queries)
         {
-            string result = $"https://{base_}/{interface_}/{method}/{version}/";
-            return result;
+            if (string.IsNullOrEmpty(comp.domain) || string.IsNullOrEmpty(comp.iFace) ||
+                string.IsNullOrEmpty(comp.method) || string.IsNullOrEmpty(comp.version))
+            {
+                throw new ArgumentNullException("Some of the base url components is null or empty");
+            }
+            else
+            {
+                string url = SteamBaseUrl(comp);
+                var uriB = new UriBuilder(url);
+
+                var querystring = HttpUtility.ParseQueryString(uriB.Query);
+                foreach (var (key, value) in queries)
+                {
+                    querystring[key] = value;
+                }
+
+                uriB.Query = querystring.ToString();
+                return uriB.ToString();
+            }
         }
+
+        /// <summary>
+        /// Creates base url string
+        /// </summary>
+        /// <param name="d">domain</param>
+        /// <param name="i">interface</param>
+        /// <param name="m">method</param>
+        /// <param name="v">version</param>
+        /// <returns>url string</returns>
+        public static string SteamBaseUrl((string domain, string iFace, string method, string version) url)
+        {
+            if (url.domain == null || url.iFace == null ||
+                url.method == null || url.version == null)
+            {
+                throw new ArgumentNullException("Some of the base url components is null");
+            }
+            else
+            {
+                return $"https://{url.domain}/{url.iFace}/{url.method}/{url.version}/";
+            }
+        }
+
         #endregion
     }
 }
