@@ -227,12 +227,12 @@ namespace SteamApiClient.Dota
         /// <param name="token">cancellation token</param>
         /// <returns>ReadOnlyColletion of contributor ids</returns>
         public static async Task<IReadOnlyCollection<uint>> GetItemCreatorsAsync(
-            this SteamHttpClient client, string itemDef, CToken token = default)
+            this SteamHttpClient client, uint itemDef, CToken token = default)
         {
             var uBuilder = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2_570, GET_ITEM_CREATORS, V1),
                 ("key", client.DevKey),
-                ("itemdef", itemDef));
+                ("itemdef", itemDef.ToString()));
 
             var creators = await client.RequestAndDeserialize<ItemCreators>(uBuilder.Url, token)
                 .ConfigureAwait(false);
@@ -403,7 +403,6 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="token">cancellation token.</param>
         /// <returns>ReadOnlyCollection of Item objects</returns>
-        [Obsolete("Use GetItemInfoAsync()")]
         public static async Task<IReadOnlyCollection<Item>> GetGameItemsAsync(this SteamHttpClient client,
             string apiInterface = IECONDOTA2_570, CToken token = default)
         {

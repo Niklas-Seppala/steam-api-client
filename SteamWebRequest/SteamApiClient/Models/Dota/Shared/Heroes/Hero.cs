@@ -7,7 +7,7 @@ namespace SteamApiClient.Models.Dota
         [JsonProperty("Localized_name")]
         public string LocalizedName { get; set; }
 
-        public int Id { get; set; }
+        public ushort Id { get; set; }
         public string Name { get; set; }
     }
 }

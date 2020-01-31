@@ -1,7 +1,7 @@
 # steam-api-core
 ## What is it?
 This project provides libraries for calling Valve's
-RESTful APIs targeting netstandard2.0.
+RESTful APIs targeting netstandard 2.0.
 ## API Methods
 ### Dota 2
 ###### IDOTA2Fantasy_205790
