@@ -34,7 +34,7 @@ GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️ TESTED ✔️ # match_id
 GET GetSteamIDForBadgeID/v1          IMPLEMENTED ❌ TESTED ❌
 GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ❌ TESTED ❌</pre>
 ###### IEconDOTA2_205790
-<pre>GET GetItemIconPath/v1               IMPLEMENTED ✔️ TESTED ❌</pre>
+<pre>GET GetItemIconPath/v1               IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IEconDOTA2_570
 <pre>GET GetEventStatsForAccount/v1       IMPLEMENTED ❌ TESTED ❌ # waiting for chance to test
 GET GetGameItems/v1                  IMPLEMENTED ✔️ TESTED ✔️
