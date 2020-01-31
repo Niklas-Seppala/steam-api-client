@@ -30,9 +30,9 @@ GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️ TESTED ✔️ # match_id
 ###### IDOTA2StreamSystem_570
 <pre>GET GetBroadcasterInfo/v1            IMPLEMENTED ✔️ TESTED ❌</pre>
 ###### IDOTA2Ticket_570
-<pre>GET ClaimBadgeReward/v1              IMPLEMENTED ❌ TESTED ❌
-GET GetSteamIDForBadgeID/v1          IMPLEMENTED ❌ TESTED ❌
-GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ❌ TESTED ❌</pre>
+<pre>GET ClaimBadgeReward/v1              IMPLEMENTED ✔️ TESTED ❌ # Returns JSON-string (no idea what this does)
+GET GetSteamIDForBadgeID/v1          IMPLEMENTED ✔️ TESTED ❌ # Returns JSON-string (no idea what this does)
+GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ✔️ TESTED ❌ # Returns JSON-string (no idea what this does)</pre>
 ###### IEconDOTA2_205790
 <pre>GET GetItemIconPath/v1               IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IEconDOTA2_570
