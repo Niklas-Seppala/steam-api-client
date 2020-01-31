@@ -19,7 +19,8 @@ namespace SteamApiClient
 {
     public partial class SteamHttpClient
     {
-        public static HttpClient Client { get; } = new HttpClient();
+        //public static HttpClient Client { get; } = new HttpClient();
+        private static HttpClient _client = new HttpClient();
 
         public string DevKey { get; }
 
@@ -54,7 +55,7 @@ namespace SteamApiClient
         private void ValidateDevKey()
         {
             var uBuilder = new UrlBuilder(GET_PRODUCTS_URL, ("key", this.DevKey), ("max_results", "1"));
-            HttpResponseMessage resp = Client.GetAsync(uBuilder.Url)
+            HttpResponseMessage resp = _client.GetAsync(uBuilder.Url)
                 .Result;
 
             if (resp.IsSuccessStatusCode)
@@ -134,7 +135,7 @@ namespace SteamApiClient
         internal async Task<T> RequestAndDeserialize<T>(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await Client.SendAsync(request,
+            using (var response = await _client.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
@@ -160,7 +161,7 @@ namespace SteamApiClient
         public async Task<Image> GetImageAsync(string url, CToken token = default)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await Client.SendAsync(request,
+            using (var response = await _client.SendAsync(request,
                 HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
             using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
@@ -177,8 +178,65 @@ namespace SteamApiClient
             }
         }
 
+
+        /// <summary>
+        /// Sends get request to url. Returns response as stream.
+        /// Request can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="url">url</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>response as stream</returns>
+        internal async Task<Stream> GetAsync(string url, CToken token = default)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await _client.SendAsync(request,
+                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStreamAsync();
+                }
+                else
+                {
+                    throw new APIException("Request failed.")
+                    { StatusCode = (int)response.StatusCode, URL = url };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends get request to url. Returns response as a string.
+        /// Request can be cancelled by providing cancellation token.
+        /// </summary>
+        /// <param name="url">url</param>
+        /// <param name="token">cancellation token</param>
+        /// <returns>response as string</returns>
+        internal async Task<string> GetStringAsync(string url, CToken token = default)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await _client.SendAsync(request,
+                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    throw new APIException("Request failed.")
+                    { StatusCode = (int)response.StatusCode, URL = url };
+                }
+            }
+        }
+
+
         #region [Utility]
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <returns></returns>
         internal ulong GetTimestamp(long timestamp)
         {
             if (timestamp < 0)
@@ -191,6 +249,11 @@ namespace SteamApiClient
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
         internal ulong GetTimestamp(DateTime dateTime)
         {
             return (ulong)dateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
