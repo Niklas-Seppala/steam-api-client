@@ -143,17 +143,18 @@ namespace SteamApiClient.Dota
         /// <param name="token">cancellation token</param>
         /// <returns>PlayerInventory object</returns>
         public static async Task<PlayerInventory> GetPlayerItemsAsync(this SteamHttpClient client,
-            string steamid64, string apiInterface = IECON_ITEMS_570, CToken token = default)
+            ulong steamid64, string apiInterface = IECON_ITEMS_570, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_PLAYER_ITEMS, V1),
                 ("key", client.DevKey),
-                ("steamid", steamid64)).Url;
+                ("steamid", steamid64.ToString())).Url;
 
-            var respnse = await client
+            var response = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, PlayerInventory>>(url, token)
                 .ConfigureAwait(false);
-            return respnse["result"];
+
+            return response["result"];
         }
 
         /// <summary>
@@ -588,25 +589,20 @@ namespace SteamApiClient.Dota
         /// <param name="accountId32">player 32-bit account id</param>
         /// <param name="leagueId32">league 32-bit id</param>
         /// <param name="heroId">hero id</param>
-        /// <param name="timeFrame">time frame</param>
-        /// <param name="matchId">match id</param>
         /// <param name="apiInterface">api interface</param>
         /// <param name="methodVersion">Method version</param>
         /// <param name="token">cancellation token</param>
         /// <returns>TournamentPlayerStats object.</returns>
         public static async Task<TournamentPlayerStats> GetTournamentPlayerStatsAsync(this SteamHttpClient client,
-            string accountId32, string apiInterface = IDOTA2_MATCH_570, string methodVersion = V2,
-            string leagueId32 = "", string heroId = "", string timeFrame = "", string matchId = "",
-            CToken token = default)
+            uint accountId32, uint leagueId32, string apiInterface = IDOTA2_MATCH_570, string methodVersion = V2,
+            ushort heroId = 0, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOURNAMENT_P_STATS, methodVersion),
                 ("key", client.DevKey),
-                ("account_id", accountId32),
-                ("league_id", leagueId32),
-                ("hero_id", heroId),
-                ("time_frame", timeFrame),
-                ("match_id", matchId)).Url;
+                ("account_id", accountId32.ToString()),
+                ("league_id", leagueId32.ToString()),
+                ("hero_id", heroId.ToString())).Url;
 
             var response = await client.RequestAndDeserialize<TournamentPlayerStatsResponse>(url, token)
                 .ConfigureAwait(false);
@@ -851,18 +847,18 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="client"></param>
         /// <param name="startId">starting team id</param>
-        /// <param name="amount">request size</param>
+        /// <param name="count">request size</param>
         /// <param name="token">cancellation token</param>
         /// <returns>ReadOnlyCollection of DotaTeamInfo objects</returns>
         public static async Task<IReadOnlyCollection<DotaTeamInfo>> GetDotaTeamInfosByIdAsync(
-            this SteamHttpClient client, ulong startId = 1, uint amount = 100,
+            this SteamHttpClient client, ulong startId = 1, uint count = 100,
             string apiInterface = IDOTA2_MATCH_570, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TEAM_INFO_BY_ID, V1),
                 ("key", client.DevKey),
                 ("start_at_team_id", startId.ToString()),
-                ("teams_requested", amount.ToString())).Url;
+                ("teams_requested", count.ToString())).Url;
 
             var response = await client.RequestAndDeserialize<DotaTeamInfosResponse>(url, token)
                 .ConfigureAwait(false);

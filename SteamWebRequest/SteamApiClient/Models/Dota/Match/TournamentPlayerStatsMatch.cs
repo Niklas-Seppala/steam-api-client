@@ -14,6 +14,8 @@ namespace SteamApiClient.Models.Dota
         public bool IsRadiant => !this.IsDire;
         public byte TeamPosition => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
 
+        [JsonProperty("hero_id")]
+        public ushort HeroId { get; set; }
         public ushort Item_0 { get; set; }
         public ushort Item_1 { get; set; }
         public ushort Item_2 { get; set; }
