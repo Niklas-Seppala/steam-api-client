@@ -162,15 +162,18 @@ namespace SteamApiClient.Dota
         /// item icon path.
         /// </summary>
         /// <param name="client"></param>
-        /// <param name="iconName">icon name</param>
+        /// <param name="iconName">the item icon name to get the CDN path of</param>
+        /// <param name="iconType">the type of image you want. 0 = normal, 1 = large, 2 = ingame</param>
         /// <returns>icon path</returns>
+        /// <exception cref="APIException">Thrown if icon name not found or type is invalid</exception>
         public static async Task<string> GetItemIconPathAsync(this SteamHttpClient client,
-            string iconName)
+            string iconName, byte iconType = 0)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, IECONDOTA2, GET_ITEM_ICON_PATH, V1),
                 ("key", client.DevKey),
-                ("iconname", iconName)).Url;
+                ("iconname", iconName),
+                ("icontype", iconType.ToString())).Url;
 
             dynamic response = JObject.Parse(await SteamHttpClient.Client.GetStringAsync(url)
                 .ConfigureAwait(false));
@@ -362,13 +365,16 @@ namespace SteamApiClient.Dota
         /// </summary>
         /// <param name="client"></param>
         /// <param name="token">cancellation token</param>
+        /// <param name="apiInterface">api interface</param>
+        /// <param name="lang">langugage</param>
         /// <returns>ReadOnlyCollection of Hero objects</returns>
         public static async Task<IReadOnlyCollection<Hero>> GetHeroesAsync(this SteamHttpClient client,
-            CToken token = default, string apiInterface = IECONDOTA2_570)
+            string lang = "en", string apiInterface = IECONDOTA2_570, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_HEROES, V1),
-                ("key", client.DevKey)).Url;
+                ("key", client.DevKey),
+                ("language", lang)).Url;
 
             var result = await client.RequestAndDeserialize<HeroesResponse>(url, token)
                 .ConfigureAwait(false);
@@ -402,13 +408,16 @@ namespace SteamApiClient.Dota
         /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="token">cancellation token.</param>
+        /// <param name="lang">language</param>
+        /// <param name="apiInterface">api interface</param>
         /// <returns>ReadOnlyCollection of Item objects</returns>
         public static async Task<IReadOnlyCollection<Item>> GetGameItemsAsync(this SteamHttpClient client,
-            string apiInterface = IECONDOTA2_570, CToken token = default)
+            string lang = "en", string apiInterface = IECONDOTA2_570, CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_GAME_ITEMS, V1),
-                ("key", client.DevKey)).Url;
+                ("key", client.DevKey),
+                ("language", lang)).Url;
 
             var result = await client.RequestAndDeserialize<GameItems>(url, token)
                 .ConfigureAwait(false);
@@ -549,8 +558,7 @@ namespace SteamApiClient.Dota
             var response = await client.RequestAndDeserialize<TopLiveGames>(url, token)
                 .ConfigureAwait(false);
 
-            throw new NotImplementedException("Need to wait for live games to check response JSON object.");
-            //return response.Games;
+            return response.Games;
         }
 
         /// <summary>
@@ -701,13 +709,13 @@ namespace SteamApiClient.Dota
         /// <param name="token">cancellation token</param>
         /// <returns>ReadOnlyDictionary of currency and value pairs</returns>
         public static async Task<IReadOnlyDictionary<string, uint>> GetTournamentPrizePoolAsync(
-            this SteamHttpClient client, string leagueId, string apiInterface = IECONDOTA2_570,
+            this SteamHttpClient client, uint leagueId, string apiInterface = IECONDOTA2_570,
             CToken token = default)
         {
             string url = new UrlBuilder(
                 UrlBuilder.CreateBaseApiUrl(STEAMPOWERED, apiInterface, GET_TOURNAMENT_PRIZE, V1),
                 ("key", client.DevKey),
-                ("leagueid", leagueId)).Url;
+                ("leagueid", leagueId.ToString())).Url;
 
             var result = await client
                 .RequestAndDeserialize<IReadOnlyDictionary<string, IReadOnlyDictionary<string, uint>>>(url, token)

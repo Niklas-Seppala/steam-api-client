@@ -2,6 +2,7 @@
 using SteamApiClient.Dota;
 using System;
 using Xunit;
+using System.Linq;
 
 namespace SWR.Client_Tests
 {

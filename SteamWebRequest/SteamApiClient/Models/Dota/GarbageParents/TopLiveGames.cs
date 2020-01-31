@@ -6,6 +6,6 @@ namespace SteamApiClient.Models.Dota
     internal class TopLiveGames
     {
         [JsonProperty("game_list")]
-        public List<LiveMatch> Games { get; set; }
+        public IReadOnlyCollection<LiveMatch> Games { get; set; }
     }
 }

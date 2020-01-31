@@ -10,9 +10,11 @@ namespace SWR.Client_Tests
         {
             var heroes = _client.GetHeroesAsync()
                 .Result;
+            this.Sleep();
 
             Assert.NotEmpty(heroes);
             Assert.All(heroes, hero => {
+                Assert.NotEmpty(hero.LocalizedName);
                 Assert.NotEmpty(hero.Name);
                 Assert.NotEqual(0, hero.Id);
             });

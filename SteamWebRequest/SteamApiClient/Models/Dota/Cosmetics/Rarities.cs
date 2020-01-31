@@ -1,4 +1,6 @@
-﻿namespace SteamApiClient.Models.Dota
+﻿using Newtonsoft.Json;
+
+namespace SteamApiClient.Models.Dota
 {
     public class DotaCosmeticRarity
     {
@@ -6,5 +8,8 @@
         public byte Id { get; set; }
         public byte Order { get; set; }
         public string Color { get; set; }
+
+        [JsonProperty("localized_name")]
+        public string LocalizedName { get; set; }
     }
 }

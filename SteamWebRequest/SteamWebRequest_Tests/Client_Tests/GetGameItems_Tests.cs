@@ -13,6 +13,7 @@ namespace SWR.Client_Tests
             this.Sleep();
 
             Assert.All(items, item => {
+                Assert.NotEmpty(item.LocalizedName);
                 Assert.NotEmpty(item.Name);
                 Assert.NotEqual(0, item.Id);
             });
