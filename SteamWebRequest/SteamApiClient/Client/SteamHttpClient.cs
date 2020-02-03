@@ -19,8 +19,8 @@ namespace SteamApiClient
 {
     public partial class SteamHttpClient
     {
-        //public static HttpClient Client { get; } = new HttpClient();
         private static HttpClient _client = new HttpClient();
+        // TODO: create private UrlBuilder and reuse it every api call.
 
         public string DevKey { get; }
 
