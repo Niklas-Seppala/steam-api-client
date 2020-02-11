@@ -1,6 +1,6 @@
 ﻿using System.Collections.Specialized;
 
-namespace SteamApiClient.Models.Dota
+namespace SteamApi.Models.Dota
 {
     public sealed class TowerStatus
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace SteamApiClient
+namespace SteamApi
 {
     [Serializable]
     public class APIException : Exception

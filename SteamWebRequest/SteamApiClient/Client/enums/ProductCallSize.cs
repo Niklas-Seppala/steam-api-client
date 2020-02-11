@@ -1,4 +1,4 @@
-﻿namespace SteamApiClient
+﻿namespace SteamApi
 {
     /// <summary>
     /// Size of the product request.

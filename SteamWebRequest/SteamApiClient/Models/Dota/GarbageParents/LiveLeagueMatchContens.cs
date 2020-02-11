@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamApiClient.Models.Dota
+namespace SteamApi.Models.Dota
 {
     internal class LiveLeagueMatchContens
     {

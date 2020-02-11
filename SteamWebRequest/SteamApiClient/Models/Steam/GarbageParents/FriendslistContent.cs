@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamApiClient.Models
+namespace SteamApi.Models
 {
     internal sealed class FriendslistContent
     {

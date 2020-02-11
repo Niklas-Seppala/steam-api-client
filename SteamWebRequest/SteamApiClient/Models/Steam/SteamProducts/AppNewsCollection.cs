@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamApiClient.Models
+namespace SteamApi.Models
 {
     public class AppNewsCollection
     {

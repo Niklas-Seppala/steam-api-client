@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 
-namespace SteamApiClient.Models.Dota
+namespace SteamApi.Models.Dota
 {
     public class DotaTeam
     {

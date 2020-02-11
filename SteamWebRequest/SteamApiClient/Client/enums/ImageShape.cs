@@ -1,4 +1,4 @@
-﻿namespace SteamApiClient.Dota
+﻿namespace SteamApi
 {
     public enum ImageShape
     {

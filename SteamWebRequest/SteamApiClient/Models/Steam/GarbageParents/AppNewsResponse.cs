@@ -1,4 +1,4 @@
-﻿namespace SteamApiClient.Models
+﻿namespace SteamApi.Models
 {
     internal class AppNewsResponse
     {

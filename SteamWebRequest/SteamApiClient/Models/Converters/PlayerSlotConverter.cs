@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
-using SteamApiClient.Models.Dota;
 using System;
 using System.Collections.Specialized;
 
-namespace SteamApiClient
+namespace SteamApi
 {
-    public class MapStateConverter : JsonConverter
+    public class PlayerSlotConverter : JsonConverter
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
@@ -14,18 +13,7 @@ namespace SteamApiClient
         public override object ReadJson(JsonReader reader, Type objectType,
             object existingValue, JsonSerializer serializer)
         {
-            if (objectType == typeof(BarracksStatus))
-            {
-                return new BarracksStatus(new BitVector32(Convert.ToByte(reader.Value)));
-            }
-            else if (objectType == typeof(TowerStatus))
-            {
-                return new TowerStatus(new BitVector32(Convert.ToUInt16(reader.Value)));
-            }
-            else
-            {
-                return null;
-            }
+            return new BitVector32(Convert.ToInt32(reader.Value));
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -35,7 +23,7 @@ namespace SteamApiClient
 
         public override bool CanConvert(Type objectType)
         {
-            return _type == objectType;
+            return objectType == _type;
         }
     }
 }

@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace SteamApiClient
+namespace SteamApi
 {
     public class TimeSpanConverter : JsonConverter
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace SteamApiClient.Models
+namespace SteamApi.Models
 {
     internal class ProductContainer
     {

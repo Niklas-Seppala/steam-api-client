@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace SteamApiClient.Models.Dota
+namespace SteamApi.Models.Dota
 {
     public class RealTimeMatch
     {

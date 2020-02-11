@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 
-namespace SteamApiClient.Models
+namespace SteamApi.Models
 {
     public class AppNews
     {

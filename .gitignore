@@ -6,6 +6,7 @@
 #Dev console
 */DevConsole/
 
+**/.editorconfig
 **/clientTestSetup.json
 # User-specific files
 *.rsuser

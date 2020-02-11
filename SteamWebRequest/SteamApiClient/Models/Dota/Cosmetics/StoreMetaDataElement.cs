@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SteamApiClient.Models.Dota
+namespace SteamApi.Models.Dota
 {
     public class StoreMetaDataElement
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SteamApiClient
+namespace SteamApi
 {
     /// <summary>
     /// Included products from Steam store.

@@ -1,4 +1,4 @@
-﻿namespace SteamApiClient.Models.Dota
+﻿namespace SteamApi
 {
     public enum DotaRegion
     {
