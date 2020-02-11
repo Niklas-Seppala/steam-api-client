@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,16 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model_Tests\" />
-    <Folder Include="ConverterTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SteamApiClient\SteamApiClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="SECRETS.dat">
+    <None Update="clientTestSetup.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

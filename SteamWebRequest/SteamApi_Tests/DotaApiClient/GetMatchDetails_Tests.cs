@@ -1,10 +1,15 @@
-﻿using SteamApiClient.Dota;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Xunit;
+using SteamApi;
 
-namespace SWR.Client_Tests
+namespace Client
 {
-    public class GetMatchDetails_Tests : SteamHttpClient_Tests
+    public class GetMatchDetails_Tests : SteamApiClientTests
     {
+        public GetMatchDetails_Tests(ClientFixture fixture) : base(fixture){}
+
         [Theory]
         [InlineData("5215439388")]
         [InlineData("5214286157")]
@@ -14,9 +19,9 @@ namespace SWR.Client_Tests
         [InlineData("5200756005")]
         public void ValidMatchIds_ReturnsCorrectMatches(string matchId)
         {
-            var details = _client.GetMatchDetailsAsync(matchId)
+            var details = Client.GetMatchDetailsAsync(matchId)
                 .Result;
-            this.Sleep();
+            SleepAfterApiCall();
 
             Assert.Equal(matchId, details.MatchId.ToString());
         }

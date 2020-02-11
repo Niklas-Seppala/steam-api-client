@@ -1,14 +1,48 @@
-﻿using SteamApiClient;
-using System;
+﻿using System;
 using Xunit;
+using SteamApi;
 
-namespace SWR.SteamIdConverter_Tests
+namespace Utility
 {
-    public class SteamId64to32_Tests
+    public class IdConversion_Tests
     {
-        // ------------------------------------------------------------------ \\
-        //                      SteamIdTo32(string id64)                      \\
-        // --------------------------- Wrong usage -------------------------- \\
+        [Theory]
+        [InlineData("")]
+        [InlineData("30339771.3")]
+        [InlineData("0x5b3d3")]
+        [InlineData("abcdefg")]
+        public void SteamIdTo64_InvalidIntegerInput_ReturnsFalseAndEmptyString(string id)
+        {
+            Assert.Throws<ArgumentException>(() => SteamIdConverter.SteamIdTo64(id));
+        }
+
+        [Fact]
+        public void SteamIdTo64_NegativeIdInput_ThrowsArgumenOutOfRangeException()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                SteamIdConverter.SteamIdTo64("-46773221");
+            });
+        }
+
+        [Theory]
+        [InlineData("147169892", "76561198107435620")]
+        [InlineData("30339771", "76561197990605499")]
+        [InlineData("46773221", "76561198007038949")]
+        [InlineData("30672625", "76561197990938353")]
+        public void SteamIdTo64_CorrectInput_ReturnsTrueAndValue(string id, string answer)
+        {
+            Assert.Matches(answer, SteamIdConverter.SteamIdTo64(id));
+        }
+
+        [Theory]
+        [InlineData(147169892, 76561198107435620)]
+        [InlineData(30339771, 76561197990605499)]
+        [InlineData(46773221, 76561198007038949)]
+        public void SteamIdTo64Int64Arg_ValidIdInput_ReturnsCorrectResult(uint id, ulong answer)
+        {
+            Assert.Equal(answer, SteamIdConverter.SteamIdTo64(id));
+        }
 
         [Theory]
         [InlineData("")]
@@ -38,8 +72,6 @@ namespace SWR.SteamIdConverter_Tests
             });
         }
 
-        // -------------------------- Correct usage ------------------------- \\
-
         [Theory]
         [InlineData("76561198107435620", "147169892")]
         [InlineData("76561197990605499", "30339771")]
@@ -49,10 +81,6 @@ namespace SWR.SteamIdConverter_Tests
         {
             Assert.Matches(answer, SteamIdConverter.SteamIdTo32(id));
         }
-
-        // ------------------------------------------------------------------ \\
-        //                       SteamIdTo32(int id64)                        \\
-        // --------------------------- Wrong usage -------------------------- \\
 
         [Theory]
         [InlineData(76561197960265726)]
@@ -65,8 +93,6 @@ namespace SWR.SteamIdConverter_Tests
                 SteamIdConverter.SteamIdTo32(id);
             });
         }
-
-        // -------------------------- Correct usage ------------------------- \\
 
         [Theory]
         [InlineData(76561198107435620, 147169892)]
