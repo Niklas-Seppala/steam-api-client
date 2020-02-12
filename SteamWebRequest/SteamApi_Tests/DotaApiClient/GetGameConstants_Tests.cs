@@ -13,7 +13,8 @@ namespace Client
                 .Result;
             SleepAfterApiCall();
 
-            Assert.All(items, item => {
+            Assert.All(items, item =>
+            {
                 Assert.NotEmpty(item.LocalizedName);
                 Assert.NotEmpty(item.Name);
                 Assert.NotEqual(0, item.Id);
@@ -28,7 +29,8 @@ namespace Client
             SleepAfterApiCall();
 
             Assert.NotEmpty(heroes);
-            Assert.All(heroes, hero => {
+            Assert.All(heroes, hero =>
+            {
                 Assert.NotEmpty(hero.LocalizedName);
                 Assert.NotEmpty(hero.Name);
                 Assert.NotEqual(0, hero.Id);

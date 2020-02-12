@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Linq;
 using Xunit;
-using SteamApi;
-using System.Linq;
 
 namespace Client
 {
     public class GetMatchHistory_Tests : SteamApiClientTests
     {
         public GetMatchHistory_Tests(ClientFixture fixture) : base(fixture)
-        {}
+        { }
 
         [Theory]
         [InlineData(50, 50)]

@@ -1,6 +1,5 @@
-using System;
-using Xunit;
 using SteamApi;
+using Xunit;
 
 namespace Utility
 {
@@ -67,7 +66,7 @@ namespace Utility
         [InlineData("localhost:8080", "localhost", "", "", 8080)]
         [InlineData("127.0.0.1:80", "127.0.0.1", "", "", 80)]
         [InlineData("webserver:443/dir1/dir2", "webserver", "/dir1/dir2", "", 443)]
-        
+
         public void Construction_FromStringWithValidPortUrl_CreatesValidObject(string url,
             string host, string path, string query, int port)
         {

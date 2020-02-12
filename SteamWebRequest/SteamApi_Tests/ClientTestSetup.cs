@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Threading;
+﻿using SteamApi;
+using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using SteamApi;
-using System;
+using System.Threading;
 using Xunit;
 
 namespace Client
@@ -25,9 +25,9 @@ namespace Client
         }
 
         public void Dispose()
-        {}
+        { }
 
-        class Setup
+        private class Setup
         {
             [JsonPropertyName("timeout")]
             public int Timeout { get; set; }

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
-using SteamApi;
+﻿using Xunit;
 
 namespace Client
 {
     public class GetMatchDetails_Tests : SteamApiClientTests
     {
-        public GetMatchDetails_Tests(ClientFixture fixture) : base(fixture){}
+        public GetMatchDetails_Tests(ClientFixture fixture) : base(fixture) { }
 
         [Theory]
         [InlineData("5215439388")]

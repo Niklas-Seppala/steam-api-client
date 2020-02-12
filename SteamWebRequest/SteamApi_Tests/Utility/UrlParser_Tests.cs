@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SteamApi;
+using System;
 using Xunit;
-using SteamApi;
 
 namespace Utility
 {
