@@ -21,7 +21,6 @@ GET GetTeamInfoByTeamID/v1           IMPLEMENTED ✔️ TESTED ✔️
 GET GetTopLiveEventGame/v1           IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetTopLiveGame/v1                IMPLEMENTED ✔️ TESTED ✔️
 GET GetTopWeekendTourneyGames/v1     IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
-GET GetTournamentPlayerStats/v1      IMPLEMENTED ✔️ TESTED ❌
 GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️ TESTED ✔️ # match_id, time_frame</pre>
 ###### IDOTA2StreamSystem_205790
 <pre>GET GetBroadcasterInfo/v1            IMPLEMENTED ✔️ TESTED ❌</pre>
