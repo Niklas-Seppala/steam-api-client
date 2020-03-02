@@ -8,108 +8,180 @@ using CToken = System.Threading.CancellationToken;
 
 namespace SteamApi
 {
+    /// <summary>
+    /// Abstract base class that more specified API client
+    /// classes are derived from. Provides simple async methods
+    /// to call APIs.
+    /// 
+    /// Main components:
+    /// 
+    ///     ApiKey - A shared API authentication key in this parent class is accessed
+    ///              in most of the API requests the child classes make.
+    ///              read more: https://steamcommunity.com/dev
+    ///              
+    ///     Client - A single shared HttpClient object that processes every
+    ///              API request the child classes make.
+    ///              Exists through whole application lifetime.
+    /// </summary>
     public abstract class ApiClient
     {
-        private static readonly DateTime _unixEpochStartTime = new DateTime(1970, 1, 1);
+        /// <summary>
+        /// Api authentication key. This key is only assigned
+        /// to this class. It's children have access to it.
+        /// </summary>
+        protected static string ApiKey { get; private set; }
+
+        /// <summary>
+        /// Single static HttpClient. Child classes make their
+        /// requests using this instance. Must be readonly.
+        /// </summary>
         protected static HttpClient Client { get; } = new HttpClient();
-        protected static string DevKey { get; private set; }
+
+        /// <summary>
+        /// UrlBuilder that is responsible for creating urls for 
+        /// API method calls.
+        /// </summary>
         protected private UrlBuilder UrlBuilder { get; }
+
+        /// <summary>
+        /// Test url to some Steam API method. Used in constructor
+        /// if user wants to test their key before continuing.
+        /// </summary>
         protected abstract string TestUrl { get; }
 
-        public static void SetDeveloperKey(string devKey)
+        /// <summary>
+        /// Sets API authentication key to static field
+        /// in base API client class.
+        /// </summary>
+        /// <param name="apiKey">Api auth key</param>
+        public static void SetApiKey(string devKey)
         {
-            DevKey = devKey;
+            ApiKey = devKey;
         }
 
+        /// <summary>
+        /// Base constructor. Sets default schema for urls
+        /// and tests ApiKey if you want.
+        /// </summary>
+        /// <param name="testConnection">default: false</param>
+        /// <param name="schema">default: "https"</param>
         protected ApiClient(bool testConnection, string schema)
         {
-            UrlBuilder = new UrlBuilder()
-                .SetSchema(schema);
+            UrlBuilder = new UrlBuilder().SetSchema(schema);
             if (testConnection)
                 TestRequest().Wait();
         }
 
+        /// <summary>
+        /// Tests connection to server and Api authentication
+        /// key. In case of failure throws exceptions normally.
+        /// </summary>
         protected async Task TestRequest()
         {
-            using (HttpResponseMessage response = Client.GetAsync(this.TestUrl).Result)
-            {
+            using (HttpResponseMessage response = await Client.GetAsync(TestUrl))
                 await HandleResults<object>(response, (r) => null);
-            }
-        }
-
-        private HttpRequestException AppropriateExceptions(HttpStatusCode code)
-        {
-            if (code == HttpStatusCode.Forbidden)
-            {
-                return new HttpRequestException($"Response status code: {code}." +
-                    $" Developer key is invalid.");
-            }
-            else
-            {
-                return new HttpRequestException($"Response status code: {code}." +
-                    $" Something went wrong with request.");
-            }
-        }
-
-        private ArgumentException StreamNotReadableException(bool streamNull)
-        {
-            return streamNull
-                ? new ArgumentNullException("Provided stream is null.")
-                : new ArgumentException("Provided stream is write only.");
         }
 
         /// <summary>
-        /// Sends get request to url. Returns response as stream.
+        /// Servers response indicates that something went wrong.
+        /// Translates Http error code to exception and throws it.
+        /// </summary>
+        /// <param name="code">Http response status code</param>
+        private void ThrowFailedRequestException(HttpStatusCode code)
+        {
+            switch (code)
+            {
+                case HttpStatusCode.BadGateway:
+                    throw new HttpRequestException($"Response status code: {code}. Bad Gateway");
+                case HttpStatusCode.BadRequest:
+                    throw new HttpRequestException($"Response status code: {code}. Bad Request");
+                case HttpStatusCode.Forbidden:
+                    throw new HttpRequestException($"Response status code: {code}. Developer key is invalid.");
+                case HttpStatusCode.GatewayTimeout:
+                    throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
+                case HttpStatusCode.Gone:
+                    throw new HttpRequestException($"Response status code: {code}. Resource No Longer Available");
+                case HttpStatusCode.HttpVersionNotSupported:
+                    throw new HttpRequestException($"Response status code: {code}. Http Version Not Supported");
+                case HttpStatusCode.InternalServerError:
+                    throw new HttpRequestException($"Response status code: {code}. Internal Server Error");
+                case HttpStatusCode.MethodNotAllowed:
+                    throw new HttpRequestException($"Response status code: {code}. Method Not Allowed");
+                case HttpStatusCode.Moved:
+                    throw new HttpRequestException($"Response status code: {code}. Content Moved");
+                case HttpStatusCode.NotFound:
+                    throw new HttpRequestException($"Response status code: {code}. Not Found");
+                case HttpStatusCode.NotImplemented:
+                    throw new HttpRequestException($"Response status code: {code}. Not Implemented");
+                case HttpStatusCode.RequestTimeout:
+                    throw new HttpRequestException($"Response status code: {code}. Request Timeout");
+                case HttpStatusCode.ServiceUnavailable:
+                    throw new HttpRequestException($"Response status code: {code}. Service Unavailable");
+                default:
+                    throw new HttpRequestException($"Response status code: {code}. Something went wrong with request.");
+            }
+        }
+
+        /// <summary>
+        /// Sends get request to url. Returns response as byte
+        /// array. Request can be cancelled by providing cancellation
+        /// token.
+        /// </summary>
+        /// <param name="url">API request url</param>
+        /// <param name="cToken">cancellation token</param>
+        /// <returns>API response as bytes</returns>
+        protected async Task<byte[]> GetBytesAsync(string url = "", CToken cToken = default)
+        {
+            using (var request = CreateRequest(HttpMethod.Get, url))
+            using (var response = await SendRequestAsync(request, cToken))
+                return await HandleResults(response, async (r) => await r.Content.ReadAsByteArrayAsync());
+        }
+
+        /// <summary>
+        /// Sends get request to url. Returns response as memory stream.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        /// <returns>response as stream</returns>
-        protected async Task<Stream> GetAsync(string url = "", CToken token = default)
+        /// <param name="url">API request url</param>
+        /// <param name="cToken">cancellation token</param>
+        /// <returns>API response as memory stream</returns>
+        protected async Task<Stream> GetStreamAsync(string url = "", CToken cToken = default)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                string.IsNullOrEmpty(url) ? UrlBuilder.PopUrl() : url))
-            using (var response = await Client.SendAsync(request,
-                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
-            {
-                return await HandleResults(response, async (resp) =>
-                    await resp.Content.ReadAsStreamAsync());
-            }
+            using (var request = CreateRequest(HttpMethod.Get, url))
+            using (var response = await SendRequestAsync(request, cToken))
+                return await HandleResults(response, async (r) => await r.Content.ReadAsStreamAsync());
         }
 
         /// <summary>
         /// Sends get request to url. Returns response as a string.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        /// <returns>response as string</returns>
-        protected async Task<string> GetStringAsync(string url = "", CToken token = default)
+        /// <param name="url">API request url</param>
+        /// <param name="cToken">cancellation token</param>
+        /// <returns>API response as string</returns>
+        protected async Task<string> GetStringAsync(string url = "", CToken cToken = default)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                string.IsNullOrEmpty(url) ? UrlBuilder.PopUrl() : url))
-            using (var response = await Client.SendAsync(request,
-                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
-            {
-                return await HandleResults(response, async (resp) =>
-                    await resp.Content.ReadAsStringAsync());
-            }
+            using (var request = CreateRequest(HttpMethod.Get, url))
+            using (var response = await SendRequestAsync(request, cToken))
+                return await HandleResults(response, async (r) => await r.Content.ReadAsStringAsync());
         }
 
         /// <summary>
         /// Sends GET request to API and deserializes
-        /// response to model object.
+        /// response to model object. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
-        /// <typeparam name="T">response model</typeparam>
-        /// <returns>Deserialized json object</returns>
-        protected async Task<T> GetModelAsync<T>(string url = "", CToken token = default)
+        /// <typeparam name="T">Type of the model</typeparam>
+        /// <param name="url">API request url</param>
+        /// <param name="cToken">cancellation token</param>
+        /// <returns>API response deserialized to model</returns>
+        protected async Task<T> GetModelAsync<T>(string url = "", CToken cToken = default)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                string.IsNullOrEmpty(url) ? UrlBuilder.PopUrl() : url))
-            using (var response = await Client.SendAsync(request,
-                HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false))
+            using (var request = CreateRequest(HttpMethod.Get, url))
+            using (var response = await SendRequestAsync(request, cToken))
             {
                 return await HandleResults(response, async (resp) => {
-                    using (Stream s = await resp.Content.ReadAsStreamAsync())
-                    {
-                        return DeserializeJsonStream<T>(s);
-                    }
+                    using (var contentStream = await resp.Content.ReadAsStreamAsync())
+                        return DeserializeJsonStream<T>(contentStream);
                 });
             }
         }
@@ -125,11 +197,13 @@ namespace SteamApi
             {
                 using (var streamReader = new StreamReader(stream))
                 using (var JsonReader = new JsonTextReader(streamReader))
-                {
                     return new JsonSerializer().Deserialize<T>(JsonReader);
-                }
             }
-            else throw StreamNotReadableException(stream == null);
+            else
+            {
+                if (stream == null) throw new ArgumentNullException("stream");
+                else throw new ArgumentException("stream is writeonly");
+            }
         }
 
         /// <summary>
@@ -138,29 +212,73 @@ namespace SteamApi
         /// </summary>
         /// <typeparam name="T">request result type</typeparam>
         /// <param name="response">api response</param>
-        /// <param name="success">success function</param>
-        private async Task<T> HandleResults<T>(HttpResponseMessage response,
-            Func<HttpResponseMessage, Task<T>> success)
+        /// <param name="successAction">success function</param>
+        private async Task<T> HandleResults<T>(HttpResponseMessage response, Func<HttpResponseMessage, Task<T>> successAction)
         {
-            if (response.IsSuccessStatusCode)
-                return await success.Invoke(response).ConfigureAwait(false);
-            else
-                throw AppropriateExceptions(response.StatusCode);
+            if (response.IsSuccessStatusCode) return await successAction.Invoke(response).ConfigureAwait(false);
+            else ThrowFailedRequestException(response.StatusCode);
+            return default; // THIS LINE WILL NEVER RUN !!
         }
 
+        /// <summary>
+        /// Creates HttpRequestMessage object.
+        /// </summary>
+        /// <param name="method">Http method</param>
+        /// <param name="url">request url</param>
+        /// <returns>Http request message</returns>
+        private HttpRequestMessage CreateRequest(HttpMethod method, string url)
+        {
+            string requestUrl;
+            if (string.IsNullOrEmpty(url))        // caller didnt specify url, 
+                requestUrl = UrlBuilder.PopUrl(); // so lets take it from UrlBuilder
+            else requestUrl = url;
+            return new HttpRequestMessage(method, requestUrl);
+        }
+
+        /// <summary>
+        /// Sends the request to API. Request can be
+        /// cancelled by cancellation token.
+        /// </summary>
+        /// <param name="request">Http request message</param>
+        /// <param name="cToken">cancellation token</param>
+        /// <returns>Http response</returns>
+        private async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request, CToken cToken)
+        {
+            return await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cToken)
+                .ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates unix timestamp. If timestamp is invalid,
+        /// return current unix timestamp.
+        /// </summary>
+        /// <param name="timestamp">unix timestamp</param>
+        /// <returns>
+        /// If timestamp is valid => same unix timestamp
+        /// if timestamp is not valid => current datetime as unix timestamp.
+        /// </returns>
         protected ulong ValidateTimestamp(long timestamp)
         {
             return timestamp > 0 ? (ulong)timestamp : GetUnixTimestampNow();
         }
 
+        /// <summary>
+        /// Returns current datetime as unix timestamp.
+        /// </summary>
+        /// <returns>Current datetime as unix timestamp</returns>
         protected ulong GetUnixTimestampNow()
         {
-            return (ulong)DateTime.UtcNow.Subtract(_unixEpochStartTime).TotalSeconds;
+            return (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
+        /// <summary>
+        /// Converts datetime object to unix timestamp.
+        /// </summary>
+        /// <param name="dateTime">datetime object</param>
+        /// <returns>unix timestamp from datetime param</returns>
         protected ulong GetUnixTimestampFromDate(DateTime dateTime)
         {
-            return (ulong)dateTime.Subtract(_unixEpochStartTime).TotalSeconds;
+            return (ulong)dateTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
         }
     }
 }
