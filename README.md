@@ -8,12 +8,10 @@ RESTful APIs targeting netstandard 2.0.
 <pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetPlayerOfficialInfo/v1         IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetProPlayerList/v1              IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test</pre>
-###### IDOTA2MatchStats_205790
-<pre>GET GetRealtimeStats/v1              IMPLEMENTED ✔️ TESTED ❌</pre>
 ###### IDOTA2MatchStats_570
-<pre>GET GetRealtimeStats/v1              IMPLEMENTED ✔️ TESTED ❌</pre>
+<pre>GET GetRealtimeStats/v1              IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IDOTA2Match_205790
-<pre>GET GetLeagueListing/v1              IMPLEMENTED ✔️ TESTED ❌</pre>
+<pre>GET GetLeagueListing/v1              IMPLEMENTED ✔️ TESTED ✔️</pre>
 ###### IDOTA2Match_570
 <pre>GET GetLiveLeagueGames/v1            IMPLEMENTED ✔️ TESTED ✔️
 GET GetMatchDetails/v1               IMPLEMENTED ✔️ TESTED ✔️
@@ -23,7 +21,6 @@ GET GetTeamInfoByTeamID/v1           IMPLEMENTED ✔️ TESTED ✔️
 GET GetTopLiveEventGame/v1           IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
 GET GetTopLiveGame/v1                IMPLEMENTED ✔️ TESTED ✔️
 GET GetTopWeekendTourneyGames/v1     IMPLEMENTED ✔️ TESTED ❌ # waiting for chance to test
-GET GetTournamentPlayerStats/v1      IMPLEMENTED ✔️ TESTED ❌
 GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️ TESTED ✔️ # match_id, time_frame</pre>
 ###### IDOTA2StreamSystem_205790
 <pre>GET GetBroadcasterInfo/v1            IMPLEMENTED ✔️ TESTED ❌</pre>
