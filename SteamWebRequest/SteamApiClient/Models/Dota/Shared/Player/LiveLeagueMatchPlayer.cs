@@ -9,17 +9,17 @@ namespace SteamApi.Models.Dota
         [JsonConverter(typeof(PlayerSlotConverter))]
         public BitVector32 Player_slot { set => _player_slot = value; }
         public bool IsDire => _player_slot[128];
-        public bool IsRadiant => !this.IsDire;
-        public byte TeamPosition => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        public bool IsRadiant => !IsDire;
+        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
 
         public double Position_X { get; set; }
         public double Position_Y { get; set; }
 
         [JsonProperty("net_worth")]
-        public ushort NetWorth { get; set; }
+        public uint NetWorth { get; set; }
 
         [JsonProperty("respawn_timer")]
-        public ushort RespawnTimer { get; set; }
+        public uint RespawnTimer { get; set; }
 
         public uint Item0 { get; set; }
         public uint Item1 { get; set; }
@@ -29,10 +29,10 @@ namespace SteamApi.Models.Dota
         public uint Item5 { get; set; }
 
         [JsonProperty("ultimate_cooldown")]
-        public ushort UltimateCooldown { get; set; }
+        public uint UltimateCooldown { get; set; }
 
         [JsonProperty("ultimate_state")]
-        public byte UltimateState { get; set; }
+        public uint UltimateState { get; set; }
 
         [JsonProperty("xp_per_min")]
         public ushort XPM { get; set; }
@@ -40,7 +40,7 @@ namespace SteamApi.Models.Dota
         [JsonProperty("gold_per_min")]
         public ushort GMP { get; set; }
 
-        public byte Level { get; set; }
+        public uint Level { get; set; }
 
         public ushort Gold { get; set; }
 
@@ -49,12 +49,12 @@ namespace SteamApi.Models.Dota
         [JsonProperty("last_hits")]
         public ushort LastHits { get; set; }
 
-        public byte Assists { get; set; }
+        public uint Assists { get; set; }
 
         [JsonProperty("death")]
-        public byte Deaths { get; set; }
+        public uint Deaths { get; set; }
 
-        public byte Kills { get; set; }
+        public uint Kills { get; set; }
 
         [JsonProperty("hero_id")]
         public ushort HeroId { get; set; }

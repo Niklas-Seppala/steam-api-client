@@ -47,8 +47,8 @@ namespace SteamApi.Models.Dota
         [JsonProperty("team_id_2")]
         public ulong Team_2_Id { get; set; }
 
-        public byte Team_1_WinCount { get; set; }
-        public byte Team_2_WinCount { get; set; }
+        public uint Team_1_WinCount { get; set; }
+        public uint Team_2_WinCount { get; set; }
 
         [JsonProperty("has_started")]
         public bool MatchStarted { get; set; }

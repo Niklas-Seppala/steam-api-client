@@ -6,7 +6,7 @@ namespace SteamApi.Models.Dota
     public sealed class Item
     {
         [JsonProperty("id")]
-        public ushort Id { get; set; }
+        public uint Id { get; set; }
 
         [JsonProperty("img")]
         public string ImageName { get; set; }
@@ -34,7 +34,7 @@ namespace SteamApi.Models.Dota
         public string Lore { get; set; }
 
         [JsonProperty("cost")]
-        public int Cost { get; set; }
+        public uint Cost { get; set; }
 
         [JsonProperty("secret_shop")]
         public bool SecretShop { get; set; }
@@ -43,7 +43,7 @@ namespace SteamApi.Models.Dota
         public bool SideShop { get; set; }
 
         [JsonProperty("recipe")]
-        public int Recipe { get; set; }
+        public uint Recipe { get; set; }
 
         [JsonProperty("created")]
         public bool Created { get; set; }

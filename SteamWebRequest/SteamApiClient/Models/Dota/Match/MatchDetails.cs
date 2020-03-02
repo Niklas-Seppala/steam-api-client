@@ -51,10 +51,10 @@ namespace SteamApi.Models.Dota
         public ulong Cluster { get; set; }
 
         [JsonProperty("positive_votes")]
-        public ushort PositiveVotes { get; set; }
+        public uint PositiveVotes { get; set; }
 
         [JsonProperty("negative_votes")]
-        public ushort NegativeVotes { get; set; }
+        public uint NegativeVotes { get; set; }
 
         [JsonProperty("human_players")]
         public byte HumanPlayers { get; set; }
@@ -69,12 +69,12 @@ namespace SteamApi.Models.Dota
         public byte GameMode { get; set; }
 
         [JsonProperty("radiant_score")]
-        public ushort RadiantScore { get; set; }
+        public uint RadiantScore { get; set; }
 
         public byte Engine { get; set; }
 
         [JsonProperty("dire_score")]
-        public ushort DireScore { get; set; }
+        public uint DireScore { get; set; }
 
         [JsonProperty("picks_bans")]
         public IReadOnlyCollection<Draft> DraftPhase { get; set; }
@@ -84,10 +84,10 @@ namespace SteamApi.Models.Dota
         {
             get
             {
-                string[] ids = new string[this.Players.Count];
-                for (int i = 0; i < this.Players.Count; i++)
+                string[] ids = new string[Players.Count];
+                for (int i = 0; i < Players.Count; i++)
                 {
-                    ids[i] = this.Players[i].Id32.ToString();
+                    ids[i] = Players[i].Id32.ToString();
                 }
                 return ids;
             }
@@ -97,10 +97,10 @@ namespace SteamApi.Models.Dota
         {
             get
             {
-                string[] ids = new string[this.Players.Count];
-                for (int i = 0; i < this.Players.Count; i++)
+                string[] ids = new string[Players.Count];
+                for (int i = 0; i < Players.Count; i++)
                 {
-                    ids[i] = this.Players[i].Id64.ToString();
+                    ids[i] = Players[i].Id64.ToString();
                 }
                 return ids;
             }

@@ -20,10 +20,10 @@ namespace SteamApi.Models.Dota
         [JsonProperty("team_logo")]
         public ulong TeamLogo { get; set; }
 
-        public ushort Score { get; set; }
+        public uint Score { get; set; }
 
         [JsonProperty("net_worth")]
-        public ushort NetWorth { get; set; }
+        public uint NetWorth { get; set; }
 
         [JsonProperty("team_logo_url")]
         public string TeamLogoUrl { get; set; }

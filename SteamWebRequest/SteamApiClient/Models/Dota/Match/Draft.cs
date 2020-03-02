@@ -8,10 +8,10 @@ namespace SteamApi.Models.Dota
         public bool IsPick { get; set; }
 
         [JsonProperty("hero_id")]
-        public ushort HeroId { get; set; }
+        public uint HeroId { get; set; }
 
         public uint Team { get; set; }
 
-        public byte Order { get; set; }
+        public uint Order { get; set; }
     }
 }

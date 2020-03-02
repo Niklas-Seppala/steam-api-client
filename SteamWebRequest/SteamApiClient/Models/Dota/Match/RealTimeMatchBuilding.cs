@@ -2,10 +2,10 @@
 {
     public class RealTimeMatchBuilding
     {
-        public byte Team { get; set; }
+        public uint Team { get; set; }
         public double Heading { get; set; }
-        public byte Type { get; set; }
-        public byte Lane { get; set; }
+        public uint Type { get; set; }
+        public uint Lane { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public bool Destroyed { get; set; }

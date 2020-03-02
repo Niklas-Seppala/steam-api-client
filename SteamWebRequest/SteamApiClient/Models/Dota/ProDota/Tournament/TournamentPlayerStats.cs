@@ -5,7 +5,7 @@ namespace SteamApi.Models.Dota
 {
     public class TournamentPlayerStats
     {
-        public byte Status { get; set; }
+        public uint Status { get; set; }
 
         [JsonProperty("account_id")]
         public uint AccountId { get; set; }
@@ -13,8 +13,8 @@ namespace SteamApi.Models.Dota
         [JsonProperty("persona")]
         public string PersonaName { get; set; }
 
-        public byte Wins { get; set; }
-        public byte Losses { get; set; }
+        public uint Wins { get; set; }
+        public uint Losses { get; set; }
         public ushort Kills { get; set; }
         public ushort Deaths { get; set; }
         public ushort Assists { get; set; }
@@ -41,28 +41,28 @@ namespace SteamApi.Models.Dota
         public double LastHitAverage { get; set; }
 
         [JsonProperty("hero_damage_average")]
-        public ushort HeroDamageAverage { get; set; }
+        public uint HeroDamageAverage { get; set; }
 
         [JsonProperty("tower_damage_average")]
-        public ushort TowerDamageAverage { get; set; }
+        public uint TowerDamageAverage { get; set; }
 
         [JsonProperty("best_kills")]
-        public byte BestKills { get; set; }
+        public uint BestKills { get; set; }
 
         [JsonProperty("best_kills_heroid")]
-        public byte BestKillsHeroId { get; set; }
+        public uint BestKillsHeroId { get; set; }
 
         [JsonProperty("best_gpm")]
-        public ushort BestGpm { get; set; }
+        public uint BestGpm { get; set; }
 
         [JsonProperty("best_gpm_heroid")]
-        public ushort BestGpmHeroId { get; set; }
+        public uint BestGpmHeroId { get; set; }
 
         [JsonProperty("best_networth")]
-        public ushort BestNetWorth { get; set; }
+        public uint BestNetWorth { get; set; }
 
         [JsonProperty("best_networth_heroid")]
-        public ushort BestNetWorthHeroId { get; set; }
+        public uint BestNetWorthHeroId { get; set; }
 
         [JsonProperty("heroes_played")]
         public IReadOnlyCollection<IReadOnlyDictionary<string, ushort>> HeroesPlayed { get; set; }

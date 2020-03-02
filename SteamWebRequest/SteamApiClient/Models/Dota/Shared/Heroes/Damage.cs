@@ -2,7 +2,7 @@
 {
     public class Damage
     {
-        public ushort Min { get; set; }
-        public ushort Max { get; set; }
+        public uint Min { get; set; }
+        public uint Max { get; set; }
     }
 }

@@ -12,8 +12,8 @@ namespace SteamApi.Models.Dota
         [JsonProperty("name")]
         public string TournamentName { get; set; }
 
-        public byte Tier { get; set; }
-        public byte Region { get; set; }
+        public uint Tier { get; set; }
+        public uint Region { get; set; }
 
         [JsonProperty("most_recent_activity")]
         public ulong MostRecentActivity { get; set; }
@@ -29,6 +29,6 @@ namespace SteamApi.Models.Dota
         [JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime EndTimestamp { get; set; }
 
-        public byte Status { get; set; }
+        public uint Status { get; set; }
     }
 }

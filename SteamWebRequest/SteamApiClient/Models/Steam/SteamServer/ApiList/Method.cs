@@ -7,7 +7,7 @@ namespace SteamApi.Models
         public string Name { get; set; }
         public uint Version { get; set; }
         public string HttpMethod { get; set; }
-        public List<Parameter> Parameters { get; set; }
+        public IReadOnlyCollection<Parameter> Parameters { get; set; }
         public string Description { get; set; }
     }
 }

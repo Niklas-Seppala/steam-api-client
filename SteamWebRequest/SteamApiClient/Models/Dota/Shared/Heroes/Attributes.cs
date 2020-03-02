@@ -14,10 +14,10 @@ namespace SteamApi.Models.Dota
         public Attribute Agility { get; set; }
 
         [JsonProperty("ms")]
-        public ushort MovementSpeed { get; set; }
+        public uint MovementSpeed { get; set; }
 
         [JsonProperty("armor")]
-        public float Armor { get; set; }
+        public double Armor { get; set; }
 
         [JsonProperty("dmg")]
         public Damage Damage { get; set; }

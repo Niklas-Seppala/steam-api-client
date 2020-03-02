@@ -7,6 +7,5 @@ namespace SteamApi.Models.Dota
         public ulong Id { get; set; }
         public string Name { get; set; }
         public IReadOnlyCollection<StoreMetaDataDropdownPrefabConfig> Config { get; set; }
-
     }
 }

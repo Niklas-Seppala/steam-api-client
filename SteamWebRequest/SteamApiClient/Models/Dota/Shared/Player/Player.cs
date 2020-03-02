@@ -11,46 +11,46 @@ namespace SteamApi.Models.Dota
         [JsonProperty("player_slot")]
         public BitVector32 PlayerSlot { set => _player_slot = value; }
         public bool IsDire => _player_slot[128];
-        public bool IsRadiant => !this.IsDire;
-        public byte TeamPosition => (byte)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        public bool IsRadiant => !IsDire;
+        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
 
-        public ushort Item_0 { get; set; }
-        public ushort Item_1 { get; set; }
-        public ushort Item_2 { get; set; }
-        public ushort Item_3 { get; set; }
-        public ushort Item_4 { get; set; }
-        public ushort Item_5 { get; set; }
-        public ushort Backpack_0 { get; set; }
-        public ushort Backpack_1 { get; set; }
-        public ushort Backpack_2 { get; set; }
+        public uint Item_0 { get; set; }
+        public uint Item_1 { get; set; }
+        public uint Item_2 { get; set; }
+        public uint Item_3 { get; set; }
+        public uint Item_4 { get; set; }
+        public uint Item_5 { get; set; }
+        public uint Backpack_0 { get; set; }
+        public uint Backpack_1 { get; set; }
+        public uint Backpack_2 { get; set; }
 
         [JsonProperty("item_neutral")]
-        public ushort NeutralItem { get; set; }
+        public uint NeutralItem { get; set; }
 
-        public byte Kills { get; set; }
-        public byte Assists { get; set; }
-        public byte Deaths { get; set; }
-        public double KDA => (this.Kills + this.Assists) / this.Deaths;
+        public uint Kills { get; set; }
+        public uint Assists { get; set; }
+        public uint Deaths { get; set; }
+        public double KDA => (Kills + Assists) / Deaths;
 
         [JsonProperty("account_id")]
         public uint Id32 { get; set; }
-        public ulong Id64 => SteamIdConverter.SteamIdTo64(this.Id32);
+        public ulong Id64 => SteamIdConverter.SteamIdTo64(Id32);
 
         [JsonProperty("hero_id")]
-        public ushort HeroId { get; set; }
+        public uint HeroId { get; set; }
 
         [JsonProperty("Leaver_status")]
-        public byte Leaver_status { get; set; }
+        public uint Leaver_status { get; set; }
 
         [JsonProperty("last_hits")]
-        public ushort LastHits { get; set; }
+        public uint LastHits { get; set; }
 
-        public ushort Denies { get; set; }
+        public uint Denies { get; set; }
 
         [JsonProperty("Xp_per_min")]
-        public ushort XPM { get; set; }
+        public uint XPM { get; set; }
 
-        public byte LevelAtEnd { get; set; }
+        public uint Level { get; set; }
 
         [JsonProperty("hero_damage")]
         public uint Damage { get; set; }
@@ -68,19 +68,19 @@ namespace SteamApi.Models.Dota
         public uint ScaledHealing { get; set; }
 
         [JsonProperty("gold_per_min")]
-        public ushort GPM { get; set; }
+        public uint GPM { get; set; }
 
         [JsonProperty("gold_spent")]
         public uint GoldSpent { get; set; }
 
         public uint GoldInPocket { get; set; }
-        public uint TotalGoldGained => this.GoldInPocket + this.GoldSpent;
+        public uint TotalGoldGained => GoldInPocket + GoldSpent;
 
         [JsonProperty("persona")]
         public string PersonaName { get; set; }
 
         [JsonProperty("ability_upgrades")]
-        public List<AbilityUpgradeEvent> AbilityUpgrades { get; set; }
+        public IReadOnlyCollection<AbilityUpgradeEvent> AbilityUpgrades { get; set; }
 
         [JsonProperty("additional_units")]
         public IReadOnlyCollection<HeroCompanion> Companions { get; set; }

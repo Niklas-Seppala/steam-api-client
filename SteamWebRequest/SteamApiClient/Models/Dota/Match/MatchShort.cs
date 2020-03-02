@@ -18,7 +18,7 @@ namespace SteamApi.Models.Dota
         public DateTime StartTime { get; set; }
 
         [JsonProperty("lobby_type")]
-        public ushort LobbyType { get; set; }
+        public uint LobbyType { get; set; }
 
         [JsonProperty("radiant_team_id")]
         public uint RadiantTeamId { get; set; }

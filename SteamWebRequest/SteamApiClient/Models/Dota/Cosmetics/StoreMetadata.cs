@@ -5,9 +5,9 @@ namespace SteamApi.Models.Dota
 {
     public class StoreMetadata
     {
-        public IReadOnlyCollection<StoreMetaDataTab> Tabs { get; set; }
+        public IList<StoreMetaDataTab> Tabs { get; set; }
 
-        public IReadOnlyCollection<StoreMetaDataFilter> Filters { get; set; }
+        public IList<StoreMetaDataFilter> Filters { get; set; }
 
         public StoreMetaDataSorting Sorting { get; set; }
 

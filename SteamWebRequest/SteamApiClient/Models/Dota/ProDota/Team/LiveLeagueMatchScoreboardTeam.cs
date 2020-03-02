@@ -5,7 +5,7 @@ namespace SteamApi.Models.Dota
 {
     public class LiveLeagueMatchScoreboardTeam
     {
-        public ushort Score { get; set; }
+        public uint Score { get; set; }
 
         [JsonProperty("tower_state")]
         public uint TowerState { get; set; }

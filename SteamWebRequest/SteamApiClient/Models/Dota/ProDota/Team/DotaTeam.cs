@@ -41,10 +41,10 @@ namespace SteamApi.Models.Dota
         public int Wins { get; set; }
 
         [JsonProperty("games_played_total")]
-        public int GamesPlayedTotal { get; set; }
+        public uint GamesPlayedTotal { get; set; }
 
         [JsonProperty("games_played_matchmaking")]
-        public int GamesPlayedMatchmaking { get; set; }
+        public uint GamesPlayedMatchmaking { get; set; }
 
         [JsonProperty("registered_member_account_ids")]
         public IReadOnlyCollection<int> RegisteredAccountIds { get; set; }
@@ -54,7 +54,7 @@ namespace SteamApi.Models.Dota
         [JsonProperty("audit_entries")]
         public IReadOnlyCollection<IReadOnlyDictionary<string, ulong>> AuditEntries { get; set; }
 
-        public int Region { get; set; }
+        public uint Region { get; set; }
 
         [JsonProperty("url_logo")]
         public string UrlLogo { get; set; }

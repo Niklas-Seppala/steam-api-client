@@ -5,9 +5,9 @@
         public string SteamId { get; set; }
         public bool CommunityBanned { get; set; }
         public bool VACBanned { get; set; }
-        public ushort NumberOfVACBans { get; set; }
-        public ushort DaysSinceLastBan { get; set; }
-        public ushort NumberOfGameBans { get; set; }
+        public uint NumberOfVACBans { get; set; }
+        public uint DaysSinceLastBan { get; set; }
+        public uint NumberOfGameBans { get; set; }
         public string EconomyBan { get; set; }
     }
 }

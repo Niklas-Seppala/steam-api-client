@@ -20,7 +20,7 @@ namespace SteamApi.Models.Dota
         public uint LeagueId { get; set; }
 
         [JsonProperty("league_node_id")]
-        public ushort LeagueNodeId { get; set; }
+        public uint LeagueNodeId { get; set; }
 
         [JsonProperty("game_state")]
         public byte GameState { get; set; }

@@ -7,7 +7,7 @@ namespace SteamApi.Models
     public partial class Friend
     {
         [JsonProperty("steamid")]
-        public string Id64 { get; set; }
+        public ulong Id64 { get; set; }
 
         [JsonProperty("friend_since")]
         [JsonConverter(typeof(UnixDateTimeConverter))]

@@ -20,20 +20,20 @@ namespace SteamApi.Models.Dota
         public ulong LobbyId { get; set; }
 
         [JsonProperty("league_id")]
-        public long LeagueId { get; set; }
+        public ulong LeagueId { get; set; }
 
         [JsonProperty("lobby_type")]
-        public byte LobbyType { get; set; }
+        public uint LobbyType { get; set; }
 
         [JsonProperty("game_time")]
         [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan GameTime { get; set; }
 
         [JsonProperty("game_mode")]
-        public long GameMode { get; set; }
+        public uint GameMode { get; set; }
 
         [JsonProperty("average_mmr")]
-        public ushort AverageMMR { get; set; }
+        public uint AverageMMR { get; set; }
 
         [JsonProperty("match_id")]
         public ulong MatchId { get; set; }
@@ -62,18 +62,16 @@ namespace SteamApi.Models.Dota
         [JsonProperty("sort_score")]
         public uint SortScore { get; set; }
 
-        [JsonProperty("last_update_time")]
-        [JsonConverter(typeof(UnixDateTimeConverter))]
         public DateTime LastUpdateTime { get; set; }
 
         [JsonProperty("radiant_lead")]
         public int RadiantLead { get; set; }
 
         [JsonProperty("radiant_score")]
-        public short RadiantScore { get; set; }
+        public uint RadiantScore { get; set; }
 
         [JsonProperty("dire_score")]
-        public short DireScore { get; set; }
+        public uint DireScore { get; set; }
 
         [JsonProperty("players")]
         public IReadOnlyCollection<PlayerShort> Players { get; set; }
@@ -81,7 +79,7 @@ namespace SteamApi.Models.Dota
         [JsonProperty("building_state")]
         public uint BuildingState { get; set; }
 
-        public ushort Delay { get; set; }
+        public uint Delay { get; set; }
         public uint Spectators { get; set; }
     }
 }

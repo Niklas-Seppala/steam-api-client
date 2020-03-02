@@ -7,11 +7,14 @@ namespace SteamApi.Models
 
     public sealed class SteamAccount
     {
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime TimeCreated { get; set; }
+        //[JsonConverter(typeof(UnixDateTimeConverter))]
+        //public DateTime? TimeCreated { get; set; }
+        public ulong TimeCreated { get; set; }
 
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime LastLogOff { get; set; }
+        //[JsonConverter(typeof(UnixDateTimeConverter))]
+        //public DateTime? LastLogOff { get; set; }
+
+        public ulong LastLogOff { get; set; }
 
         [JsonProperty("steamid")]
         public string Id { get; set; }
@@ -26,12 +29,12 @@ namespace SteamApi.Models
         public string AvatarFullURL { get; set; }
 
         public string ProfileURL { get; set; }
-        public byte CommunityVisibilityState { get; set; }
-        public byte ProfileState { get; set; }
+        public uint CommunityVisibilityState { get; set; }
+        public uint ProfileState { get; set; }
         public string PersonaName { get; set; }
-        public byte PersonaState { get; set; }
+        public uint PersonaState { get; set; }
         public string LocCountryCode { get; set; }
         public string LocStateCode { get; set; }
-        public int LocCityId { get; set; }
+        public uint LocCityId { get; set; }
     }
 }

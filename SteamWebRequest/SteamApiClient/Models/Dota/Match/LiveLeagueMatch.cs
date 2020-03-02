@@ -18,19 +18,19 @@ namespace SteamApi.Models.Dota
         public uint LeagueId { get; set; }
 
         [JsonProperty("league_node_id")]
-        public ushort LeagueNodeId { get; set; }
+        public uint LeagueNodeId { get; set; }
 
         [JsonProperty("steam_delay_s")]
-        public ushort StreamDelay { get; set; }
+        public uint StreamDelay { get; set; }
 
         [JsonProperty("radiant_series_wins")]
-        public byte RadiantSeriesWins { get; set; }
+        public uint RadiantSeriesWins { get; set; }
 
         [JsonProperty("dire_series_wins")]
-        public byte DireSeriesWins { get; set; }
+        public uint DireSeriesWins { get; set; }
 
         [JsonProperty("series_type")]
-        public byte SeriesType { get; set; }
+        public uint SeriesType { get; set; }
 
         [JsonProperty("radiant_team")]
         public LiveLeagueMatchTeam RadiantTeam { get; set; }

@@ -16,7 +16,7 @@ namespace SteamApi.Models
         public DateTime Date { get; set; }
 
         [JsonProperty("feed_type")]
-        public byte FeedType { get; set; }
+        public uint FeedType { get; set; }
 
         public string Title { get; set; }
         public string Url { get; set; }

@@ -6,6 +6,6 @@ namespace SteamApi.Models.Dota
     public class RealTimeMatchGrapData
     {
         [JsonProperty("graph_gold")]
-        public IReadOnlyCollection<short> GoldGraph { get; set; }
+        public IReadOnlyCollection<int> GoldGraph { get; set; }
     }
 }

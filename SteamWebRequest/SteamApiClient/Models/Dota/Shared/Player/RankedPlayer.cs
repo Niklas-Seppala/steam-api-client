@@ -14,7 +14,7 @@ namespace SteamApi.Models.Dota
 
         public string Country { get; set; }
 
-        public ushort Rank { get; set; }
+        public uint Rank { get; set; }
 
         public string Name { get; set; }
     }

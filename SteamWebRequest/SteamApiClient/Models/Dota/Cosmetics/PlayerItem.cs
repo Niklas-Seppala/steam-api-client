@@ -10,18 +10,18 @@ namespace SteamApi.Models.Dota
 
         public ulong Id { get; set; }
         public ulong DefIndex { get; set; }
-        public ushort Level { get; set; }
-        public byte Quality { get; set; }
+        public uint Level { get; set; }
+        public uint Quality { get; set; }
         public ulong Inventory { get; set; }
-        public ushort Quantity { get; set; }
+        public uint Quantity { get; set; }
     }
 
     public class PlayerInventory
     {
-        public byte Status { get; set; }
+        public uint Status { get; set; }
 
         [JsonProperty("num_backpack_slots")]
-        public ushort NumBackpackSlots { get; set; }
+        public uint NumBackpackSlots { get; set; }
 
         public IReadOnlyCollection<PlayerItem> Items { get; set; }
     }

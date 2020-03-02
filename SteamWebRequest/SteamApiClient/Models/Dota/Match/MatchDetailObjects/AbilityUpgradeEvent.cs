@@ -9,6 +9,6 @@ namespace SteamApi.Models.Dota
         public TimeSpan Time { get; set; }
 
         public uint Ability { get; set; }
-        public byte Level { get; set; }
+        public uint Level { get; set; }
     }
 }
