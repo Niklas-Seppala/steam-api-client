@@ -21,7 +21,7 @@ namespace Client
         {
             string setUpContent = File.ReadAllText(_setupFile);
             _setup = JsonSerializer.Deserialize<Setup>(setUpContent);
-            ApiClient.SetDeveloperKey(_setup.DeveloperKey);
+            ApiClient.SetApiKey(_setup.DeveloperKey);
         }
 
         public void Dispose()

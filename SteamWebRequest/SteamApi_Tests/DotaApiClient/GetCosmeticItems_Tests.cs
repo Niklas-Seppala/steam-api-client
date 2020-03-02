@@ -20,7 +20,7 @@ namespace Client
                 Assert.NotEmpty(rarity.LocalizedName);
                 Assert.NotEmpty(rarity.Name);
                 Assert.NotEmpty(rarity.Color);
-                Assert.NotEqual(0, rarity.Id);
+                Assert.NotEqual((uint)0, rarity.Id);
             });
         }
 
@@ -168,7 +168,7 @@ namespace Client
             var items = Client.GetPlayerItemsAsync(76561198059119066)
                 .Result;
             SleepAfterApiCall();
-            Assert.Equal(15, items.Status);
+            Assert.Equal((uint)15, items.Status);
         }
 
         [Fact]

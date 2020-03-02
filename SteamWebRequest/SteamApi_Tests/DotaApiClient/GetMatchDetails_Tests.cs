@@ -21,5 +21,20 @@ namespace Client
 
             Assert.Equal(matchId, details.MatchId.ToString());
         }
+
+        [Fact]
+        public void GetRealTimeMatchStats_LiveGamesAvailable_RealTimeMatchStats()
+        {
+            var result = Client.GetTopLiveGamesAsync().Result;
+            SleepAfterApiCall();
+            foreach (var liveGame in result)
+            {
+                var matchStats = Client.GetRealtimeMatchStatsAsync(liveGame.ServerSteamId.ToString())
+                    .Result;
+                SleepAfterApiCall();
+
+                Assert.NotNull(matchStats);
+            }
+        }
     }
 }

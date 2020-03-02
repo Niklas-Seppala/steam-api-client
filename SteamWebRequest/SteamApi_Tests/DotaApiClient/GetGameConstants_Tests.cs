@@ -17,7 +17,7 @@ namespace Client
             {
                 Assert.NotEmpty(item.LocalizedName);
                 Assert.NotEmpty(item.Name);
-                Assert.NotEqual(0, item.Id);
+                Assert.NotEqual((uint)0, item.Id);
             });
         }
 
@@ -33,7 +33,7 @@ namespace Client
             {
                 Assert.NotEmpty(hero.LocalizedName);
                 Assert.NotEmpty(hero.Name);
-                Assert.NotEqual(0, hero.Id);
+                Assert.NotEqual((uint)0, hero.Id);
             });
         }
     }

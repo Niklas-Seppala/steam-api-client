@@ -19,7 +19,7 @@ namespace Utility
         [Fact]
         public void SteamIdTo64_NegativeIdInput_ThrowsArgumenOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 SteamIdConverter.SteamIdTo64("-46773221");
             });
@@ -57,7 +57,7 @@ namespace Utility
         [Fact]
         public void SteamIdTo32_NegativeIdInput_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 SteamIdConverter.SteamIdTo32("-76561198107435620");
             });
@@ -66,7 +66,7 @@ namespace Utility
         [Fact]
         public void SteamIdTo32_IdSmallerThanDifference_ThrowsArgumenOutOfRangeException()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<OverflowException>(() =>
             {
                 SteamIdConverter.SteamIdTo32("76561197960265726");
             });

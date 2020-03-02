@@ -109,5 +109,14 @@ namespace Client
 
             Assert.NotEmpty(leagueGames);
         }
+
+        [Fact]
+        public void GetLeagueListing_None_ReturnsLeagueListing()
+        {
+            var leaguelist = Client.GetLeagueListingAsync()
+                .Result;
+
+            Assert.NotEmpty(leaguelist);
+        }
     }
 }
