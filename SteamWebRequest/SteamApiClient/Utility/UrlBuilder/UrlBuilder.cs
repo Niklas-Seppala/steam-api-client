@@ -99,9 +99,9 @@ namespace SteamApi
             return url;
         }
 
-        public void Clear()
+        public void Clear(bool clearSchema = false)
         {
-            Components.Clear();
+            Components.Clear(clearSchema);
         }
 
         public override string ToString()

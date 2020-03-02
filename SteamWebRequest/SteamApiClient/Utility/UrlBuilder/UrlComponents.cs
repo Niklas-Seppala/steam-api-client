@@ -44,15 +44,15 @@ namespace SteamApi
             return result;
         }
 
-        public void Clear()
+        public void Clear(bool clearSchema)
         {
+            if (clearSchema)
+                Schema = "";
             Port = -1;
             Path = "";
             Host = "";
             Fragment = "";
             _querystring.Clear();
-            _helperStrBuilder.Clear();
-            _strBuilder.Clear();
         }
 
         public void CreatePath(string[] path)
