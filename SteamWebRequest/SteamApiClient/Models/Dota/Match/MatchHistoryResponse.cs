@@ -7,12 +7,10 @@ namespace SteamApi.Models.Dota
     {
         [JsonProperty("total_results")]
         public uint TotalCount { get; set; }
-
         [JsonProperty("results_remaining")]
         public uint Remaining { get; set; }
-
         public byte Status { get; set; }
         public string StatusDetail { get; set; }
-        public IReadOnlyCollection<MatchShort> Matches { get; set; }
+        public IReadOnlyList<MatchShort> Matches { get; set; }
     }
 }

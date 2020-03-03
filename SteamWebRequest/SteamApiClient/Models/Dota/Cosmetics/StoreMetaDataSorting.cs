@@ -5,9 +5,8 @@ namespace SteamApi.Models.Dota
 {
     public class StoreMetaDataSorting
     {
-        public IReadOnlyCollection<StoreMetaDataSorter> Sorters { get; set; }
-
+        public IReadOnlyList<StoreMetaDataSorter> Sorters { get; set; }
         [JsonProperty("sorting_prefabs")]
-        public IReadOnlyCollection<StoreMetaDataSortingPrefab> SortingPrefabs { get; set; }
+        public IReadOnlyList<StoreMetaDataSortingPrefab> SortingPrefabs { get; set; }
     }
 }

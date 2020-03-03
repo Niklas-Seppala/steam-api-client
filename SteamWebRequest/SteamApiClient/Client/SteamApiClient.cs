@@ -6,18 +6,37 @@ using CToken = System.Threading.CancellationToken;
 
 namespace SteamApi
 {
+    /// <summary>
+    /// Special HttpClient for making requests for Valve's Steam
+    /// APIs. Derived from ApiClient class.
+    /// </summary>
     public class SteamApiClient : ApiClient
     {
+        /// <summary>
+        /// SteamApiClient's URL to send test request.
+        /// </summary>
+        /// <see cref="ApiClient.TestUrl"/>
+        protected override string TestUrl => $"https://api.steampowered.com/IStoreService/GetAppList/v1/?key={ApiKey}";
+
+        // Constant strings for building API URL methods.
+        #region URL constants
         private const string HOST = "api.steampowered.com";
         private const string ISTEAM_USER = "ISteamUser";
         private const string ISTORE_SERVICE = "IStoreService";
         private const string ISTEAM_WEB_API = "ISteamWebAPIUtil";
         private const string ISTEAM_NEWS = "ISteamNews";
+        #endregion
 
-        protected override string TestUrl => $"https://api.steampowered.com/IStoreService/GetAppList/v1/?key={ApiKey}";
-
-        public SteamApiClient(bool testConnection = false, string schema = "https")
-            : base(testConnection, schema) { }
+        /// <summary>
+        /// Instantiates SteamApiClient object.
+        /// </summary>
+        /// <param name="testConnection">default is false</param>
+        /// <param name="schema">default is "https"</param>
+        /// <see cref="ApiClient(bool, string)"/>
+        public SteamApiClient(bool testConnection = false, string schema = "https") : base(testConnection, schema) 
+        {
+            // Initialization happens in parent class's constructor.
+        }
 
         #region [Get Api Info]
         /// <summary>
@@ -37,20 +56,21 @@ namespace SteamApi
         /// </summary>
         /// <param name="token">cancellation token</param>
         /// <returns>ReadOnlyCollection of ApiInterface objects</returns>
-        public async Task<IReadOnlyCollection<ApiInterface>> GetApiListAsync(CToken cToken = default)
+        public async Task<IReadOnlyList<ApiInterface>> GetApiListAsync(CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_WEB_API, "GetSupportedAPIList", "v1");
             return (await GetModelAsync<ApiListResponse>(cToken: cToken).ConfigureAwait(false)).
                 Apilist.Interfaces;
         }
         #endregion
+
         #region [Get Steam Products]
         /// <summary>
         /// Sends GET request for any kinds of products in Steam store.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
         /// <returns>ReadOnlyCollection of SteamProduct objects</returns>
-        public async Task<IReadOnlyCollection<SteamProduct>> GetSteamProductsAsync(IncludeProducts products,
+        public async Task<IReadOnlyList<SteamProduct>> GetSteamProductsAsync(IncludeProducts products,
             ProductCallSize callSize = ProductCallSize.Default, CToken cToken = default)
         {
             if (products.Equals(IncludeProducts.None))
@@ -59,7 +79,7 @@ namespace SteamApi
             }
             else
             {
-                bool callAll = this.CallSizeToString(callSize, out string size);
+                bool callAll = CallSizeToString(callSize, out string size);
                 CreateProductQueryString(products, size);
                 if (callAll)
                 {
@@ -114,9 +134,10 @@ namespace SteamApi
         }
 
         /// <summary>
-        /// 
+        /// Sends http GET request to http://api.steampowered.com/
+        /// for steam application news.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>AppNewsCollection object</returns>
         public async Task<AppNewsCollection> GetAppNewsAsync(
              uint appId, ushort count = 20, long endDateTimestamp = -1, CToken cToken = default, params string[] tags)
         {
@@ -125,43 +146,52 @@ namespace SteamApi
                 .AddQuery("count", count.ToString())
                 .AddQuery("enddate", ValidateTimestamp(endDateTimestamp).ToString())
                 .AddQuery("tags", string.Join(",", tags));
+
             return (await GetModelAsync<AppNewsResponse>(cToken: cToken)
                 .ConfigureAwait(false)).AppNews;
         }
         #endregion
+
         #region [Steam Users]
         /// <summary>
-        /// 
+        /// Sends http GET request to http://api.steampowered.com/ for 
+        /// Steam accounts Ban history.
         /// </summary>
-        /// <returns></returns>
-        public async Task<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>> GetSteamAccountBansAsync(
+        /// <returns>Dictionary of Account bans</returns>
+        public async Task<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>> GetSteamAccountsBansAsync(
             CToken cToken = default, params string[] steamId64s)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerBans", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamids", string.Join(",", steamId64s));
+
             return await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(cToken: cToken)
                 .ConfigureAwait(false);
         }
 
         /// <summary>
         /// Sends GET request to http://api.steampowered.com/
-        /// for steam accounts.
+        /// for steam accounts. Request can be cancelled by providing cancellation
+        /// token.
         /// </summary>
-        public async Task<IReadOnlyCollection<SteamAccount>> GetSteamAccountsAsync(CToken cToken = default,
+        /// <returns>List of SteamAccounts</returns>
+        public async Task<IReadOnlyList<SteamAccount>> GetSteamAccountsAsync(CToken cToken = default,
             params string[] id64)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", "v2")
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamids", string.Join(",", id64));
+
             return (await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false)).Content.Accounts;
         }
 
         /// <summary>
         /// Sends GET request to http://api.steampowered.com/
-        /// for steam account.
+        /// for steam profile information. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
+        /// <returns>Steam account object</returns>
         public async Task<SteamAccount> GetSteamAccountAsync(string id64, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", "v2")
@@ -170,36 +200,42 @@ namespace SteamApi
 
             var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false);
+
             if (response.Content.Accounts.Count > 0)
                 return response.Content.Accounts.ElementAt(0);
-            else return null;
+            else
+                return null;
         }
 
         /// <summary>
         /// Sends GET request for steam user's friendslist. Request
-        /// can be cancelled providing CancellationToken.
+        /// can be cancelled providing cancellation Token.
         /// </summary>
-        public async Task<IReadOnlyCollection<Friend>> GetFriendslistAsync(string id64, CToken cToken = default)
+        /// <returns>List of Friend objects</returns>
+        public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(string id64, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetFriendList", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamid", id64);
+
             return (await GetModelAsync<FriendslistResponse>(cToken: cToken).ConfigureAwait(false)).Content.Friends;
         }
 
         /// <summary>
         /// Sends GET request for steam user's friendslist. Request
-        /// can be cancelled providing CancellationToken.
+        /// can be cancelled providing cancellation Token.
         /// </summary>
-        /// <returns>Friendslist object.</returns>
-        public async Task<IReadOnlyCollection<Friend>> GetFriendslistAsync(long id64, CToken cToken = default)
+        /// <returns>List of Friend objects</returns>
+        public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(long id64, CToken cToken = default)
         {
             return await GetFriendslistAsync(id64.ToString(), cToken);
         }
 
         /// <summary>
-        /// 
+        /// Sends GET request for steam user's profile picture. Request can
+        /// be cancelled by providing cancellation token
         /// </summary>
+        /// <returns>Steam profile picture as bytes</returns>
         public async Task<byte[]> GetProfilePicBytesAsync(string url, CToken cToken = default)
         {
             return await GetBytesAsync(url, cToken).ConfigureAwait(false);

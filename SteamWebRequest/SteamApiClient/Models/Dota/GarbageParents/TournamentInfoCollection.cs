@@ -4,6 +4,6 @@ namespace SteamApi.Models.Dota
 {
     internal class TournamentInfoCollection
     {
-        public IReadOnlyCollection<TournamentInfo> Infos { get; set; }
+        public IReadOnlyList<TournamentInfo> Infos { get; set; }
     }
 }

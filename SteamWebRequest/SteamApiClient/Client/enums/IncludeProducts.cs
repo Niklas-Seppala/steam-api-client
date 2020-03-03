@@ -17,9 +17,7 @@ namespace SteamApi
         Videos = 16,
 
         Media = Games | DLC | Videos,
-
         GameProducs = Games | DLC,
-
         All = Games | DLC | Software | Harware | Videos
     }
 }

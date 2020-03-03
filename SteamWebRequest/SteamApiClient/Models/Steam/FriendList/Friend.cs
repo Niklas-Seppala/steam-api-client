@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
 namespace SteamApi.Models
 {
@@ -8,9 +6,7 @@ namespace SteamApi.Models
     {
         [JsonProperty("steamid")]
         public ulong Id64 { get; set; }
-
         [JsonProperty("friend_since")]
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime FriendSince { get; set; }
+        public ulong FriendSince { get; set; }
     }
 }

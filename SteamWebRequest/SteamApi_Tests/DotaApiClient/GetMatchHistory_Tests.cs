@@ -37,7 +37,7 @@ namespace Client
 
             foreach (var match in response.Matches)
             {
-                Assert.Contains(match.Players, (player) => player.Id == playerId);
+                Assert.Contains(match.Players, (player) => player.Id32 == playerId);
             }
         }
 

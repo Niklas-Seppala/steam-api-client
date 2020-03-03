@@ -4,7 +4,7 @@ namespace SteamApi.Models.Dota
 {
     public class StoreMetaDataDropdownData
     {
-        public IReadOnlyCollection<StoreMetaDataDropdown> Dropdowns { get; set; }
-        public IReadOnlyCollection<StoreMetaDataDropdownPrefab> Prefabs { get; set; }
+        public IReadOnlyList<StoreMetaDataDropdown> Dropdowns { get; set; }
+        public IReadOnlyList<StoreMetaDataDropdownPrefab> Prefabs { get; set; }
     }
 }

@@ -1,109 +1,56 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
     public sealed class MatchDetails
     {
-        [JsonConverter(typeof(TimeSpanConverter))]
-        public TimeSpan Duration { get; set; }
-
-        [JsonConverter(typeof(TimeSpanConverter))]
+        public uint Duration { get; set; }
         [JsonProperty("pre_game_duration")]
-        public TimeSpan PreGameDuration { get; set; }
-
-        [JsonConverter(typeof(UnixDateTimeConverter))]
+        public uint PreGameDuration { get; set; }
         [JsonProperty("start_time")]
-        public DateTime StartTime { get; set; }
-
-        [JsonConverter(typeof(TimeSpanConverter))]
+        public ulong StartTime { get; set; }
         [JsonProperty("first_blood_time")]
-        public TimeSpan FirstBloodTime { get; set; }
-
+        public uint FirstBloodTime { get; set; }
         [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("tower_status_radiant")]
         public TowerStatus TowerStatusRadiant { get; set; }
-
         [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("tower_status_dire")]
         public TowerStatus TowerStatusDire { get; set; }
-
         [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("barracks_status_radiant")]
         public BarracksStatus BarracksStatusRadiant { get; set; }
-
         [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("barracks_status_dire")]
         public BarracksStatus BarracksStatusDire { get; set; }
-
         [JsonProperty("match_id")]
         public ulong MatchId { get; set; }
-
         [JsonProperty("match_seq_num")]
         public ulong MatchSequenceNum { get; set; }
-
         [JsonProperty("radiant_win")]
         public bool RadiantWin { get; set; }
-        public bool DireWin => !this.RadiantWin;
-
+        public bool DireWin => !RadiantWin;
         public ulong Cluster { get; set; }
-
         [JsonProperty("positive_votes")]
         public uint PositiveVotes { get; set; }
-
         [JsonProperty("negative_votes")]
         public uint NegativeVotes { get; set; }
-
         [JsonProperty("human_players")]
         public byte HumanPlayers { get; set; }
-
         [JsonProperty("lobby_type")]
         public byte LobbyType { get; set; }
-
         [JsonProperty("leagueid")]
         public uint LeagueId { get; set; }
-
         [JsonProperty("game_mode")]
-        public byte GameMode { get; set; }
-
+        public uint GameMode { get; set; }
         [JsonProperty("radiant_score")]
         public uint RadiantScore { get; set; }
-
-        public byte Engine { get; set; }
-
+        public uint Engine { get; set; }
         [JsonProperty("dire_score")]
         public uint DireScore { get; set; }
-
         [JsonProperty("picks_bans")]
-        public IReadOnlyCollection<Draft> DraftPhase { get; set; }
-
-        public List<Player> Players { get; set; }
-        public string[] PlayerIds32
-        {
-            get
-            {
-                string[] ids = new string[Players.Count];
-                for (int i = 0; i < Players.Count; i++)
-                {
-                    ids[i] = Players[i].Id32.ToString();
-                }
-                return ids;
-            }
-        }
-
-        public string[] PlayerIds64
-        {
-            get
-            {
-                string[] ids = new string[Players.Count];
-                for (int i = 0; i < Players.Count; i++)
-                {
-                    ids[i] = Players[i].Id64.ToString();
-                }
-                return ids;
-            }
-        }
+        public IReadOnlyList<Draft> DraftPhase { get; set; }
+        public IReadOnlyList<Player> Players { get; set; }
     }
 }

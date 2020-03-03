@@ -4,6 +4,6 @@ namespace SteamApi.Models
 {
     internal sealed class FriendslistContent
     {
-        public IReadOnlyCollection<Friend> Friends { get; set; }
+        public IReadOnlyList<Friend> Friends { get; set; }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
 namespace SteamApi.Models
 {
@@ -11,9 +9,9 @@ namespace SteamApi.Models
 
         public string Name { get; set; }
 
-        [JsonConverter(typeof(UnixDateTimeConverter))]
         [JsonProperty("last_modified")]
-        public DateTime LastModified { get; set; }
+        public ulong LastModified { get; set; }
+
 
         [JsonProperty("price_change_number")]
         public ulong PriceChangeNumber { get; set; }

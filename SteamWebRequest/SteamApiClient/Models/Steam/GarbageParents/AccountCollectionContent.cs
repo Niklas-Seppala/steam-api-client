@@ -6,6 +6,6 @@ namespace SteamApi.Models
     internal sealed class AccountCollectionContent
     {
         [JsonProperty("players")]
-        public IReadOnlyCollection<SteamAccount> Accounts { get; set; }
+        public IReadOnlyList<SteamAccount> Accounts { get; set; }
     }
 }

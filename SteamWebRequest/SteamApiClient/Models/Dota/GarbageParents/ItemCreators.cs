@@ -4,6 +4,6 @@ namespace SteamApi.Models.Dota
 {
     internal class ItemCreators
     {
-        public IReadOnlyCollection<uint> Contributors { get; set; }
+        public IReadOnlyList<uint> Contributors { get; set; }
     }
 }

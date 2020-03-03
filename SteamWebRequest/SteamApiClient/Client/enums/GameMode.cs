@@ -1,5 +1,9 @@
 ﻿namespace SteamApi
 {
+    /// <summary>
+    /// Dota 2 game modes according to old
+    /// dota2 API documentation. (Not to be completely trusted).
+    /// </summary>
     public enum GameMode
     {
         None = 0,

@@ -7,10 +7,8 @@ namespace SteamApi.Models.Dota
 {
     public class RecentDcpEvents
     {
-        public IReadOnlyCollection<Tournament> Tournaments { get; set; }
-
+        public IReadOnlyList<Tournament> Tournaments { get; set; }
         [JsonProperty("wager_timestamp")]
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime WagerTimeStamp { get; set; }
+        public ulong WagerTimestamp { get; set; }
     }
 }

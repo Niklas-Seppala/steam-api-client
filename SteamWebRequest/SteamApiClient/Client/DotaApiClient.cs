@@ -8,9 +8,19 @@ using CToken = System.Threading.CancellationToken;
 
 namespace SteamApi
 {
+    /// <summary>
+    /// Special HttpClient for making requests for Valve's Dota 2
+    /// APIs. Derived from ApiClient class.
+    /// </summary>
     public class DotaApiClient : ApiClient
     {
+        /// <summary>
+        /// DotaApiClient's URL to send test request.
+        /// </summary>
+        /// <see cref="ApiClient.TestUrl"/>
         protected override string TestUrl => $"https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/v1?key={ApiKey}";
+
+        // Constant strings for building API URL methods.
         #region [Url Constants]
         private const string URL_ITEM_IMG = "http://media.steampowered.com/apps/dota2/images/items/";
         private const string URL_HERO_IMG = "http://media.steampowered.com/apps/dota2/images/heroes/";
@@ -32,8 +42,16 @@ namespace SteamApi
         private const string IECON_ITEMS = "IEconItems_570";
         #endregion
 
-        public DotaApiClient(bool testConnection = false, string schema = "https")
-            : base(testConnection, schema) { }
+        /// <summary>
+        /// Instantiates DotaApiClient object.
+        /// </summary>
+        /// <param name="testConnection">default is false</param>
+        /// <param name="schema">default is "https"</param>
+        /// <see cref="ApiClient(bool, string)"/>
+        public DotaApiClient(bool testConnection = false, string schema = "https") : base(testConnection, schema)
+        {
+            // Initialization happens in parent class's constructor.
+        }
 
         #region [Matches]
         /// <summary>
@@ -42,7 +60,7 @@ namespace SteamApi
         /// Returns list of ! MatchDetails ! unlike other match history methods.
         /// Request can be cancelled providing cancellation token.
         /// </summary>
-        public async Task<IList<MatchDetails>> GetMatchHistoryBySequenceNumAsync(
+        public async Task<IReadOnlyList<MatchDetails>> GetMatchHistoryBySequenceNumAsync(
             ulong seqNum, string apiInterface = IDOTA2_MATCH, uint count = 50, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -74,6 +92,7 @@ namespace SteamApi
                 .AddQuery("league_id", leagueId.ToString())
                 .AddQuery("start_at_match_id", startAtId.ToString())
                 .AddQuery("skill", skillLevel.ToString());
+
             return (await GetModelAsync<MatchHistoryContainer>(cToken: cToken).ConfigureAwait(false)).History;
         }
 
@@ -96,7 +115,7 @@ namespace SteamApi
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="partner">partner id</param>
-        public async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveGamesAsync(string apiInterface = IDOTA2_MATCH,
+        public async Task<IReadOnlyList<LiveMatch>> GetTopLiveGamesAsync(string apiInterface = IDOTA2_MATCH,
             int partner = 1, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -106,6 +125,7 @@ namespace SteamApi
             return (await GetModelAsync<TopLiveGames>(cToken: cToken).ConfigureAwait(false)).Games;
         }
         #endregion
+
         #region [Game Constant Data]
         /// <summary>
         /// Sends GET request for dota heroinfo. Request
@@ -131,7 +151,7 @@ namespace SteamApi
         /// Sends GET request for dota 2 heroes. Request
         /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<Hero>> GetHeroesAsync(string lang = "en",
+        public async Task<IReadOnlyList<Hero>> GetHeroesAsync(string lang = "en",
             string apiInterface = IECONDOTA, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -154,13 +174,14 @@ namespace SteamApi
         /// Sends GET request to api.steampowered.com for dota 2 items. Request
         /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<Item>> GetGameItemsAsync(string lang = "en",
+        public async Task<IReadOnlyList<Item>> GetGameItemsAsync(string lang = "en",
             string apiInterface = IECONDOTA, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
                 .SetPath(apiInterface, "GetGameItems", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("language", lang);
+
             return (await GetModelAsync<GameItems>(cToken: cToken).ConfigureAwait(false)).Content.Items;
         }
 
@@ -173,6 +194,7 @@ namespace SteamApi
             return (await GetModelAsync<Abilities>(URL_ABILITY_DATA, cToken).ConfigureAwait(false)).AbilityDict;
         }
         #endregion
+
         #region [Users]
         /// <summary>
         /// Sends GET request for unique user count. Request
@@ -220,13 +242,14 @@ namespace SteamApi
             return await GetModelAsync<DotaPlayerProfile>(cToken: cToken).ConfigureAwait(false);
         }
         #endregion
+
         #region [Cosmetic Items]
         /// <summary>
         /// Sends GET request to api.steampowered.com for players equiped
         /// items for specified hero. Default api interface is IEconItems_570.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<EquipedItem>> GetEquipedPlayerItemsAsync(ulong steamId64,
+        public async Task<IReadOnlyList<EquipedItem>> GetEquipedPlayerItemsAsync(ulong steamId64,
             ushort heroClassId, string apiInterface = IECON_ITEMS, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -234,8 +257,10 @@ namespace SteamApi
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamid", steamId64.ToString())
                 .AddQuery("class_id", heroClassId.ToString());
+
             var response = await GetModelAsync<IReadOnlyDictionary<string, EquipedCosmeticItems>>(cToken: cToken)
                 .ConfigureAwait(false);
+
             return response["result"].Items;
         }
 
@@ -251,7 +276,9 @@ namespace SteamApi
                 .SetPath(apiInterface, "GetPlayerItems", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamid", steamid64.ToString());
+
             var response = await GetModelAsync<IReadOnlyDictionary<string, PlayerInventory>>(cToken: cToken).ConfigureAwait(false);
+
             return response["result"];
         }
 
@@ -268,7 +295,9 @@ namespace SteamApi
                 .AddQuery("key", ApiKey)
                 .AddQuery("iconname", iconName)
                 .AddQuery("icontype", iconType.ToString());
+
             dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken).ConfigureAwait(false));
+
             return response.result.path;
         }
 
@@ -282,7 +311,9 @@ namespace SteamApi
             UrlBuilder.SetHost(HOST)
                 .SetPath(apiInterface, "GetSchemaURL", "v1")
                 .AddQuery("key", ApiKey);
+
             dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken).ConfigureAwait(false));
+
             return response.result.items_game_url;
         }
 
@@ -297,6 +328,7 @@ namespace SteamApi
                 .SetPath(apiInterface, "GetStoreMetaData", "v1")
                 .AddQuery("key", ApiKey);
             var response = await GetModelAsync<IReadOnlyDictionary<string, StoreMetadata>>(cToken: cToken).ConfigureAwait(false);
+
             return response["result"];
         }
 
@@ -306,13 +338,15 @@ namespace SteamApi
         /// by providing Cancellation token.
         /// </summary>
         /// <param name="itemDef">item id</param>
-        public async Task<IReadOnlyCollection<uint>> GetItemCreatorsAsync(uint itemDef, CToken cToken = default)
+        public async Task<IReadOnlyList<uint>> GetItemCreatorsAsync(uint itemDef, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
                 .SetPath(IECONDOTA, "GetItemCreators", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("itemdef", itemDef.ToString());
+
             var creators = await GetModelAsync<ItemCreators>(cToken: cToken).ConfigureAwait(false);
+
             return creators.Contributors;
         }
 
@@ -320,17 +354,20 @@ namespace SteamApi
         /// Sends GET request for Dota 2 cosmetic item rarities.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<DotaCosmeticRarity>> GetCosmeticRaritiesAsync(CToken cToken = default,
+        public async Task<IReadOnlyList<DotaCosmeticRarity>> GetCosmeticRaritiesAsync(CToken cToken = default,
             string apiInterface = IECONDOTA, string lang = "en")
         {
             UrlBuilder.SetHost(HOST)
                 .SetPath(apiInterface, "GetRarities", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("language", lang);
+
             var result = await GetModelAsync<DotaCosmeticRaritiesResult>(cToken: cToken).ConfigureAwait(false);
+
             return result.Result.Rarities;
         }
         #endregion
+
         #region [Get Tournament Data]
         /// <summary>
         /// Sends GET request to api.steampowered.com for players tournament
@@ -345,6 +382,7 @@ namespace SteamApi
                 .AddQuery("account_id", accountId32.ToString())
                 .AddQuery("league_id", leagueId32.ToString())
                 .AddQuery("hero_id", heroId.ToString());
+
             return (await GetModelAsync<TournamentPlayerStatsResponse>(cToken: cToken).ConfigureAwait(false)).Result;
         }
 
@@ -359,6 +397,7 @@ namespace SteamApi
                 .SetPath(IDOTA2_MATCH_STATS, "GetRealtimeStats", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("server_steam_id", serverId);
+
             return await GetModelAsync<RealtimeMatchStats>(cToken: cToken).ConfigureAwait(false);
         }
 
@@ -367,7 +406,7 @@ namespace SteamApi
         /// league games. Request can be cancelled by providing
         /// cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<LiveLeagueMatch>> GetLiveLeagueMatchAsync(ulong matchId64 = 0,
+        public async Task<IReadOnlyList<LiveLeagueMatch>> GetLiveLeagueMatchAsync(ulong matchId64 = 0,
             uint leagueId32 = 0, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -375,6 +414,7 @@ namespace SteamApi
                 .AddQuery("key", ApiKey)
                 .AddQuery("match_id", matchId64.ToString())
                 .AddQuery("league_id", leagueId32.ToString());
+
             return (await GetModelAsync<LiveLeagueMatchResponse>(cToken: cToken).ConfigureAwait(false)).Result.Games;
         }
 
@@ -382,11 +422,12 @@ namespace SteamApi
         /// Sends GET request to api.steampowered.com for leaguelistings.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<League>> GetLeagueListingAsync(CToken cToken = default)
+        public async Task<IReadOnlyList<League>> GetLeagueListingAsync(CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
                 .SetPath("IDOTA2Match_205790", "GetLeagueListing", "v1")
                 .AddQuery("key", ApiKey);
+
             return (await GetModelAsync<LeagueListingResponse>(cToken: cToken).ConfigureAwait(false)).Result.Leagues;
         }
 
@@ -401,6 +442,7 @@ namespace SteamApi
                 .SetPath(apiInterface, "GetTournamentPrizePool", "v1")
                 .AddQuery("key", ApiKey)
                 .AddQuery("leagueid", leagueId.ToString());
+
             return (await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyDictionary<string, uint>>>(cToken: cToken)
                 .ConfigureAwait(false))["result"];
         }
@@ -415,6 +457,7 @@ namespace SteamApi
             UrlBuilder.UrlFromString(URL_IDOTA2DPC + "GetLeagueNodeData/v001/")
                 .AddQuery("league_id", leagueId.ToString())
                 .AddQuery("node_id", nodeId.ToString());
+
             return await GetModelAsync<LeagueNode>(cToken: cToken).ConfigureAwait(false);
         }
 
@@ -424,7 +467,7 @@ namespace SteamApi
         /// current timestamp. Request may be narrowed down specifying max
         /// and min tiers. Request can be cancelled providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<TournamentInfo>> GetTournamentInfoAsync(long timestamp = -1,
+        public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(long timestamp = -1,
             byte maxTier = 5, byte minTier = 1, CToken cToken = default)
         {
             CreateUrlForTournamentInfo(ValidateTimestamp(timestamp), maxTier, minTier);
@@ -436,7 +479,7 @@ namespace SteamApi
         /// from provided date.Request may be narrowed down specifying max
         /// and min tiers. Request can be cancelled providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<TournamentInfo>> GetTournamentInfoAsync(DateTime datetime,
+        public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(DateTime datetime,
             byte maxTier = 5, byte minTier = 1, CToken cToken = default)
         {
             CreateUrlForTournamentInfo(GetUnixTimestampFromDate(datetime), maxTier, minTier);
@@ -452,7 +495,7 @@ namespace SteamApi
         {
             if (minTier > maxTier)
             {
-                throw new APIException("Minimum tier can't be larger than maximum tier");
+                throw new ArgumentException("Minimum tier can't be larger than maximum tier");
             }
             else
             {
@@ -493,10 +536,12 @@ namespace SteamApi
         {
             UrlBuilder.UrlFromString(URL_IDOTA2DPC + "/GetSingleTeamInfo/v001/")
                 .AddQuery("team_id", teamId);
+
             if (includeDCP)
             {
                 UrlBuilder.AddQuery("get_dpc_info", "1");
             }
+
             return await GetModelAsync<DotaTeam>(cToken: cToken).ConfigureAwait(false);
         }
 
@@ -505,7 +550,7 @@ namespace SteamApi
         /// id. Default request size is 100 teams. Request can be cancelled
         /// by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyCollection<DotaTeamInfo>> GetDotaTeamInfosByIdAsync(ulong startId = 1,
+        public async Task<IReadOnlyList<DotaTeamInfo>> GetDotaTeamInfosByIdAsync(ulong startId = 1,
             uint count = 100, string apiInterface = IDOTA2_MATCH, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)
@@ -513,29 +558,31 @@ namespace SteamApi
                 .AddQuery("key", ApiKey)
                 .AddQuery("start_at_team_id", startId.ToString())
                 .AddQuery("teams_requested", count.ToString());
+
             return (await GetModelAsync<DotaTeamInfosResponse>(cToken: cToken).ConfigureAwait(false)).Result.Teams;
         }
         #endregion
+
         #region [Images]
         /// <summary>
         /// Sends GET request for hero image.
         /// </summary>
-        public async Task<byte[]> GetHeroImageAsync(string heroName, ImageShape imgShape = ImageShape.Horizontal)
+        public async Task<byte[]> GetHeroImageAsync(string heroName, HeroImageShape imgShape = HeroImageShape.Horizontal)
         {
             StringBuilder sBuilder = new StringBuilder(URL_HERO_IMG);
             sBuilder.Append(heroName);
             switch (imgShape)
             {
-                case ImageShape.Vertical:
+                case HeroImageShape.Vertical:
                     sBuilder.Append("_vert.jpg");
                     break;
-                case ImageShape.Full:
+                case HeroImageShape.Full:
                     sBuilder.Append("_full.png");
                     break;
-                case ImageShape.Horizontal:
+                case HeroImageShape.Horizontal:
                     sBuilder.Append("_lg.png");
                     break;
-                case ImageShape.Small:
+                case HeroImageShape.Small:
                     sBuilder.Append("_sb.png");
                     break;
             }
@@ -551,6 +598,7 @@ namespace SteamApi
             return await GetBytesAsync(URL_ITEM_IMG + imgName, cToken).ConfigureAwait(false);
         }
         #endregion
+
         #region [Unfinished] 
         /// <summary>
         /// Really don't know what this do :). In case
@@ -679,7 +727,7 @@ namespace SteamApi
         }
 
         [Obsolete("This method is incomplete")] // TODO: (GetTopLiveEventGamesAsync) Figure out response object model
-        public async Task<IReadOnlyCollection<LiveMatch>> GetTopLiveEventGamesAsync(string apiInterface = IDOTA2_MATCH,
+        public async Task<IReadOnlyList<LiveMatch>> GetTopLiveEventGamesAsync(string apiInterface = IDOTA2_MATCH,
             int partner = 1, CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST)

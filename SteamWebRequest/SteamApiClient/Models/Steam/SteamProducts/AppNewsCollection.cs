@@ -6,6 +6,6 @@ namespace SteamApi.Models
     {
         public uint AppId { get; set; }
         public uint TotalCount { get; set; }
-        public IReadOnlyCollection<AppNews> NewsItems { get; set; }
+        public IReadOnlyList<AppNews> NewsItems { get; set; }
     }
 }

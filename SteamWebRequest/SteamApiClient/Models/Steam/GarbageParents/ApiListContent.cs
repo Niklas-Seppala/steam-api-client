@@ -4,6 +4,6 @@ namespace SteamApi.Models
 {
     internal class ApiListContent
     {
-        public IReadOnlyCollection<ApiInterface> Interfaces { get; set; }
+        public IReadOnlyList<ApiInterface> Interfaces { get; set; }
     }
 }

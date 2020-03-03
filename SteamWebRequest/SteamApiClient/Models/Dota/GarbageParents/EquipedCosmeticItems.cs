@@ -4,6 +4,6 @@ namespace SteamApi.Models.Dota
 {
     internal class EquipedCosmeticItems
     {
-        public IReadOnlyCollection<EquipedItem> Items { get; set; }
+        public IReadOnlyList<EquipedItem> Items { get; set; }
     }
 }

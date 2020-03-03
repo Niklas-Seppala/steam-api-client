@@ -12,6 +12,6 @@ namespace SteamApi.Models.Dota
         public string AttackType { get; set; }
 
         [JsonProperty("roles_l")]
-        public IReadOnlyCollection<string> Roles { get; set; }
+        public IReadOnlyList<string> Roles { get; set; }
     }
 }

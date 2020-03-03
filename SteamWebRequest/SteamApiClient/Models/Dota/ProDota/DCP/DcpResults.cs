@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
 namespace SteamApi.Models.Dota
 {
@@ -8,14 +6,9 @@ namespace SteamApi.Models.Dota
     {
         [JsonProperty("league_id")]
         public uint LeagueId { get; set; }
-
         public uint Standing { get; set; }
-
         public uint Points { get; set; }
-
         public double Earnings { get; set; }
-
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime Timestamp { get; set; }
+        public ulong Timestamp { get; set; }
     }
 }

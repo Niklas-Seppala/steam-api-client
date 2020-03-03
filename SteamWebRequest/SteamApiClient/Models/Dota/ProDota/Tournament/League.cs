@@ -6,7 +6,6 @@ namespace SteamApi.Models.Dota
     {
         [JsonProperty("tournament_url")]
         public string Url { get; set; }
-
         public uint ItemDef { get; set; }
         public string Name { get; set; }
         public uint LeagueId { get; set; }

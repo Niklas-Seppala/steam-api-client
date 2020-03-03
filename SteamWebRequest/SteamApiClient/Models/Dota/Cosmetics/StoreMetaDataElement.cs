@@ -6,7 +6,6 @@ namespace SteamApi.Models.Dota
     {
         [JsonProperty("localized_text")]
         public string LocalizedText { get; set; }
-
         public string Name { get; set; }
         public ulong Id { get; set; }
     }

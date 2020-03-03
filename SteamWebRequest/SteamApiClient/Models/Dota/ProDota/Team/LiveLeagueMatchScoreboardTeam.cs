@@ -6,17 +6,13 @@ namespace SteamApi.Models.Dota
     public class LiveLeagueMatchScoreboardTeam
     {
         public uint Score { get; set; }
-
         [JsonProperty("tower_state")]
         public uint TowerState { get; set; }
-
         [JsonProperty("barracks_state")]
         public uint BarracksState { get; set; }
-
-        public IReadOnlyCollection<Pick> Picks { get; set; }
-        public IReadOnlyCollection<Ban> Bans { get; set; }
-
-        public IReadOnlyCollection<LiveLeagueMatchPlayer> Players { get; set; }
-        public IReadOnlyCollection<IReadOnlyDictionary<string, uint>> Abilities { get; set; }
+        public IReadOnlyList<Pick> Picks { get; set; }
+        public IReadOnlyList<Ban> Bans { get; set; }
+        public IReadOnlyList<LiveLeagueMatchPlayer> Players { get; set; }
+        public IReadOnlyList<IReadOnlyDictionary<string, uint>> Abilities { get; set; }
     }
 }

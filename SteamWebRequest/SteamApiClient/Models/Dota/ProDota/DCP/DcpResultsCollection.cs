@@ -6,6 +6,6 @@ namespace SteamApi.Models.Dota
     public class DcpResultsCollection
     {
         [JsonProperty("results")]
-        public IReadOnlyCollection<DcpResults> Content { get; set; }
+        public IReadOnlyList<DcpResults> Content { get; set; }
     }
 }

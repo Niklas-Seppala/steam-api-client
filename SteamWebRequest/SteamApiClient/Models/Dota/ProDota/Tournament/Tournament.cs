@@ -6,6 +6,6 @@ namespace SteamApi.Models.Dota
     {
         public ulong Id { get; set; }
         public string Name { get; set; }
-        public IReadOnlyCollection<TournamentMatch> Matches { get; set; }
+        public IReadOnlyList<TournamentMatch> Matches { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SteamApi.Models
 {
-    internal class FriendslistResponse
+    internal sealed class FriendslistResponse
     {
         [JsonProperty("friendslist")]
         public FriendslistContent Content { get; set; }

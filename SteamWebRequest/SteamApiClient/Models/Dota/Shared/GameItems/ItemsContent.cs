@@ -6,6 +6,6 @@ namespace SteamApi.Models.Dota
     internal class ItemsContent
     {
         [JsonProperty("items")]
-        public List<Item> Items { get; set; }
+        public IReadOnlyList<Item> Items { get; set; }
     }
 }

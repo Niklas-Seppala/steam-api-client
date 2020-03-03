@@ -10,6 +10,6 @@ namespace SteamApi.Models.Dota
     internal class DotaTeamInfosContent
     {
         public uint Status { get; set; }
-        public IReadOnlyCollection<DotaTeamInfo> Teams { get; set; }
+        public IReadOnlyList<DotaTeamInfo> Teams { get; set; }
     }
 }

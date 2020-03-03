@@ -4,6 +4,6 @@ namespace SteamApi.Models.Dota
 {
     internal class LeagueListing
     {
-        public IReadOnlyCollection<League> Leagues { get; set; }
+        public IReadOnlyList<League> Leagues { get; set; }
     }
 }

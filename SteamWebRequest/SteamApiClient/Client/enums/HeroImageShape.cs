@@ -1,6 +1,9 @@
 ﻿namespace SteamApi
 {
-    public enum ImageShape
+    /// <summary>
+    /// Shape of the hero image
+    /// </summary>
+    public enum HeroImageShape
     {
         Vertical,
         Full,

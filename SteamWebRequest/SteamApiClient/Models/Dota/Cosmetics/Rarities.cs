@@ -8,7 +8,6 @@ namespace SteamApi.Models.Dota
         public uint Id { get; set; }
         public uint Order { get; set; }
         public string Color { get; set; }
-
         [JsonProperty("localized_name")]
         public string LocalizedName { get; set; }
     }

@@ -8,15 +8,9 @@ namespace SteamApi.Models.Dota
     public class TournamentMatch
     {
         public ulong NodeId { get; set; }
-
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime ActualMatchTime { get; set; }
-
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        public DateTime MatchTime { get; set; }
-
+        public ulong ActualMatchTime { get; set; }
+        public ulong MatchTime { get; set; }
         public bool Tied { get; set; }
-
-        public IReadOnlyCollection<TournamentTeam> Teams { get; set; }
+        public IReadOnlyList<TournamentTeam> Teams { get; set; }
     }
 }

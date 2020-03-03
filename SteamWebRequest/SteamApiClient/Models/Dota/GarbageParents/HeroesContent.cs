@@ -4,6 +4,6 @@ namespace SteamApi.Models.Dota
 {
     internal class HeroesContent
     {
-        public IReadOnlyCollection<Hero> Heroes { get; set; }
+        public IReadOnlyList<Hero> Heroes { get; set; }
     }
 }

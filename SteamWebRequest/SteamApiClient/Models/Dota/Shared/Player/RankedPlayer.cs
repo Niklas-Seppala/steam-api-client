@@ -6,16 +6,11 @@ namespace SteamApi.Models.Dota
     {
         [JsonProperty("team_id")]
         public ulong TeamId { get; set; }
-
         [JsonProperty("team_tag")]
         public string TeamTag { get; set; }
-
         public string Sponsor { get; set; }
-
         public string Country { get; set; }
-
         public uint Rank { get; set; }
-
         public string Name { get; set; }
     }
 }
