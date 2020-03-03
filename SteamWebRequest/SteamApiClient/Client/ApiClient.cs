@@ -93,33 +93,33 @@ namespace SteamApi
             switch (code)
             {
                 case HttpStatusCode.BadGateway:
-                    throw new HttpRequestException($"Response status code: {code}. Bad Gateway");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Bad Gateway");
                 case HttpStatusCode.BadRequest:
-                    throw new HttpRequestException($"Response status code: {code}. Bad Request");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Bad Request");
                 case HttpStatusCode.Forbidden:
-                    throw new HttpRequestException($"Response status code: {code}. Developer key is invalid.");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Developer key is invalid.");
                 case HttpStatusCode.GatewayTimeout:
-                    throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Gateway Timeout");
                 case HttpStatusCode.Gone:
-                    throw new HttpRequestException($"Response status code: {code}. Resource No Longer Available");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Resource No Longer Available");
                 case HttpStatusCode.HttpVersionNotSupported:
-                    throw new HttpRequestException($"Response status code: {code}. Http Version Not Supported");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Http Version Not Supported");
                 case HttpStatusCode.InternalServerError:
-                    throw new HttpRequestException($"Response status code: {code}. Internal Server Error");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Internal Server Error");
                 case HttpStatusCode.MethodNotAllowed:
-                    throw new HttpRequestException($"Response status code: {code}. Method Not Allowed");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Method Not Allowed");
                 case HttpStatusCode.Moved:
-                    throw new HttpRequestException($"Response status code: {code}. Content Moved");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Content Moved");
                 case HttpStatusCode.NotFound:
-                    throw new HttpRequestException($"Response status code: {code}. Not Found");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Not Found");
                 case HttpStatusCode.NotImplemented:
-                    throw new HttpRequestException($"Response status code: {code}. Not Implemented");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Not Implemented");
                 case HttpStatusCode.RequestTimeout:
-                    throw new HttpRequestException($"Response status code: {code}. Request Timeout");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Request Timeout");
                 case HttpStatusCode.ServiceUnavailable:
-                    throw new HttpRequestException($"Response status code: {code}. Service Unavailable");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Service Unavailable");
                 default:
-                    throw new HttpRequestException($"Response status code: {code}. Something went wrong with request.");
+                    throw new HttpRequestException($"Response status code: {(int)code}. Something went wrong with request.");
             }
         }
 
