@@ -1,4 +1,4 @@
-using SteamApi;
+using SteamApi.Utility;
 using Xunit;
 
 namespace Utility

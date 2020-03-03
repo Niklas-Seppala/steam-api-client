@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
+using SteamApi.Utility;
 
 namespace SteamApi
 {

@@ -1,4 +1,4 @@
-﻿using SteamApi;
+﻿using SteamApi.Utility.Url;
 using System;
 using Xunit;
 

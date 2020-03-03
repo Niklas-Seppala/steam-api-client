@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
+using SteamApi.Utility.Url;
 
-namespace SteamApi
+namespace SteamApi.Utility
 {
+    /// <summary>
+    /// 
+    /// </summary>
     internal class UrlBuilder
     {
         public string Url => ToString();
