@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SteamApi.Models
+namespace SteamApi.Models.Steam
 {
     public sealed class SteamAccount
     {

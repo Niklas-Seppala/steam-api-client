@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
-namespace SteamApi.Models
+namespace SteamApi.Models.Steam
 {
     public class AppNews
     {

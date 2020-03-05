@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using SteamApi.Models.Dota;
+using SteamApi.Models.Dota.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -229,7 +230,7 @@ namespace SteamApi
             UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("jsfeed", "abilitydata");
 
-            var response = await GetModelAsync<Abilities>(cToken: cToken)
+            var response = await GetModelAsync<AbilitiesResponse>(cToken: cToken)
                 .ConfigureAwait(false);
 
             return response.AbilityDict;

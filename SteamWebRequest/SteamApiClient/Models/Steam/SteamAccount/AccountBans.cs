@@ -1,4 +1,4 @@
-﻿namespace SteamApi.Models
+﻿namespace SteamApi.Models.Steam
 {
     public class AccountBans
     {

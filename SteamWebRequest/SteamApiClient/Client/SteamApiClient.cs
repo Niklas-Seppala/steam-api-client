@@ -1,4 +1,5 @@
-﻿using SteamApi.Models;
+﻿using SteamApi.Models.Steam;
+using SteamApi.Models.Steam.ResponseModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

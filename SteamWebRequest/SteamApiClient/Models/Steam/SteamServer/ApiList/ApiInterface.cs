@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamApi.Models
+namespace SteamApi.Models.Steam
 {
     public class ApiInterface
     {
