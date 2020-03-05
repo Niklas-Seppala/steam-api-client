@@ -211,4 +211,24 @@ namespace SteamApi.Models.Dota.ResponseModels
     {
         public TournamentPlayerStats Result { get; set; }
     }
+
+    /// <summary>
+    /// This is a JSON response container class that is never supposed
+    /// to see sunlight during its brief lifetime.
+    /// </summary>
+    internal sealed class GameItems
+    {
+        [JsonProperty("result")]
+        public ItemsContent Content { get; set; }
+    }
+
+    /// <summary>
+    /// This is a JSON response container class that is never supposed
+    /// to see sunlight during its brief lifetime.
+    /// </summary>
+    internal class ItemsContent
+    {
+        [JsonProperty("items")]
+        public IReadOnlyList<Item> Items { get; set; }
+    }
 }

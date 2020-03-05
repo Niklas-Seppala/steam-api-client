@@ -2,11 +2,20 @@
 
 namespace SteamApi.Models.Dota
 {
+    /// <summary>
+    /// Dota 2 Hero's attribute
+    /// </summary>
     public class Attribute
     {
+        /// <summary>
+        /// Start value
+        /// </summary>
         [JsonProperty("b")]
         public uint Base { get; set; }
 
+        /// <summary>
+        /// Gained each level
+        /// </summary>
         [JsonProperty("g")]
         public float Gain { get; set; }
     }
