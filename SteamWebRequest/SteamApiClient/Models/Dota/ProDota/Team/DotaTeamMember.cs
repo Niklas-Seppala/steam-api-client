@@ -1,18 +1,24 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
 namespace SteamApi.Models.Dota
 {
     public class DotaTeamMember
     {
+        /// <summary>
+        /// Account id
+        /// </summary>
         [JsonProperty("account_id")]
         public uint AccountId { get; set; }
 
-        [JsonConverter(typeof(UnixDateTimeConverter))]
+        /// <summary>
+        /// Unixtimestamp of date when joined
+        /// </summary>
         [JsonProperty("time_joined")]
-        public DateTime TimeJoined { get; set; }
-
+        public ulong TimeJoined { get; set; }
+        
+        /// <summary>
+        /// Is team admin
+        /// </summary>
         public bool Admin { get; set; }
     }
 }

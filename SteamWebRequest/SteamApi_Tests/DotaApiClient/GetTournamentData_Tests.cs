@@ -31,7 +31,7 @@ namespace Client
                 .Result;
             SleepAfterApiCall();
 
-            Assert.Equal(playerId, eventMatches.AccountId);
+            Assert.Equal(playerId, eventMatches.AccountId32);
             Assert.NotEmpty(eventMatches.Matches);
             Assert.NotEmpty(eventMatches.HeroesPlayed);
         }
@@ -47,7 +47,7 @@ namespace Client
                  heroId: heroId).Result;
             SleepAfterApiCall();
 
-            Assert.Equal(playerId, eventMatches.AccountId);
+            Assert.Equal(playerId, eventMatches.AccountId32);
             Assert.NotEmpty(eventMatches.Matches);
             Assert.NotEmpty(eventMatches.HeroesPlayed);
             Assert.All(eventMatches.Matches, (match) => Assert.Equal(heroId, match.HeroId));
@@ -60,7 +60,7 @@ namespace Client
                 .Result;
             SleepAfterApiCall();
 
-            Assert.True(eventMatches.AccountId == 0);
+            Assert.True(eventMatches.AccountId32 == 0);
             Assert.Empty(eventMatches.Matches);
             Assert.Null(eventMatches.HeroesPlayed);
         }
