@@ -19,13 +19,15 @@ namespace SteamApi
         /// <see cref="ApiClient.TestUrl"/>
         protected override string TestUrl => $"https://api.steampowered.com/IStoreService/GetAppList/v1/?key={ApiKey}";
 
-        // Constant strings for building API URL methods.
+        
         #region URL constants
+
         private const string HOST = "api.steampowered.com";
         private const string ISTEAM_USER = "ISteamUser";
         private const string ISTORE_SERVICE = "IStoreService";
         private const string ISTEAM_WEB_API = "ISteamWebAPIUtil";
         private const string ISTEAM_NEWS = "ISteamNews";
+
         #endregion
 
         /// <summary>
