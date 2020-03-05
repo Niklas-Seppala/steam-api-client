@@ -134,7 +134,7 @@ namespace SteamApi
         protected async Task<byte[]> GetBytesAsync(string url = "", CToken cToken = default)
         {
             using (var request = CreateRequest(HttpMethod.Get, url))
-            using (var response = await SendRequestAsync(request, cToken))
+            using (var response = await SendRequestAsync(request, cToken).ConfigureAwait(false))
                 return await HandleResults(response, async (r) => await r.Content.ReadAsByteArrayAsync());
         }
 
@@ -148,7 +148,7 @@ namespace SteamApi
         protected async Task<Stream> GetStreamAsync(string url = "", CToken cToken = default)
         {
             using (var request = CreateRequest(HttpMethod.Get, url))
-            using (var response = await SendRequestAsync(request, cToken))
+            using (var response = await SendRequestAsync(request, cToken).ConfigureAwait(false))
                 return await HandleResults(response, async (r) => await r.Content.ReadAsStreamAsync());
         }
 
@@ -162,7 +162,7 @@ namespace SteamApi
         protected async Task<string> GetStringAsync(string url = "", CToken cToken = default)
         {
             using (var request = CreateRequest(HttpMethod.Get, url))
-            using (var response = await SendRequestAsync(request, cToken))
+            using (var response = await SendRequestAsync(request, cToken).ConfigureAwait(false))
                 return await HandleResults(response, async (r) => await r.Content.ReadAsStringAsync());
         }
 
@@ -178,9 +178,10 @@ namespace SteamApi
         protected async Task<T> GetModelAsync<T>(string url = "", CToken cToken = default)
         {
             using (var request = CreateRequest(HttpMethod.Get, url))
-            using (var response = await SendRequestAsync(request, cToken))
+            using (var response = await SendRequestAsync(request, cToken).ConfigureAwait(false))
             {
-                return await HandleResults(response, async (resp) => {
+                return await HandleResults(response, async (resp) =>
+                {
                     using (var contentStream = await resp.Content.ReadAsStreamAsync())
                         return DeserializeJsonStream<T>(contentStream);
                 });
@@ -202,7 +203,7 @@ namespace SteamApi
             }
             else
             {
-                if (stream == null) throw new ArgumentNullException("stream");
+                if (stream == null) throw new ArgumentNullException("stream is null");
                 else throw new ArgumentException("stream is writeonly");
             }
         }
