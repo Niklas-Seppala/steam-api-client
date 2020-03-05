@@ -66,7 +66,7 @@ namespace Utility
         [Fact]
         public void SteamIdTo32_IdSmallerThanDifference_ThrowsArgumenOutOfRangeException()
         {
-            Assert.Throws<OverflowException>(() =>
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 SteamIdConverter.SteamIdTo32("76561197960265726");
             });
