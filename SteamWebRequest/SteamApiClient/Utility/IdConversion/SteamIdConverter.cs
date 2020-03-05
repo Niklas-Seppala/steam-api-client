@@ -27,10 +27,12 @@ namespace SteamApi
         /// <param name="id64Str">64-bit Steam id as a string</param>
         public static string SteamIdTo32(string id64Str)
         {
-            ulong difference = 76561197960265728;
+            ulong start = 76561197960265728;
             if (ulong.TryParse(id64Str, out ulong id64))
             {
-                checked { return (id64 - difference).ToString(); }
+                if (id64 < start)
+                    throw new ArgumentOutOfRangeException("Id is not valid 64-bit steam id.");
+                checked { return (id64 - start).ToString(); }
             }
             throw new ArgumentException("Given string couldn't be parsed to UInt64");
         }
@@ -50,10 +52,10 @@ namespace SteamApi
         /// <param name="id64">64-bit Steam id</param>
         public static uint SteamIdTo32(ulong id64)
         {
-            ulong difference = 76561197960265728;
-            if (id64 < difference)
-                throw new ArgumentOutOfRangeException("Id is not valid 64-bit id.");
-            checked { return (uint)(id64 - difference); }
+            ulong start = 76561197960265728;
+            if (id64 < start)
+                throw new ArgumentOutOfRangeException("Id is not valid 64-bit steam id.");
+            checked { return (uint)(id64 - start); }
         }
     }
 }
