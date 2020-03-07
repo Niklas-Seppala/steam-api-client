@@ -88,38 +88,45 @@ namespace SteamApi
         /// Translates Http error code to exception and throws it.
         /// </summary>
         /// <param name="code">Http response status code</param>
-        private void ThrowFailedRequestException(HttpStatusCode code)
+        private void ThrowFailedRequestException(HttpResponseMessage resp)
         {
-            switch (code)
+            int code = (int)resp.StatusCode;
+            switch (resp.StatusCode)
             {
+                case HttpStatusCode.Unauthorized:
+                    throw new PrivateApiResponseException($"Response status code: {code}. Unauthorized request")
+                    {
+                        URL = resp.RequestMessage.RequestUri.ToString(),
+                        StatusCode = code
+                    };
                 case HttpStatusCode.BadGateway:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Bad Gateway");
+                    throw new HttpRequestException($"Response status code: {code}. Bad Gateway");
                 case HttpStatusCode.BadRequest:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Bad Request");
+                    throw new HttpRequestException($"Response status code: {code}. Bad Request");
                 case HttpStatusCode.Forbidden:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Developer key is invalid.");
+                    throw new HttpRequestException($"Response status code: {code}. Developer key is invalid.");
                 case HttpStatusCode.GatewayTimeout:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Gateway Timeout");
+                    throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
                 case HttpStatusCode.Gone:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Resource No Longer Available");
+                    throw new HttpRequestException($"Response status code: {code}. Resource No Longer Available");
                 case HttpStatusCode.HttpVersionNotSupported:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Http Version Not Supported");
+                    throw new HttpRequestException($"Response status code: {code}. Http Version Not Supported");
                 case HttpStatusCode.InternalServerError:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Internal Server Error");
+                    throw new HttpRequestException($"Response status code: {code}. Internal Server Error");
                 case HttpStatusCode.MethodNotAllowed:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Method Not Allowed");
+                    throw new HttpRequestException($"Response status code: {code}. Method Not Allowed");
                 case HttpStatusCode.Moved:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Content Moved");
+                    throw new HttpRequestException($"Response status code: {code}. Content Moved");
                 case HttpStatusCode.NotFound:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Not Found");
+                    throw new HttpRequestException($"Response status code: {code}. Not Found");
                 case HttpStatusCode.NotImplemented:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Not Implemented");
+                    throw new HttpRequestException($"Response status code: {code}. Not Implemented");
                 case HttpStatusCode.RequestTimeout:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Request Timeout");
+                    throw new HttpRequestException($"Response status code: {code}. Request Timeout");
                 case HttpStatusCode.ServiceUnavailable:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Service Unavailable");
+                    throw new HttpRequestException($"Response status code: {code}. Service Unavailable");
                 default:
-                    throw new HttpRequestException($"Response status code: {(int)code}. Something went wrong with request.");
+                    throw new HttpRequestException($"Response status code: {code}. Something went wrong with request.");
             }
         }
 
@@ -218,7 +225,7 @@ namespace SteamApi
         private async Task<T> HandleResults<T>(HttpResponseMessage response, Func<HttpResponseMessage, Task<T>> successAction)
         {
             if (response.IsSuccessStatusCode) return await successAction.Invoke(response).ConfigureAwait(false);
-            else ThrowFailedRequestException(response.StatusCode);
+            else ThrowFailedRequestException(response);
             return default; // THIS LINE WILL NEVER RUN !!
         }
 
