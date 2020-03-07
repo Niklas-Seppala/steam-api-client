@@ -1,14 +1,16 @@
 ﻿using SteamApi.Models.Steam;
 using SteamApi.Models.Steam.ResponseModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
 
 namespace SteamApi
 {
     /// <summary>
-    /// Special HttpClient for making requests for Valve's Steam
+    /// Specialized HttpClient for making requests for Valve's Steam
     /// APIs. Derived from ApiClient class.
     /// </summary>
     public class SteamApiClient : ApiClient
@@ -19,7 +21,7 @@ namespace SteamApi
         /// <see cref="ApiClient.TestUrl"/>
         protected override string TestUrl => $"https://api.steampowered.com/IStoreService/GetAppList/v1/?key={ApiKey}";
 
-        
+
         #region URL constants
 
         private const string HOST = "api.steampowered.com";
@@ -36,7 +38,7 @@ namespace SteamApi
         /// <param name="testConnection">default is false</param>
         /// <param name="schema">default is "https"</param>
         /// <see cref="ApiClient(bool, string)"/>
-        public SteamApiClient(bool testConnection = false, string schema = "https") : base(testConnection, schema) 
+        public SteamApiClient(bool testConnection = false, string schema = "https") : base(testConnection, schema)
         {
             // Initialization happens in parent class's constructor.
         }
@@ -197,12 +199,12 @@ namespace SteamApi
         /// <param name="cToken">Cancellation token</param>
         /// <param name="version">API method version</param>
         /// <returns>List of SteamAccounts</returns>
-        public async Task<IReadOnlyList<SteamAccount>> GetSteamAccountsAsync(string version = "v2",
-            CToken cToken = default, params string[] id64)
+        public async Task<IReadOnlyList<SteamAccount>> GetSteamAccountsAsync(IEnumerable<ulong> id64s, string version = "v2",
+            CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", version)
                 .AddQuery("key", ApiKey)
-                .AddQuery("steamids", string.Join(",", id64));
+                .AddQuery("steamids", string.Join(",", id64s));
 
             var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -219,20 +221,20 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Steam account object</returns>
-        public async Task<SteamAccount> GetSteamAccountAsync(string id64, string version = "v2",
+        public async Task<SteamAccount> GetSteamAccountAsync(ulong id64, string version = "v2",
             CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", version)
                 .AddQuery("key", ApiKey)
-                .AddQuery("steamids", id64);
+                .AddQuery("steamids", id64.ToString());
 
             var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false);
 
-            if (response.Content.Accounts.Count > 0)
-                return response.Content.Accounts.ElementAt(0);
+            if (response.Content.Accounts.Count == 0)
+                throw new EmptyApiResponseException<SteamAccount>($"64-bit steam id: {id64}");                
             else
-                return null;
+                return response.Content.Accounts.ElementAt(0);
         }
 
         /// <summary>
@@ -242,18 +244,20 @@ namespace SteamApi
         /// <param name="id64">64-bit steam-id</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
+        /// <exception cref="PrivateApiResponseException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <returns>List of Friend objects</returns>
-        public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(long id64,
+        public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(ulong id64,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetFriendList", version)
                 .AddQuery("key", ApiKey)
                 .AddQuery("steamid", id64.ToString());
 
-            var response = await GetModelAsync<FriendslistResponse>(cToken: cToken)
+                var response = await GetModelAsync<FriendslistResponse>(cToken: cToken)
                 .ConfigureAwait(false);
-
-            return response.Content.Friends;
+                return response.Content.Friends;
         }
 
         /// <summary>

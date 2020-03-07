@@ -5,7 +5,7 @@ using Ctoken = System.Threading.CancellationToken;
 namespace SteamApi
 {
     /// <summary>
-    /// Special HttpClient for making requests for Valve's CSGO
+    /// Specialized HttpClient for making requests for Valve's CSGO
     /// APIs. Derived from ApiClient class.
     /// </summary>
     public class CsGoClient : ApiClient

@@ -9,7 +9,7 @@ using CToken = System.Threading.CancellationToken;
 namespace SteamApi
 {
     /// <summary>
-    /// Special HttpClient for making requests for Valve's Dota 2
+    /// Specialized HttpClient for making requests for Valve's Dota 2
     /// APIs. Derived from ApiClient class.
     /// </summary>
     public class DotaApiClient : ApiClient
