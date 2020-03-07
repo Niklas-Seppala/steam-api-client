@@ -17,9 +17,9 @@ namespace Client
         [InlineData(0, 0)]
         public void CountParamDefined_ReturnsSpecifiedAmount(byte count, byte resultCount)
         {
-            var response = Client.GetMatchHistoryAsync(count: count)
+            var response = DotaApiClient.GetMatchHistoryAsync(count: count)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.True(response.Matches.Count == resultCount);
         }
@@ -31,9 +31,9 @@ namespace Client
         [InlineData(147169892)]
         public void AccountIdSpecified_ReturnsMatchesWithSpecifiedAccount(uint playerId)
         {
-            var response = Client.GetMatchHistoryAsync(playerId32: playerId, count: 5)
+            var response = DotaApiClient.GetMatchHistoryAsync(playerId32: playerId, count: 5)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             foreach (var match in response.Matches)
             {
@@ -48,12 +48,12 @@ namespace Client
         [InlineData(9870)]  // The International 2018
         public void LeagueIdSpecified_ReturnsMatchesFromSpecifiedLeague(uint leagueId)
         {
-            var response = Client.GetMatchHistoryAsync(leagueId: leagueId)
+            var response = DotaApiClient.GetMatchHistoryAsync(leagueId: leagueId)
                 .Result;
-            SleepAfterApiCall();
-            var details = Client.GetMatchDetailsAsync(
+            SleepAfterSendingRequest();
+            var details = DotaApiClient.GetMatchDetailsAsync(
                 response.Matches.ElementAt(0).MatchId.ToString()).Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(leagueId.ToString(), details.LeagueId.ToString());
         }
@@ -66,9 +66,9 @@ namespace Client
         [InlineData(20)]
         public void MinPlayersSpecified_ReturnsMatchesWithMinimumPLayerCount(byte minPlayerCount)
         {
-            var response = Client.GetMatchHistoryAsync(minPlayers: minPlayerCount)
+            var response = DotaApiClient.GetMatchHistoryAsync(minPlayers: minPlayerCount)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             foreach (var match in response.Matches)
             {
@@ -84,9 +84,9 @@ namespace Client
         [InlineData(66)]
         public void HeroSpecified_ReturnsOnlyGamesWithSPecifiedHero(ushort heroId)
         {
-            var response = Client.GetMatchHistoryAsync(heroId: heroId, count: 2)
+            var response = DotaApiClient.GetMatchHistoryAsync(heroId: heroId, count: 2)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             foreach (var match in response.Matches)
             {
@@ -106,9 +106,9 @@ namespace Client
         public void GetMatchHistoryBySequenceNum_ValidSeqNum_ReturnsMatchesStartingFromSeqNum(
             ulong seqNum, ulong resultStartSeqNum)
         {
-            var matches = Client.GetMatchHistoryBySequenceNumAsync(seqNum: seqNum, count: 1)
+            var matches = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum: seqNum, count: 1)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(resultStartSeqNum, matches.ElementAt(0).MatchSequenceNum);
         }
@@ -123,9 +123,9 @@ namespace Client
             byte count, byte actualCount)
         {
             ulong seqNum = 55555050;
-            var matches = Client.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
+            var matches = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(actualCount, matches.Count);
         }

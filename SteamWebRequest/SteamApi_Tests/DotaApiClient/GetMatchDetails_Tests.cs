@@ -15,9 +15,9 @@ namespace Client
         [InlineData("5200756005")]
         public void ValidMatchIds_ReturnsCorrectMatches(string matchId)
         {
-            var details = Client.GetMatchDetailsAsync(matchId)
+            var details = DotaApiClient.GetMatchDetailsAsync(matchId)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(matchId, details.MatchId.ToString());
         }
@@ -25,13 +25,13 @@ namespace Client
         [Fact]
         public void GetRealTimeMatchStats_LiveGamesAvailable_RealTimeMatchStats()
         {
-            var result = Client.GetTopLiveGamesAsync().Result;
-            SleepAfterApiCall();
+            var result = DotaApiClient.GetTopLiveGamesAsync().Result;
+            SleepAfterSendingRequest();
             foreach (var liveGame in result)
             {
-                var matchStats = Client.GetRealtimeMatchStatsAsync(liveGame.ServerSteamId.ToString())
+                var matchStats = DotaApiClient.GetRealtimeMatchStatsAsync(liveGame.ServerSteamId.ToString())
                     .Result;
-                SleepAfterApiCall();
+                SleepAfterSendingRequest();
 
                 Assert.NotNull(matchStats);
             }

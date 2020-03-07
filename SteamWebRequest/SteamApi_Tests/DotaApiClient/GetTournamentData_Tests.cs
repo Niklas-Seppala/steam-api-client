@@ -12,9 +12,9 @@ namespace Client
         public void GetTournamentPrizePool_LeagueIdProvided_ReturnsCorrectPrizepool(
             uint leagueId, uint prize)
         {
-            var resp = Client.GetTournamentPrizePoolAsync(leagueId)
+            var resp = DotaApiClient.GetTournamentPrizePoolAsync(leagueId)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(prize, resp["prize_pool"]);
             Assert.Equal(leagueId, resp["league_id"]);
@@ -27,9 +27,9 @@ namespace Client
         public void GetTournamentPlayerStats_ProPlayerIdProvided_ReturnsMatchesFromEventByPlayer
             (uint playerId, uint eventId)
         {
-            var eventMatches = Client.GetTournamentPlayerStatsAsync(playerId, eventId)
+            var eventMatches = DotaApiClient.GetTournamentPlayerStatsAsync(playerId, eventId)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(playerId, eventMatches.AccountId32);
             Assert.NotEmpty(eventMatches.Matches);
@@ -43,9 +43,9 @@ namespace Client
         public void GetTournamentPlayerStats_HeroIdProvided_ReturnsMatchesWithSpecifiedHero(
             uint playerId, uint eventId, ushort heroId)
         {
-            var eventMatches = Client.GetTournamentPlayerStatsAsync(playerId, eventId,
+            var eventMatches = DotaApiClient.GetTournamentPlayerStatsAsync(playerId, eventId,
                  heroId: heroId).Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(playerId, eventMatches.AccountId32);
             Assert.NotEmpty(eventMatches.Matches);
@@ -56,9 +56,9 @@ namespace Client
         [Fact]
         public void GetTournamentPlayerStats_NonProId_ReturnsEmptyObject()
         {
-            var eventMatches = Client.GetTournamentPlayerStatsAsync(147169892, 9870)
+            var eventMatches = DotaApiClient.GetTournamentPlayerStatsAsync(147169892, 9870)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.True(eventMatches.AccountId32 == 0);
             Assert.Empty(eventMatches.Matches);
@@ -68,9 +68,9 @@ namespace Client
         [Fact]
         public void GetTopLiveGames_DefaultParams_ReturnsTopLiveGames()
         {
-            var topGames = Client.GetTopLiveGamesAsync()
+            var topGames = DotaApiClient.GetTopLiveGamesAsync()
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.NotEmpty(topGames);
         }
@@ -78,7 +78,7 @@ namespace Client
         [Fact(Skip = "Event games are hard to come by.")]
         public void GetTopLiveEventGames_DefaultParams_ReturnsTopLiveEventGames()
         {
-            var topEventGames = Client.GetTopLiveEventGamesAsync()
+            var topEventGames = DotaApiClient.GetTopLiveEventGamesAsync()
                 .Result;
 
             Assert.NotNull(topEventGames);
@@ -94,9 +94,9 @@ namespace Client
         public void GetDotaTeamInfosById_CountProvided_ReturnsCorrectAmount(
             byte count, byte resultCount)
         {
-            var teams = Client.GetDotaTeamInfosByIdAsync(count: count)
+            var teams = DotaApiClient.GetDotaTeamInfosByIdAsync(count: count)
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.Equal(resultCount, teams.Count);
         }
@@ -104,7 +104,7 @@ namespace Client
         [Fact]
         public void GetLiveLeagueMatch_DefaultParameters_ReturnsLiveLeagueGames()
         {
-            var leagueGames = Client.GetLiveLeagueMatchAsync()
+            var leagueGames = DotaApiClient.GetLiveLeagueMatchAsync()
                 .Result;
 
             Assert.NotEmpty(leagueGames);
@@ -113,7 +113,7 @@ namespace Client
         [Fact]
         public void GetLeagueListing_None_ReturnsLeagueListing()
         {
-            var leaguelist = Client.GetLeagueListingAsync()
+            var leaguelist = DotaApiClient.GetLeagueListingAsync()
                 .Result;
 
             Assert.NotEmpty(leaguelist);

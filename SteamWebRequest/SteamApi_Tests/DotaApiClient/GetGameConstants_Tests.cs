@@ -9,9 +9,9 @@ namespace Client
         [Fact]
         public void GetGameItems_DefaultParams_ReturnsGameItems()
         {
-            var items = Client.GetGameItemsAsync()
+            var items = DotaApiClient.GetGameItemsAsync()
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.All(items, item =>
             {
@@ -24,9 +24,9 @@ namespace Client
         [Fact]
         public void GetHeroes_DefaultParams_ReturnsHeroes()
         {
-            var heroes = Client.GetHeroesAsync()
+            var heroes = DotaApiClient.GetHeroesAsync()
                 .Result;
-            SleepAfterApiCall();
+            SleepAfterSendingRequest();
 
             Assert.NotEmpty(heroes);
             Assert.All(heroes, hero =>

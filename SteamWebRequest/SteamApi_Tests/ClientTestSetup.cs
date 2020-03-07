@@ -10,23 +10,30 @@ namespace Client
 {
     public class ClientFixture : IDisposable
     {
-        private Setup _setup;
+        private readonly Setup _setup;
         public string DevKey => _setup.DeveloperKey;
         public bool SleepAfterApiCall => _setup.SleepAfterApiCall;
         public int Timeout => _setup.Timeout;
 
-        private string _setupFile = "clientTestSetup.json";
+        private readonly string _setupFile = "clientTestSetup.json";
 
+        /// <summary>
+        /// Reads test setup file and deserializes its contents to
+        /// private setup field. Sets API key.
+        /// </summary>
         public ClientFixture()
         {
-            string setUpContent = File.ReadAllText(_setupFile);
-            _setup = JsonSerializer.Deserialize<Setup>(setUpContent);
+            string setUpFileContent = File.ReadAllText(_setupFile);
+            _setup = JsonSerializer.Deserialize<Setup>(setUpFileContent);
             ApiClient.SetApiKey(_setup.DeveloperKey);
         }
 
-        public void Dispose()
-        { }
 
+        public void Dispose() { } // Nothing to dispose
+
+        /// <summary>
+        /// JSON setup file model
+        /// </summary>
         private class Setup
         {
             [JsonPropertyName("timeout")]
@@ -38,18 +45,31 @@ namespace Client
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class SteamApiClientTests : IClassFixture<ClientFixture>
     {
-        protected DotaApiClient Client { get; } = new DotaApiClient();
+        protected DotaApiClient DotaApiClient { get; }
+        protected SteamApiClient SteamApiClient { get; }
         protected ClientFixture Fixture { get; set; }
 
-
+        /// <summary>
+        /// Instatiates API client objects
+        /// </summary>
+        /// <param name="fixture"></param>
         public SteamApiClientTests(ClientFixture fixture)
         {
             Fixture = fixture;
+            DotaApiClient = new DotaApiClient();
+            SteamApiClient = new SteamApiClient();
         }
 
-        protected virtual void SleepAfterApiCall()
+        /// <summary>
+        /// Makes program wait a bit after sending API request.
+        /// This way running tests won't bombard valve's servers too much.
+        /// </summary>
+        protected virtual void SleepAfterSendingRequest()
         {
             if (Fixture.SleepAfterApiCall)
             {
@@ -57,7 +77,12 @@ namespace Client
             }
         }
 
-        protected virtual void SleepAfterApiCall(int timeout)
+        /// <summary>
+        /// Makes program wait a bit after sending API request.
+        /// This way running tests won't bombard valve's servers too much.
+        /// </summary>
+        /// <param name="timeout"></param>
+        protected virtual void SleepAfterSendingRequest(int timeout)
         {
             if (Fixture.SleepAfterApiCall)
             {

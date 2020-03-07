@@ -151,7 +151,7 @@ namespace SteamApi
         }
 
         /// <summary>
-        /// Sends http GET request to http://api.steampowered.com/
+        /// Sends http GET request to api.steampowered.com
         /// for steam application news.
         /// </summary>
         /// <returns>AppNewsCollection object</returns>
@@ -172,26 +172,57 @@ namespace SteamApi
         #region [Steam Users]
 
         /// <summary>
-        /// Sends http GET request to http://api.steampowered.com/ for 
+        /// Sends http GET request to api.steampowered.com for 
         /// Steam accounts Ban history.
         /// </summary>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <param name="steamId64s">Array of 64-bit steam-ids</param>
-        /// <returns>Dictionary of Account bans</returns>
-        public async Task<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>> GetSteamAccountsBansAsync(
-            string version = "v1", CToken cToken = default, params string[] steamId64s)
+        /// <returns>List of account bans</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        public async Task<IReadOnlyCollection<AccountBans>> GetSteamAccountsBansAsync(
+            IEnumerable<ulong> id64s, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerBans", version)
                 .AddQuery("key", ApiKey)
-                .AddQuery("steamids", string.Join(",", steamId64s));
+                .AddQuery("steamids", string.Join(",", id64s));
 
-            return await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(cToken: cToken)
+            var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(cToken: cToken)
                 .ConfigureAwait(false);
+
+            return response["players"];
         }
 
         /// <summary>
-        /// Sends GET request to http://api.steampowered.com/
+        /// Sends http GET request to api.steampowered.com for 
+        /// a single Steam accounts ban history.
+        /// </summary>
+        /// <param name="id64">64-bit steam id</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellation token</param>
+        /// <returns>Account ban model</returns>
+        /// <exception cref="EmptyApiResponseException{AccountBans}"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        public async Task<AccountBans> GetSteamAccountBansAsync(ulong id64, string
+            version = "v1", CToken cToken = default)
+        {
+            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerBans", version)
+                .AddQuery("key", ApiKey)
+                .AddQuery("steamids", id64.ToString());
+
+            var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyList<AccountBans>>>(cToken: cToken)
+                .ConfigureAwait(false);
+
+            if (response["players"].Count == 0)
+                throw new EmptyApiResponseException<AccountBans>($"64-bit steam id: {id64}");
+            else
+                return response["players"][0];
+        }
+
+        /// <summary>
+        /// Sends GET request to api.steampowered.com
         /// for steam accounts. Request can be cancelled by providing cancellation
         /// token.
         /// </summary>
@@ -213,7 +244,7 @@ namespace SteamApi
         }
 
         /// <summary>
-        /// Sends GET request to http://api.steampowered.com/
+        /// Sends GET request to api.steampowered.com
         /// for steam profile information. Request can be cancelled
         /// by providing cancellation token.
         /// </summary>
@@ -244,7 +275,7 @@ namespace SteamApi
         /// <param name="id64">64-bit steam-id</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <exception cref="PrivateApiResponseException"></exception>
+        /// <exception cref="PrivateApiContentException"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <returns>List of Friend objects</returns>
@@ -267,6 +298,8 @@ namespace SteamApi
         /// <param name="url">Profile picture url</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Steam profile picture as bytes</returns>
+        /// <exception cref="ApiResourceNotFoundException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<byte[]> GetProfilePicBytesAsync(string url, CToken cToken = default)
         {
             return await GetBytesAsync(url, cToken)

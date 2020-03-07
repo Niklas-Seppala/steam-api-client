@@ -94,7 +94,7 @@ namespace SteamApi
             switch (resp.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    throw new PrivateApiResponseException($"Response status code: {code}. Unauthorized request")
+                    throw new PrivateApiContentException($"Response status code: {code}. Unauthorized request")
                     {
                         URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
@@ -107,18 +107,30 @@ namespace SteamApi
                     throw new HttpRequestException($"Response status code: {code}. Developer key is invalid.");
                 case HttpStatusCode.GatewayTimeout:
                     throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
-                case HttpStatusCode.Gone:
-                    throw new HttpRequestException($"Response status code: {code}. Resource No Longer Available");
                 case HttpStatusCode.HttpVersionNotSupported:
                     throw new HttpRequestException($"Response status code: {code}. Http Version Not Supported");
                 case HttpStatusCode.InternalServerError:
                     throw new HttpRequestException($"Response status code: {code}. Internal Server Error");
                 case HttpStatusCode.MethodNotAllowed:
                     throw new HttpRequestException($"Response status code: {code}. Method Not Allowed");
+                case HttpStatusCode.Gone:
+                    throw new ApiResourceNotFoundException($"Response status code: {code}. Resource No Longer Available")
+                    {
+                        URL = resp.RequestMessage.RequestUri.ToString(),
+                        StatusCode = code
+                    };
                 case HttpStatusCode.Moved:
-                    throw new HttpRequestException($"Response status code: {code}. Content Moved");
+                    throw new ApiResourceNotFoundException($"Response status code: {code}. Content Moved")
+                    {
+                        URL = resp.RequestMessage.RequestUri.ToString(),
+                        StatusCode = code
+                    };
                 case HttpStatusCode.NotFound:
-                    throw new HttpRequestException($"Response status code: {code}. Not Found");
+                    throw new ApiResourceNotFoundException($"Response status code: {code}. Not Found")
+                    {
+                        URL = resp.RequestMessage.RequestUri.ToString(),
+                        StatusCode = code
+                    };
                 case HttpStatusCode.NotImplemented:
                     throw new HttpRequestException($"Response status code: {code}. Not Implemented");
                 case HttpStatusCode.RequestTimeout:
