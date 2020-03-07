@@ -22,7 +22,7 @@ namespace SteamApi.Models.Steam
         /// 64-bit Steam id
         /// </summary>
         [JsonProperty("steamid")]
-        public string Id64 { get; set; }
+        public ulong Id64 { get; set; }
 
         /// <summary>
         /// Small (32x32) avatar image URL
@@ -57,14 +57,7 @@ namespace SteamApi.Models.Steam
         public uint CommunityVisibilityState { get; set; }
 
         /// <summary>
-        /// Users current profile state:
-        ///     0 = Offline OR private profile,
-        ///     1 = Online,
-        ///     2 = Busy,
-        ///     3 = Away,
-        ///     4 = Snooze,
-        ///     5 = Looking to trade,
-        ///     6 = Looking to play
+        /// If set to 1 the user has configured the profile.
         /// </summary>
         public uint ProfileState { get; set; }
 
@@ -99,5 +92,17 @@ namespace SteamApi.Models.Steam
         /// Steam city code
         /// </summary>
         public uint LocCityId { get; set; }
+
+        /// <summary>
+        /// Player's clan id
+        /// </summary>
+        [JsonProperty("primaryclanid")]
+        public string PrimaryClanId { get; set; }
+
+        /// <summary>
+        /// Current game
+        /// </summary>
+        [JsonProperty("gameextrainfo")]
+        public string Game { get; set; }
     }
 }
