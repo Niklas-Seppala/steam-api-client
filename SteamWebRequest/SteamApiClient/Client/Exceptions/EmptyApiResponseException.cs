@@ -20,16 +20,4 @@ namespace SteamApi
         public EmptyApiResponseException(string message, Exception inner) : base(message, inner) { }
         protected EmptyApiResponseException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
-
-
-    [Serializable]
-    public class PrivateApiResponseException : ApiException
-    {
-        public PrivateApiResponseException() { }
-        public PrivateApiResponseException(string message) : base(message) { }
-        public PrivateApiResponseException(string message, Exception inner) : base(message, inner) { }
-        protected PrivateApiResponseException(
-          SerializationInfo info,
-          StreamingContext context) : base(info, context) { }
-    }
 }
