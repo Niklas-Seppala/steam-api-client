@@ -8,16 +8,16 @@ namespace SteamApi
     /// </summary>
     /// <typeparam name="T">Expected response model type</typeparam>
     [Serializable]
-    public class EmptyApiResponseException<T> : ApiException
+    public class EmptyApiResultException<T> : ApiException
     {
         /// <summary>
         /// Type of the Requested model
         /// </summary>
         public Type ResponseModelType { get; } = typeof(T);
 
-        public EmptyApiResponseException() { }
-        public EmptyApiResponseException(string message) : base(message) { }
-        public EmptyApiResponseException(string message, Exception inner) : base(message, inner) { }
-        protected EmptyApiResponseException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public EmptyApiResultException() { }
+        public EmptyApiResultException(string message) : base(message) { }
+        public EmptyApiResultException(string message, Exception inner) : base(message, inner) { }
+        protected EmptyApiResultException(SerializationInfo info, StreamingContext context) : base(info, context) { }
     }
 }
