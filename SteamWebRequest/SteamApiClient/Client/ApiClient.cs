@@ -104,7 +104,11 @@ namespace SteamApi
                 case HttpStatusCode.BadRequest:
                     throw new HttpRequestException($"Response status code: {code}. Bad Request");
                 case HttpStatusCode.Forbidden:
-                    throw new HttpRequestException($"Response status code: {code}. Developer key is invalid.");
+                    throw new ApiException($"Response status code: {code}. Developer key is invalid.")
+                    {
+                        URL = resp.RequestMessage.RequestUri.ToString(),
+                        StatusCode = code
+                    };
                 case HttpStatusCode.GatewayTimeout:
                     throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
                 case HttpStatusCode.HttpVersionNotSupported:
