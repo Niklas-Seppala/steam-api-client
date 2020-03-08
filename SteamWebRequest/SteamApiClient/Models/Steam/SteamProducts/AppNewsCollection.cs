@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SteamApi.Models.Steam
 {
@@ -15,6 +16,7 @@ namespace SteamApi.Models.Steam
         /// <summary>
         /// Total count of news items about the app
         /// </summary>
+        [JsonProperty("count")]
         public uint TotalCount { get; set; }
 
         /// <summary>
