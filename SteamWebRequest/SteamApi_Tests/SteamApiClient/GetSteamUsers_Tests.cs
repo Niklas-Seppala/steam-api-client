@@ -43,7 +43,7 @@ namespace Client
             var exeption = Assert.Throws<AggregateException>(() => {
                 var profile = SteamApiClient.GetSteamAccountAsync(0)
                     .Result;
-            }).InnerException as EmptyApiResponseException<SteamAccount>;
+            }).InnerException as EmptyApiResultException<SteamAccount>;
 
             Assert.NotNull(exeption);
             Assert.Equal(typeof(SteamAccount), exeption.ResponseModelType);

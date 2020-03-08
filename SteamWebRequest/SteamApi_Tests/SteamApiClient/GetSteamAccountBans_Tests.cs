@@ -37,7 +37,7 @@ namespace Client
             {
                 var accountBans = SteamApiClient.GetSteamAccountBansAsync(0)
                .Result;
-            }).InnerException as EmptyApiResponseException<AccountBans>;
+            }).InnerException as EmptyApiResultException<AccountBans>;
             SleepAfterSendingRequest();
 
             Assert.NotNull(ex);
