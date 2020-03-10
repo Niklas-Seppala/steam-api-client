@@ -42,7 +42,7 @@ namespace SteamApi.Models.Dota
         /// Game time in seconds
         /// </summary>
         [JsonProperty("game_time")]
-        public uint GameTime { get; set; }
+        public int GameTime { get; set; }
 
         /// <summary>
         /// Game mode
