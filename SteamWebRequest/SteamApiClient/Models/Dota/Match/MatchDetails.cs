@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,6 +7,7 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Match details model
     /// </summary>
+    [Serializable]
     public sealed class MatchDetails
     {
         /// <summary>
@@ -32,31 +34,31 @@ namespace SteamApi.Models.Dota
         public uint FirstBloodTime { get; set; }
 
         /// <summary>
-        /// Radiants towerstatus
+        /// Radiant team's tower state after the game
         /// </summary>
-        [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("tower_status_radiant")]
+        [JsonConverter(typeof(MapStateConverter))]
         public TowerStatus TowerStatusRadiant { get; set; }
 
         /// <summary>
-        /// Dire towerstatus
+        /// Dire team's tower state after the game
         /// </summary>
-        [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("tower_status_dire")]
+        [JsonConverter(typeof(MapStateConverter))]
         public TowerStatus TowerStatusDire { get; set; }
 
         /// <summary>
-        /// Radiant's barracks status
+        /// Radiant team's barracks state after the game
         /// </summary>
-        [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("barracks_status_radiant")]
+        [JsonConverter(typeof(MapStateConverter))]
         public BarracksStatus BarracksStatusRadiant { get; set; }
 
         /// <summary>
-        /// Dire's barracks status
+        /// Dire team's barracks state after the game
         /// </summary>
-        [JsonConverter(typeof(MapStateConverter))]
         [JsonProperty("barracks_status_dire")]
+        [JsonConverter(typeof(MapStateConverter))]
         public BarracksStatus BarracksStatusDire { get; set; }
 
         /// <summary>

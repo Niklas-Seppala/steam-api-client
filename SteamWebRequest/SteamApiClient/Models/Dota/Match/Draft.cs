@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 match draft phase model
     /// </summary>
+    [Serializable]
     public class Draft
     {
         /// <summary>

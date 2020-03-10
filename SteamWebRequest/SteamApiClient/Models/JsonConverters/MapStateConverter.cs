@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SteamApi.Models.Dota;
 using System;
-using System.Collections.Specialized;
+using SteamApi.Utility;
 
 namespace SteamApi
 {
@@ -15,17 +14,11 @@ namespace SteamApi
             object existingValue, JsonSerializer serializer)
         {
             if (objectType == typeof(BarracksStatus))
-            {
-                return new BarracksStatus(new BitVector32(Convert.ToByte(reader.Value)));
-            }
+                return ExpandValues.GetBarrackStatus(Convert.ToInt32(reader.Value));
             else if (objectType == typeof(TowerStatus))
-            {
-                return new TowerStatus(new BitVector32(Convert.ToUInt16(reader.Value)));
-            }
+                return ExpandValues.GetTowerStatus(Convert.ToInt32(reader.Value));
             else
-            {
                 return null;
-            }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

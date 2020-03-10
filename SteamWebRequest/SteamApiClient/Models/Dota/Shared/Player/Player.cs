@@ -1,38 +1,20 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 player model
     /// </summary>
+    [Serializable]
     public class Player
     {
-        private BitVector32 _player_slot;
-
-        /// <summary>
-        /// Player slot bitvector. Dont touch this, get values from IsDire/IsRadiant
-        /// and TeamPosition properties
-        /// </summary>
-        [JsonConverter(typeof(PlayerSlotConverter))]
         [JsonProperty("player_slot")]
-        public BitVector32 PlayerSlot { set => _player_slot = value; }
-
-        /// <summary>
-        /// Is player in Dire team
-        /// </summary>
-        public bool IsDire => _player_slot[128];
-
-        /// <summary>
-        /// Is player in Radiant team
-        /// </summary>
-        public bool IsRadiant => !IsDire;
-
-        /// <summary>
-        /// Player's team position
-        /// </summary>
-        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        [JsonConverter(typeof(PlayerSlotConverter))]
+        public PlayerSlot PlayerSlot { get; set; }
 
         /// <summary>
         /// Item at item slot 0

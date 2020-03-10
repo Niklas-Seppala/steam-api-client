@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Hero companion model (Lone Druid's Spirit Bear)
     /// </summary>
+    [Serializable]
     public class HeroCompanion
     {
         /// <summary>
