@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using SteamApi.Utility;
+using SteamApi.Models.Dota;
 
 namespace SteamApi
 {
@@ -8,15 +8,15 @@ namespace SteamApi
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
-        private readonly Type _type = typeof(int);
+        private readonly Type _type = typeof(uint);
 
         public override object ReadJson(JsonReader reader, Type objectType,
             object existingValue, JsonSerializer serializer)
         {
             if (objectType == typeof(BarracksStatus))
-                return ExpandValues.GetBarrackStatus(Convert.ToInt32(reader.Value));
+                return new BarracksStatus(Convert.ToInt32(reader.Value));
             else if (objectType == typeof(TowerStatus))
-                return ExpandValues.GetTowerStatus(Convert.ToInt32(reader.Value));
+                return new TowerStatus(Convert.ToInt32(reader.Value));
             else
                 return null;
         }

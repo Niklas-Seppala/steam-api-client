@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Specialized;
-using SteamApi.Utility;
+using SteamApi.Models.Dota;
 
 namespace SteamApi
 {
@@ -9,16 +8,16 @@ namespace SteamApi
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
-        private readonly Type _type = typeof(int);
+        private readonly Type _type = typeof(uint);
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            return ExpandValues.GetPlayerSlot(Convert.ToInt32(reader.Value));
+            return new PlayerSlot(Convert.ToInt32(reader.Value));
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException("Cant write");
+            throw new NotImplementedException("Can't write");
         }
 
         public override bool CanConvert(Type objectType)
