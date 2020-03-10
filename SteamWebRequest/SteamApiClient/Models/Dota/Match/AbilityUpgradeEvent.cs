@@ -1,5 +1,8 @@
-﻿namespace SteamApi.Models.Dota
+﻿using System;
+
+namespace SteamApi.Models.Dota
 {
+    [Serializable]
     public sealed class AbilityUpgradeEvent
     {
         public uint Time { get; set; }
