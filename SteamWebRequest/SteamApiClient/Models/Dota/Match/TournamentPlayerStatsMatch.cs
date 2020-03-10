@@ -8,31 +8,12 @@ namespace SteamApi.Models.Dota
     /// </summary>
     public class TournamentPlayerStatsMatch
     {
-        private BitVector32 _player_slot;
-
         /// <summary>
-        /// PLayer slot as bitvector. Don't use this.
-        /// Details can be extracted from bitvector using IsDire/IsRadiant
-        /// and TeamPosition properties
+        /// Player's data about how they fit in their team.
         /// </summary>
         [JsonConverter(typeof(PlayerSlotConverter))]
         [JsonProperty("player_slot")]
-        public BitVector32 PlayerSlot { set => _player_slot = value; }
-
-        /// <summary>
-        /// Is player Dire
-        /// </summary>
-        public bool IsDire => _player_slot[128];
-
-        /// <summary>
-        /// Is player Radiant
-        /// </summary>
-        public bool IsRadiant => !IsDire;
-
-        /// <summary>
-        /// Players team position
-        /// </summary>
-        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        public PlayerSlot PlayerSlot { get; set; }
 
         /// <summary>
         /// Id of the hero being played

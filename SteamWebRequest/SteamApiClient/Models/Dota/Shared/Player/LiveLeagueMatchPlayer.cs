@@ -8,29 +8,12 @@ namespace SteamApi.Models.Dota
     /// </summary>
     public class LiveLeagueMatchPlayer
     {
-        private BitVector32 _player_slot;
-
         /// <summary>
-        /// Player slot bitvector. Dont touch this, get values from IsDire/IsRadiant
-        /// and TeamPosition properties
+        /// Player's data about how they fit in their team.
         /// </summary>
+        [JsonProperty("player_slot")]
         [JsonConverter(typeof(PlayerSlotConverter))]
-        public BitVector32 Player_slot { set => _player_slot = value; }
-
-        /// <summary>
-        /// Is player Dire
-        /// </summary>
-        public bool IsDire => _player_slot[128];
-
-        /// <summary>
-        /// Is player Radiant
-        /// </summary>
-        public bool IsRadiant => !IsDire;
-
-        /// <summary>
-        /// Player's position in the team
-        /// </summary>
-        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        public PlayerSlot PlayerSlot { get; set; }
 
         /// <summary>
         /// PLayer's X-coordinate on minimap

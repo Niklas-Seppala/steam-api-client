@@ -8,30 +8,37 @@ namespace SteamApi.Models.Dota
     /// </summary>
     public sealed class PlayerShort
     {
-        private BitVector32 _player_slot;
+        //private BitVector32 _player_slot;
+
+        ///// <summary>
+        ///// Player slot bitvector. Dont touch this, get values from IsDire/IsRadiant
+        ///// and TeamPosition properties
+        ///// </summary>
+        //[JsonConverter(typeof(PlayerSlotConverter))]
+        //[JsonProperty("player_slot")]
+        //public BitVector32 PlayerSlot { set => _player_slot = value; }
 
         /// <summary>
-        /// Player slot bitvector. Dont touch this, get values from IsDire/IsRadiant
-        /// and TeamPosition properties
+        /// Player's data about how they fit in their team.
         /// </summary>
         [JsonConverter(typeof(PlayerSlotConverter))]
         [JsonProperty("player_slot")]
-        public BitVector32 PlayerSlot { set => _player_slot = value; }
+        public PlayerSlot PlayerSlot { get; set; }
 
-        /// <summary>
-        /// Is player on Dire team
-        /// </summary>
-        public bool IsDire => _player_slot[128];
+        ///// <summary>
+        ///// Is player on Dire team
+        ///// </summary>
+        //public bool IsDire => _player_slot[128];
 
-        /// <summary>
-        /// Is player on Radiant team
-        /// </summary>
-        public bool IsRadiant => !IsDire;
+        ///// <summary>
+        ///// Is player on Radiant team
+        ///// </summary>
+        //public bool IsRadiant => !IsDire;
 
-        /// <summary>
-        /// Player's position on the team
-        /// </summary>
-        public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
+        ///// <summary>
+        ///// Player's position on the team
+        ///// </summary>
+        //public uint TeamPosition => (uint)(_player_slot[BitVector32.CreateSection(4)] + 1);
 
         /// <summary>
         /// 32-bit steam account id
