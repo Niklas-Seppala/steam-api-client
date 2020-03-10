@@ -33,7 +33,7 @@ namespace SteamApi.Models.Dota
         /// Game mode
         /// </summary>
         [JsonProperty("game_mode")]
-        public byte GameMode { get; set; }
+        public uint GameMode { get; set; }
 
         /// <summary>
         /// League id. Optional

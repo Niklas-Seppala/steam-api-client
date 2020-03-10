@@ -92,11 +92,11 @@ namespace SteamApi.Models.Dota
         /// <summary>
         /// List of abilities player has leveled
         /// </summary>
-        public IReadOnlyList<ushort> Abilities { get; set; }
+        public IReadOnlyList<uint> Abilities { get; set; }
 
         /// <summary>
         /// List of items player has obtained
         /// </summary>
-        public IReadOnlyList<ushort> Items { get; set; }
+        public IReadOnlyList<uint> Items { get; set; }
     }
 }
