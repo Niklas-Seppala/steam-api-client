@@ -6,6 +6,6 @@ namespace SteamApi.Models.Dota
     /// Draft phase Pick event
     /// </summary>
     [Serializable]
-    public class Ban : Pick
+    public sealed class Ban : Pick
     { }
 }

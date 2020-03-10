@@ -7,7 +7,7 @@ namespace SteamApi.Models.Dota
     /// Draft phase pick event
     /// </summary>
     [Serializable]
-    public sealed class Pick
+    public class Pick
     {
         /// <summary>
         /// Hero id that this event targets
