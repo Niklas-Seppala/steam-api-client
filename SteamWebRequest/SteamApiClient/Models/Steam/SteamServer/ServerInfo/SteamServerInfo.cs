@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Steam
 {
     /// <summary>
     /// Basic Steam server info
     /// </summary>
+    [Serializable]
     public sealed class SteamServerInfo
     {
         /// <summary>

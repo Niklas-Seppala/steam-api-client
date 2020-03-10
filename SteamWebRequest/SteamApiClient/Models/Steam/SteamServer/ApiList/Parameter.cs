@@ -1,8 +1,11 @@
-﻿namespace SteamApi.Models.Steam
+﻿using System;
+
+namespace SteamApi.Models.Steam
 {
     /// <summary>
     /// Steam API method parameter
     /// </summary>
+    [Serializable]
     public sealed class Parameter
     {
         /// <summary>

@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Steam
 {
     /// <summary>
     /// Steam users ban history model.
     /// </summary>
+    [Serializable]
     public sealed class AccountBans
     {
         /// <summary>

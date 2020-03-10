@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SteamApi.Models.Steam
 {
     /// <summary>
     /// Steam API method
     /// </summary>
+    [Serializable]
     public sealed class Method
     {
         /// <summary>

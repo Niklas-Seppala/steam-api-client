@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Steam
 {
     /// <summary>
     /// App news model
     /// </summary>
+    [Serializable]
     public sealed class AppNews
     {
         /// <summary>

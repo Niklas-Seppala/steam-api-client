@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Steam
@@ -6,6 +7,7 @@ namespace SteamApi.Models.Steam
     /// <summary>
     /// Collection of news about app
     /// </summary>
+    [Serializable]
     public sealed class AppNewsCollection
     {
         /// <summary>
