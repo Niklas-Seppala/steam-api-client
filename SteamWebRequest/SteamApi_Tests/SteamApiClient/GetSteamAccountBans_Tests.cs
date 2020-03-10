@@ -9,7 +9,11 @@ namespace Client
 {
     public class GetSteamAccountBans_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetSteamAccountBans_Tests(ClientFixture fixture) : base(fixture) {}
+
 
         /// <summary>
         /// Test case for single valid id. Method should return

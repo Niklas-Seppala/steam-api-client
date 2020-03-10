@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
 namespace Client
 {
     public class GetApiList_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetApiList_Tests(ClientFixture fixture) : base(fixture) { }
 
 
+        /// <summary>
+        /// Test case for default parameters
+        /// </summary>
         [Fact]
         public void DefaultConditions_ReturnsApiList()
         {

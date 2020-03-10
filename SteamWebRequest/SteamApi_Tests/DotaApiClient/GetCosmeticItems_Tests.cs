@@ -5,6 +5,9 @@ namespace Client
 {
     public class GetCosmeticItems_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetCosmeticItems_Tests(ClientFixture fixture) : base(fixture) { }
 
         [Fact]
@@ -23,6 +26,7 @@ namespace Client
                 Assert.NotEqual((uint)0, rarity.Id);
             });
         }
+
 
         [Theory]
         [InlineData("fi",
@@ -53,6 +57,7 @@ namespace Client
             }
         }
 
+
         [Theory]
         [InlineData(6666)]
         [InlineData(5613)]
@@ -66,6 +71,7 @@ namespace Client
             Assert.NotEmpty(creators);
         }
 
+
         [Theory]
         [InlineData(418)]
         [InlineData(419)]
@@ -78,6 +84,7 @@ namespace Client
 
             Assert.Empty(creators);
         }
+
 
         [Theory]
         [InlineData("infinite_waves_shoulder")]
@@ -95,6 +102,7 @@ namespace Client
             Assert.StartsWith("icons/econ", iconPath);
         }
 
+
         [Theory]
         [InlineData("infinite_waves_shoulder", 0)]
         [InlineData("arms_of_the_onyx_crucible_weapon", 1)]
@@ -111,7 +119,8 @@ namespace Client
             Assert.StartsWith("icons/econ", iconPath);
         }
 
-        [Fact] // TODO: handle AggregateExceptions
+
+        [Fact]
         public void GetItemIconPath_ItemDefAndInvalidTypeProvided_ThrowsException()
         {
             Assert.Throws<AggregateException>(() =>
@@ -122,6 +131,7 @@ namespace Client
             });
             SleepAfterSendingRequest();
         }
+
 
         [Theory]
         [InlineData(76561198107435620, 1)]
@@ -137,6 +147,7 @@ namespace Client
             Assert.NotEmpty(items);
         }
 
+
         [Fact]
         public void GetEquipedPlayerItems_PrivateAccount_Returns()
         {
@@ -145,6 +156,7 @@ namespace Client
 
             Assert.Empty(items);
         }
+
 
         [Theory]
         [InlineData(76561198107435620)]
@@ -162,6 +174,7 @@ namespace Client
             }
         }
 
+
         [Fact]
         public void GetPlayerItems_PrivateInventory_ReturnsWithStatus15()
         {
@@ -170,6 +183,7 @@ namespace Client
             SleepAfterSendingRequest();
             Assert.Equal((uint)15, items.Status);
         }
+
 
         [Fact]
         public void GetSchemaUr_DefaultParams_ReturnsSchemaUrl()
@@ -180,6 +194,7 @@ namespace Client
 
             Assert.NotEmpty(schema);
         }
+
 
         [Fact]
         public void GetStoreMetadata_DefaultParams_ReturnsStoreMetaData()

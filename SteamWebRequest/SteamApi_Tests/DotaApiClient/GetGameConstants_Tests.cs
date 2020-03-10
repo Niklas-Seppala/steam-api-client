@@ -4,7 +4,11 @@ namespace Client
 {
     public class GetGameConstants_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetGameConstants_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         [Fact]
         public void GetGameItems_DefaultParams_ReturnsGameItems()
@@ -20,6 +24,7 @@ namespace Client
                 Assert.NotEqual((uint)0, item.Id);
             });
         }
+
 
         [Fact]
         public void GetHeroes_DefaultParams_ReturnsHeroes()

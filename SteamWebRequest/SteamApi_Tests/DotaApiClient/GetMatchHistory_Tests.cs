@@ -5,8 +5,11 @@ namespace Client
 {
     public class GetMatchHistory_Tests : SteamApiClientTests
     {
-        public GetMatchHistory_Tests(ClientFixture fixture) : base(fixture)
-        { }
+        /// <summary>
+        /// Setup
+        /// </summary>
+        public GetMatchHistory_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         [Theory]
         [InlineData(50, 50)]
@@ -23,6 +26,7 @@ namespace Client
 
             Assert.True(response.Matches.Count == resultCount);
         }
+
 
         [Theory]
         [InlineData(78123870)]
@@ -41,6 +45,7 @@ namespace Client
             }
         }
 
+
         [Theory]
         [InlineData(5609)]  // ESL One Hamburg 2017
         [InlineData(11517)] // DreamLeague Season 13
@@ -57,6 +62,7 @@ namespace Client
 
             Assert.Equal(leagueId.ToString(), details.LeagueId.ToString());
         }
+
 
         [Theory]
         [InlineData(2)]
@@ -75,6 +81,7 @@ namespace Client
                 Assert.True(match.Players.Count >= minPlayerCount);
             }
         }
+
 
         [Theory]
         [InlineData(80)]
@@ -97,6 +104,7 @@ namespace Client
             }
         }
 
+
         [Theory]
         [InlineData(666666, 666667)]
         [InlineData(808089, 808089)]
@@ -112,6 +120,7 @@ namespace Client
 
             Assert.Equal(resultStartSeqNum, matches.ElementAt(0).MatchSequenceNum);
         }
+
 
         [Theory]
         [InlineData(5, 5)]

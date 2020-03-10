@@ -12,6 +12,7 @@ namespace Client
         /// </summary>
         public GetSteamFriendlists_Tests(ClientFixture fixture) : base(fixture){ }
 
+
         /// <summary>
         /// Test case for 32-bit steam id. Method should throw Exception
         /// </summary>
@@ -27,6 +28,7 @@ namespace Client
 
             Assert.NotNull(ex); // makes sure inner exception was the expected exception.
         }
+
 
         /// <summary>
         /// Test case for invalid steam id. Method should throw HttpRequestException
@@ -45,6 +47,7 @@ namespace Client
             Assert.NotNull(ex); // makes sure inner exception was the expected exception.
         }
 
+
         /// <summary>
         /// Test case for steam profile that is not public. You can't
         /// get private profile's friendslist, sot method should throw
@@ -62,6 +65,7 @@ namespace Client
             Assert.NotNull(ex); // makes sure inner exception was the expected exception.
             Assert.True(401 == ex.StatusCode); // Http status code should be 401 for unauthorized request
         }
+
 
         /// <summary>
         /// Test case for valid and visible steam profiles. Method should return

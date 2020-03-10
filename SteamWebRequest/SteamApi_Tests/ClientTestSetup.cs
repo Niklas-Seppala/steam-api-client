@@ -46,7 +46,7 @@ namespace Client
     }
 
     /// <summary>
-    /// 
+    /// Base class for api client tests
     /// </summary>
     public class SteamApiClientTests : IClassFixture<ClientFixture>
     {

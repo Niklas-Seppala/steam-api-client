@@ -16,6 +16,7 @@ namespace Client
         /// </summary>
         public GetSteamUsers_Tests(ClientFixture fixture) : base(fixture) { }
 
+
         /// <summary>
         /// Tests Steam api client's method that requests for multiple steam profiles
         /// using faulty 64-bit steam ids
@@ -32,6 +33,7 @@ namespace Client
 
             Assert.Empty(profiles);
         }
+
 
         /// <summary>
         /// Tests Steam api client's method that requests for single steam profile
@@ -51,6 +53,7 @@ namespace Client
             SleepAfterSendingRequest();
         }
 
+
         /// <summary>
         /// Tests Steam api client's method that requests for single steam profile
         /// using 64-bit steam id
@@ -68,6 +71,7 @@ namespace Client
             Assert.NotEmpty(profile.AvatarFullURL);
             Assert.NotEmpty(profile.AvatarSmallURL);
         }
+
 
         /// <summary>
         /// Tests SteamApiClient's method that requests for multiple steam profiles
@@ -96,7 +100,6 @@ namespace Client
                 Assert.NotEmpty(p.AvatarFullURL);
                 Assert.NotEmpty(p.AvatarSmallURL);
             });
-
         }
     }
 }

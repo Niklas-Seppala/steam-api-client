@@ -4,7 +4,11 @@ namespace Client
 {
     public class GetMatchDetails_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetMatchDetails_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         [Theory]
         [InlineData(5215439388)]
@@ -21,6 +25,7 @@ namespace Client
 
             Assert.Equal(matchId, details.MatchId);
         }
+
 
         [Fact]
         public void GetRealTimeMatchStats_LiveGamesAvailable_RealTimeMatchStats()

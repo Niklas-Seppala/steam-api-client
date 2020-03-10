@@ -7,6 +7,9 @@ namespace Client
 {
     public class GetAppNews_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetAppNews_Tests(ClientFixture fixture) : base(fixture) {}
 
 

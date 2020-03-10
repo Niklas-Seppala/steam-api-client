@@ -5,7 +5,11 @@ namespace Client
 {
     public class GetSteamServerInfo_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetSteamServerInfo_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         /// <summary>
         /// Test case for normal conditions. Method should return

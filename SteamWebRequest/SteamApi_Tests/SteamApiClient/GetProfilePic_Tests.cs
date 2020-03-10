@@ -1,14 +1,20 @@
 ﻿using System;
 using Xunit;
 using SteamApi;
-using System.Net.Http;
 
 namespace Client
 {
     public class GetProfilePic_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetProfilePic_Tests(ClientFixture fixture) : base(fixture) {}
 
+        /// <summary>
+        /// Test case for invalid file name. Method should
+        /// throw ApiResourceNotFoundException
+        /// </summary>
         [Fact]
         public void InvalidFileName_ThrowsHttpRequestException()
         {
@@ -32,6 +38,11 @@ namespace Client
             Assert.True(ex.URL == profile.AvatarFullURL);
         }
 
+
+        /// <summary>
+        /// Test case for invalid url. Method should
+        /// throw exception.
+        /// </summary>
         [Fact]
         public void InvalidUrl_ThrowsEmptyResponseException()
         {
@@ -41,12 +52,18 @@ namespace Client
             });
         }
 
+
+        /// <summary>
+        /// Test case for valid steam profile avatar url.
+        /// Method should return correct image as byte array.
+        /// </summary>
+        /// <param name="id64">64-bit steam id</param>
         [Theory]
         [InlineData(76561197960321706)]
         [InlineData(76561198096280303)]
         [InlineData(76561198038389598)]
         [InlineData(76561198049597855)]
-        public void ValidId_GetsProfilePicAsByteArray(ulong id64)
+        public void ValidUrl_GetsProfilePicAsByteArray(ulong id64)
         {
             var profile = SteamApiClient.GetSteamAccountAsync(id64)
                 .Result;

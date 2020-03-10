@@ -4,7 +4,11 @@ namespace Client
 {
     public class GetTournamentData_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetTournamentData_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         [Theory]
         [InlineData(9870, 25532177)]
@@ -19,6 +23,7 @@ namespace Client
             Assert.Equal(prize, resp["prize_pool"]);
             Assert.Equal(leagueId, resp["league_id"]);
         }
+
 
         [Theory]
         [InlineData(72312627, 9870)]  // TI8
@@ -35,6 +40,7 @@ namespace Client
             Assert.NotEmpty(eventMatches.Matches);
             Assert.NotEmpty(eventMatches.HeroesPlayed);
         }
+
 
         [Theory]
         [InlineData(72312627, 9870, 42)]  // Wraith King
@@ -53,6 +59,7 @@ namespace Client
             Assert.All(eventMatches.Matches, (match) => Assert.Equal(heroId, match.HeroId));
         }
 
+
         [Fact]
         public void GetTournamentPlayerStats_NonProId_ReturnsEmptyObject()
         {
@@ -65,6 +72,7 @@ namespace Client
             Assert.Null(eventMatches.HeroesPlayed);
         }
 
+
         [Fact]
         public void GetTopLiveGames_DefaultParams_ReturnsTopLiveGames()
         {
@@ -75,6 +83,7 @@ namespace Client
             Assert.NotEmpty(topGames);
         }
 
+
         [Fact(Skip = "Event games are hard to come by.")]
         public void GetTopLiveEventGames_DefaultParams_ReturnsTopLiveEventGames()
         {
@@ -84,6 +93,7 @@ namespace Client
             Assert.NotNull(topEventGames);
             Assert.NotEmpty(topEventGames);
         }
+
 
         [Theory]
         [InlineData(5, 5)]
@@ -101,6 +111,7 @@ namespace Client
             Assert.Equal(resultCount, teams.Count);
         }
 
+
         [Fact]
         public void GetLiveLeagueMatch_DefaultParameters_ReturnsLiveLeagueGames()
         {
@@ -109,6 +120,7 @@ namespace Client
 
             Assert.NotEmpty(leagueGames);
         }
+
 
         [Fact]
         public void GetLeagueListing_None_ReturnsLeagueListing()

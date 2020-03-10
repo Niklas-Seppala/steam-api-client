@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 using SteamApi;
 
 namespace Client
 {
     public class GetSteamProducts_Tests : SteamApiClientTests
     {
+        /// <summary>
+        /// Setup
+        /// </summary>
         public GetSteamProducts_Tests(ClientFixture fixture) : base(fixture) {}
 
 
@@ -24,6 +24,12 @@ namespace Client
             Assert.True(response.Count > (int)ProductCallSize.Max);
         }
 
+
+        /// <summary>
+        /// Test case where product call size is defined.
+        /// Mehtod should return correct amount of products.
+        /// </summary>
+        /// <param name="callSize">product call size</param>
         [Theory]
         [InlineData(ProductCallSize.Large)]
         [InlineData(ProductCallSize.Medium)]
@@ -37,6 +43,7 @@ namespace Client
 
             Assert.True((int)callSize >= response.Count);
         }
+
 
         /// <summary>
         /// Test case for IncludeProducts enum used as a set. Method should return
@@ -58,6 +65,7 @@ namespace Client
             }
 
         }
+
 
         /// <summary>
         /// Test case for all multiple product types included in the reqeust.
