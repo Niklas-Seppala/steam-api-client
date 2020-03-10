@@ -102,13 +102,14 @@ namespace SteamApi
                 if (callAll)
                 {
                     SteamProductsContainer chunk;
-                    SteamProductsContainer allProducts = await GetModelAsync<SteamProductsContainer>(cToken: cToken)
+                    SteamProductsContainer allProducts = await GetModelAsync<SteamProductsContainer>(UrlBuilder.Url, cToken: cToken)
                         .ConfigureAwait(false);
 
                     while (allProducts.Content.MoreResults)
                     {
                         UrlBuilder.AddQuery("last_appid", allProducts.Content.LastId.ToString());
-                        chunk = await GetModelAsync<SteamProductsContainer>(cToken: cToken).ConfigureAwait(false);
+                        chunk = await GetModelAsync<SteamProductsContainer>(UrlBuilder.Url, cToken: cToken)
+                            .ConfigureAwait(false);
                         allProducts.Content.LastId = chunk.Content.LastId;
                         allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
                         allProducts.Content.MoreResults = chunk.Content.MoreResults;
@@ -163,15 +164,21 @@ namespace SteamApi
         /// <exception cref="EmptyApiResultException{AppNewsCollection}"></exception>
         /// <exception cref="ApiException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<AppNewsCollection> GetAppNewsAsync(
-             uint appId, uint count = 20, long endDateTimestamp = -1, CToken cToken = default, params string[] tags)
+        /// <example>
+        /// <code>
+        ///     ApiClient.SetApiKey("api key here");
+        ///     var client = new SteamApiClient();
+        ///     var news = await client.GetAppNewsAsync(570, count: 50);
+        /// </code>
+        /// </example>
+        public async Task<AppNewsCollection> GetAppNewsAsync(uint appId, uint count = 20,
+            long endDateTimestamp = -1, CToken cToken = default, params string[] tags)
         {
             UrlBuilder.SetHost(HOST).SetPath(ISTEAM_NEWS, "GetNewsForApp", "v2")
                 .AddQuery("appid", appId.ToString())
                 .AddQuery("count", count.ToString())
                 .AddQuery("enddate", ValidateTimestamp(endDateTimestamp).ToString())
                 .AddQuery("tags", string.Join(",", tags));
-
             try
             {
                 var response = await GetModelAsync<AppNewsResponse>(cToken: cToken)
