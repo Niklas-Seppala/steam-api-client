@@ -90,6 +90,17 @@ namespace SteamApi
         /// <param name="callSize">Call size</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>ReadOnlyCollection of SteamProduct objects</returns>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <example>
+        /// <code>
+        ///     ApiClient.SetApiKey("api key here");
+        ///     var client = new SteamApiClient();
+        ///     var products = client.GetSteamProductsAsync(
+        ///         IncludeProducts.DLC | IncludeProducts.Games,
+        ///         callSize: 50000);
+        /// </code>
+        /// </example>
         public async Task<IReadOnlyList<SteamProduct>> GetSteamProductsAsync(IncludeProducts products,
             ProductCallSize callSize = ProductCallSize.Default, CToken cToken = default)
         {
@@ -210,6 +221,16 @@ namespace SteamApi
         /// <returns>List of account bans</returns>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="HttpRequestException"></exception>
+        /// <example>
+        /// <code>
+        ///     ApiClient.SetApiKey("api key here");
+        ///     var client = new SteamApiClient();
+        ///     var response = await client.GetSteamAccountsBansAsync(new ulong[] {
+        ///         76561198107435620,
+        ///         76561198107435621,
+        ///         76561198107435622})
+        /// </code>
+        /// </example>
         public async Task<IReadOnlyCollection<AccountBans>> GetSteamAccountsBansAsync(
             IEnumerable<ulong> id64s, string version = "v1", CToken cToken = default)
         {
@@ -235,6 +256,13 @@ namespace SteamApi
         /// <exception cref="EmptyApiResultException{AccountBans}"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="HttpRequestException"></exception>
+        /// <example>
+        /// <code>
+        ///     ApiClient.SetApiKey("api key here");
+        ///     var client = new SteamApiClient();
+        ///     var response = await client.GetSteamAccountBansAsync(76561198107435620);
+        /// </code>
+        /// </example>
         public async Task<AccountBans> GetSteamAccountBansAsync(ulong id64, string
             version = "v1", CToken cToken = default)
         {

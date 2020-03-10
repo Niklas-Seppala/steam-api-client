@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace SteamApi
 {
+    /// <summary>
+    /// Thrown when the Steam user's private information was requested.
+    /// </summary>
     [Serializable]
     public class PrivateApiContentException : ApiException
     {

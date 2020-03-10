@@ -242,7 +242,7 @@ namespace SteamApi
         {
             if (response.IsSuccessStatusCode) return await successAction.Invoke(response).ConfigureAwait(false);
             else ThrowFailedRequestException(response);
-            return default; // THIS LINE WILL NEVER RUN !!
+            return default; // !! THIS LINE WILL NEVER RUN !!
         }
 
         /// <summary>
