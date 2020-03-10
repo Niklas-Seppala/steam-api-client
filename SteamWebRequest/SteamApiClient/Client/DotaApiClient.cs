@@ -105,7 +105,7 @@ namespace SteamApi
         /// Sends GET request for Dota 2 match details. Request can be
         /// cancelled by providing cancellation token.
         /// </summary>
-        public async Task<MatchDetails> GetMatchDetailsAsync(string matchId,
+        public async Task<MatchDetails> GetMatchDetailsAsync(ulong matchId,
             string apiInterface = IDOTA2_MATCH, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.SetHost(STEAM_HOST).SetPath(apiInterface, "GetMatchDetails", version)
