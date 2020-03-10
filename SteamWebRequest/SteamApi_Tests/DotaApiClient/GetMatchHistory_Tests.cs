@@ -52,7 +52,7 @@ namespace Client
                 .Result;
             SleepAfterSendingRequest();
             var details = DotaApiClient.GetMatchDetailsAsync(
-                response.Matches.ElementAt(0).MatchId.ToString()).Result;
+                response.Matches.ElementAt(0).MatchId).Result;
             SleepAfterSendingRequest();
 
             Assert.Equal(leagueId.ToString(), details.LeagueId.ToString());
