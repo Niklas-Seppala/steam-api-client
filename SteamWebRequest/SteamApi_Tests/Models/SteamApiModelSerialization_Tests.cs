@@ -47,7 +47,7 @@ namespace Models
             Assert.Equal(friend.FriendSince, deserialized.FriendSince);
         }
 
-        
+
         /// <summary>
         /// Testing binary serialization for AccountsBans model
         /// </summary>
