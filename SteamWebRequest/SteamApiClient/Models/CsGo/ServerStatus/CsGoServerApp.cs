@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.CsGo
 {
     /// <summary>
     /// CS GO server status server app model
     /// </summary>
-    public class CsGoServerApp
+    [Serializable]
+    public sealed class CsGoServerApp
     {
         /// <summary>
         /// App version

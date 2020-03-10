@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Collection of pro dota 2 DCP results
     /// </summary>
-    public class DcpResultsCollection
+    [Serializable]
+    public sealed class DcpResultsCollection
     {
         /// <summary>
         /// List of the DCP results

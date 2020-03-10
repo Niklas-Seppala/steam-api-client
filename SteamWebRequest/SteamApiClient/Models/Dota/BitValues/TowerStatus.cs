@@ -8,7 +8,7 @@ namespace SteamApi.Models.Dota
     /// still standing.
     /// </summary>
     [Serializable]
-    public class TowerStatus
+    public sealed class TowerStatus
     {
         /// <summary>
         /// Ancient top (Tier 4) tower. True means that

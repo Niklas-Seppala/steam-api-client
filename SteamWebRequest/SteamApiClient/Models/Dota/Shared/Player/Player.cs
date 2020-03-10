@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Runtime.Serialization;
 
 namespace SteamApi.Models.Dota
 {
@@ -10,7 +8,7 @@ namespace SteamApi.Models.Dota
     /// Dota 2 player model
     /// </summary>
     [Serializable]
-    public class Player
+    public sealed class Player
     {
         [JsonProperty("player_slot")]
         [JsonConverter(typeof(PlayerSlotConverter))]

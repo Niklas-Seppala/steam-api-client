@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Dota 2 MMR leaderboard model
     /// </summary>
-    public class Leaderboard
+    [Serializable]
+    public sealed class Leaderboard
     {
         /// <summary>
         /// Unixtimestamp of post

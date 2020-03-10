@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetadata
+    [Serializable]
+    public sealed class StoreMetadata
     {
         public IReadOnlyList<StoreMetaDataTab> Tabs { get; set; }
 

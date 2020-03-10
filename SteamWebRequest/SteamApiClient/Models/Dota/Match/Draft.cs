@@ -7,7 +7,7 @@ namespace SteamApi.Models.Dota
     /// Dota 2 match draft phase model
     /// </summary>
     [Serializable]
-    public class Draft
+    public sealed class Draft
     {
         /// <summary>
         /// Is drafted hero a pick

@@ -1,9 +1,12 @@
-﻿namespace SteamApi.Models.Dota
+﻿using System;
+
+namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Realtime dota 2 match building state model
     /// </summary>
-    public class RealTimeMatchBuilding
+    [Serializable]
+    public sealed class RealTimeMatchBuilding
     {
         /// <summary>
         /// Whose building

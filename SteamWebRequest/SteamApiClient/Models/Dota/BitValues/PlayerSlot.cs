@@ -7,7 +7,7 @@ namespace SteamApi.Models.Dota
     /// Player's data about how they fit in their team.
     /// </summary>
     [Serializable]
-    public class PlayerSlot
+    public sealed class PlayerSlot
     {
         /// <summary>
         /// Player's position in their team

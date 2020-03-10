@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Pro Dota 2 DCP results
     /// </summary>
-    public class DcpResults
+    [Serializable]
+    public sealed class DcpResults
     {
         /// <summary>
         /// Id of the DCP event

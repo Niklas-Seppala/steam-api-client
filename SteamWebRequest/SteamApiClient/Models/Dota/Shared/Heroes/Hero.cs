@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 Hero model
     /// </summary>
-    public class Hero
+    [Serializable]
+    public sealed class Hero
     {
         /// <summary>
         /// Localized Hero name

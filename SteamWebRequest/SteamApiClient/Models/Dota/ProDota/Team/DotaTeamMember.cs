@@ -1,8 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class DotaTeamMember
+    /// <summary>
+    /// Dota 2 team member
+    /// </summary>
+    [Serializable]
+    public sealed class DotaTeamMember
     {
         /// <summary>
         /// Account id

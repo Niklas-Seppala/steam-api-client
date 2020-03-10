@@ -1,10 +1,13 @@
-﻿namespace SteamApi.Models.Dota
+﻿using System;
+
+namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// In Dota 2 actual damage is between min and max
     /// damage amount
     /// </summary>
-    public struct Damage
+    [Serializable]
+    public sealed class Damage
     {
         /// <summary>
         /// Minimum amount of damage

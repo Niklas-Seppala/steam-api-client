@@ -1,9 +1,12 @@
-﻿namespace SteamApi.Models.CsGo
+﻿using System;
+
+namespace SteamApi.Models.CsGo
 {
     /// <summary>
     /// CS GO datacenter model
     /// </summary>
-    public class CsGoDataCenter
+    [Serializable]
+    public sealed class CsGoDataCenter
     {
         /// <summary>
         /// Datacenter capacity

@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Tournament info model
     /// </summary>
-    public class TournamentInfo
+    [Serializable]
+    public sealed class TournamentInfo
     {
         /// <summary>
         /// League id

@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataSortingPrefab
+    [Serializable]
+    public sealed class StoreMetaDataSortingPrefab
     {
         public ulong Id { get; set; }
         public string Name { get; set; }

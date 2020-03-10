@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Realtime dota 2 match team
     /// </summary>
-    public class RealTimeMatchTeam
+    [Serializable]
+    public sealed class RealTimeMatchTeam
     {
         /// <summary>
         /// Number of the team

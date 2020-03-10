@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Game item model
     /// </summary>
+    [Serializable]
     public sealed class Item
     {
         /// <summary>

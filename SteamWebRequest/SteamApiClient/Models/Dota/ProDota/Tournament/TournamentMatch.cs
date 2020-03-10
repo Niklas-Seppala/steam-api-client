@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -8,7 +6,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Dota 2 Pro tournament match model
     /// </summary>
-    public class TournamentMatch
+    [Serializable]
+    public sealed class TournamentMatch
     {
         /// <summary>
         /// Tournament series node id

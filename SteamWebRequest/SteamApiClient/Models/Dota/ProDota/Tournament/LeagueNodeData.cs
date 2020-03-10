@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Pro dota league match node
     /// </summary>
-    public class LeagueNode
+    [Serializable]
+    public sealed class LeagueNode
     {
         /// <summary>
         /// Node name

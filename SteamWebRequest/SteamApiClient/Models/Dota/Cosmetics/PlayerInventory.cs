@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class PlayerInventory
+    [Serializable]
+    public sealed class PlayerInventory
     {
         public uint Status { get; set; }
 

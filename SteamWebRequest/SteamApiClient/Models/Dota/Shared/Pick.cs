@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Draft phase pick event
     /// </summary>
-    public class Pick
+    [Serializable]
+    public sealed class Pick
     {
         /// <summary>
         /// Hero id that this event targets

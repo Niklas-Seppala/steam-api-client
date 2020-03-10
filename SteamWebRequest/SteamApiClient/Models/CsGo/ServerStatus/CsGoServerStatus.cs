@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SteamApi.Models.CsGo
 {
     /// <summary>
     /// CS GO server status model
     /// </summary>
-    public class CsGoServerStatus
+    [Serializable]
+    public sealed class CsGoServerStatus
     {
         /// <summary>
         /// Server App

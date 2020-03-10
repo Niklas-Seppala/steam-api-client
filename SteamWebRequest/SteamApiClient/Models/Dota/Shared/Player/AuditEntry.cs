@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Somekind of pro dota team happening
     /// </summary>
-    public class AuditEntry
+    [Serializable]
+    public sealed class AuditEntry
     {
         /// <summary>
         /// Unixtimestamp

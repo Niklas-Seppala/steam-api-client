@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 hero stats model
     /// </summary>
-    public class HeroStats
+    [Serializable]
+    public sealed class HeroStats
     {
         /// <summary>
         /// Localized name
@@ -30,6 +32,5 @@ namespace SteamApi.Models.Dota
         /// </summary>
         [JsonProperty("attribs")]
         public Attributes Attributes { get; set; }
-
     }
 }

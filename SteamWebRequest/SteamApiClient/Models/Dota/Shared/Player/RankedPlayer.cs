@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 ranked player model
     /// </summary>
-    public class RankedPlayer
+    [Serializable]
+    public sealed class RankedPlayer
     {
         /// <summary>
         /// Team id

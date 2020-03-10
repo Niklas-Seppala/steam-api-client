@@ -8,7 +8,7 @@ namespace SteamApi.Models.Dota
     /// still standing.
     /// </summary>
     [Serializable]
-    public class BarracksStatus
+    public sealed class BarracksStatus
     {
         /// <summary>
         /// Bottom ranged barracks

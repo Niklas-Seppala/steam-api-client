@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Live league team
     /// </summary>
-    public class LiveLeagueMatchTeam
+    [Serializable]
+    public sealed class LiveLeagueMatchTeam
     {
         /// <summary>
         /// Name of the team

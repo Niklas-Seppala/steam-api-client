@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Hero info model
     /// </summary>
-    public class HeroInfo
+    [Serializable]
+    public sealed class HeroInfo
     {
         /// <summary>
         /// Hero name

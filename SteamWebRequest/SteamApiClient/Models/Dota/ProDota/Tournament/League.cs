@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Pro dota 2 league model
     /// </summary>
-    public class League
+    [Serializable]
+    public sealed class League
     {
         /// <summary>
         /// Tournament URL

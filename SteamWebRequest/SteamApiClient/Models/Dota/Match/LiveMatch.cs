@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Live match model
     /// </summary>
-    public class LiveMatch
+    [Serializable]
+    public sealed class LiveMatch
     {
         [JsonProperty("activate_time")]
         public ulong ActivateTime { get; set; }

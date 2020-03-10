@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataDropdownPrefabConfig
+    [Serializable]
+    public sealed class StoreMetaDataDropdownPrefabConfig
     {
         [JsonProperty("dropdown_id")]
         public ulong DropdownId { get; set; }

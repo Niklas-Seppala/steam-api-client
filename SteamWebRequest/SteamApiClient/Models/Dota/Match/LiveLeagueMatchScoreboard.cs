@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Live league match scoreboard model
     /// </summary>
-    public class LiveLeagueMatchScoreboard
+    [Serializable]
+    public sealed class LiveLeagueMatchScoreboard
     {
         /// <summary>
         /// Match duration

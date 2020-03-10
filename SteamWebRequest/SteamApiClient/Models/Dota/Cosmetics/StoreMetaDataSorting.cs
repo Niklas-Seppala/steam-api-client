@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataSorting
+    [Serializable]
+    public sealed class StoreMetaDataSorting
     {
         public IReadOnlyList<StoreMetaDataSorter> Sorters { get; set; }
         [JsonProperty("sorting_prefabs")]

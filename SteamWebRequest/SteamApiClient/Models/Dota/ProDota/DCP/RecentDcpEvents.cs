@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Recent DCP events model
     /// </summary>
-    public class RecentDcpEvents
+    [Serializable]
+    public sealed class RecentDcpEvents
     {
         /// <summary>
         /// List of DCP tournaments

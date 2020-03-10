@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
-    /// Hero's base attributes
+    /// Collection of Dota 2 hero's base attributes
     /// </summary>
-    public class Attributes
+    [Serializable]
+    public sealed class Attributes
     {
         /// <summary>
         /// Hero's strength attribute data

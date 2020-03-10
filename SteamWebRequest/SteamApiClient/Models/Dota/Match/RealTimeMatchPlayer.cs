@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Realtime dota 2 match player model
     /// </summary>
-    public class RealTimeMatchPlayer
+    [Serializable]
+    public sealed class RealTimeMatchPlayer
     {
         /// <summary>
         /// 32-bit steam account id

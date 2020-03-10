@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataPlayerClassData
+    [Serializable]
+    public sealed class StoreMetaDataPlayerClassData
     {
         public uint Id { get; set; }
         [JsonProperty("base_name")]

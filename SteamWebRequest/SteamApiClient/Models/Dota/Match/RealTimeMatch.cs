@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Realtime dota2 match
     /// </summary>
-    public class RealTimeMatch
+    [Serializable]
+    public sealed class RealTimeMatch
     {
         /// <summary>
         /// Steam servers id that hosts the match

@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataDropdown
+    [Serializable]
+    public sealed class StoreMetaDataDropdown
     {
         public ulong Id { get; set; }
         public string Name { get; set; }

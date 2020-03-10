@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Short version of dota 2 match
     /// </summary>
-    public class MatchShort
+    [Serializable]
+    public sealed class MatchShort
     {
         /// <summary>
         /// Match Id

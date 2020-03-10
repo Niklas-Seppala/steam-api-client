@@ -1,6 +1,6 @@
 ﻿namespace SteamApi.Models.CsGo
 {
-    internal class CsGoServerStatusResponse
+    internal sealed class CsGoServerStatusResponse
     {
         public CsGoServerStatus Result { get; set; }
     }

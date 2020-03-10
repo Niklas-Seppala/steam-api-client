@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataElement
+    [Serializable]
+    public sealed class StoreMetaDataElement
     {
         [JsonProperty("localized_text")]
         public string LocalizedText { get; set; }

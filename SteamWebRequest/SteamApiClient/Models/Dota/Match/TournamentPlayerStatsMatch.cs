@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Specialized;
+using System;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Player's stats in tournament game
     /// </summary>
-    public class TournamentPlayerStatsMatch
+    [Serializable]
+    public sealed class TournamentPlayerStatsMatch
     {
         /// <summary>
         /// Player's data about how they fit in their team.

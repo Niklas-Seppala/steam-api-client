@@ -1,9 +1,12 @@
-﻿namespace SteamApi.Models.CsGo
+﻿using System;
+
+namespace SteamApi.Models.CsGo
 {
     /// <summary>
     /// CS GO server status service information model
     /// </summary>
-    public class CsGoServerServices
+    [Serializable]
+    public sealed class CsGoServerServices
     {
         /// <summary>
         /// 

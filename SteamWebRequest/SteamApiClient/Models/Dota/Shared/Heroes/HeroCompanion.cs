@@ -7,7 +7,7 @@ namespace SteamApi.Models.Dota
     /// Hero companion model (Lone Druid's Spirit Bear)
     /// </summary>
     [Serializable]
-    public class HeroCompanion
+    public sealed class HeroCompanion
     {
         /// <summary>
         /// Unit name

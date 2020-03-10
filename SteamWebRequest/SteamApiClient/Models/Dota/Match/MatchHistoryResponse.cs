@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Match history API response model
     /// </summary>
-    public class MatchHistoryResponse
+    [Serializable]
+    public sealed class MatchHistoryResponse
     {
         /// <summary>
         /// Number of total results

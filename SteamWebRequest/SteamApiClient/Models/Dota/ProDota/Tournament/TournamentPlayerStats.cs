@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Player's stats in the tournament
     /// </summary>
-    public class TournamentPlayerStats
+    [Serializable]
+    public sealed class TournamentPlayerStats
     {
         /// <summary>
         /// Status

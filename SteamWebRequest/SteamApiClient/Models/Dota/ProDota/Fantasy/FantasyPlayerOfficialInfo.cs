@@ -1,9 +1,12 @@
-﻿namespace SteamApi.Models.Dota
+﻿using System;
+
+namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Fantasy player info model
     /// </summary>
-    public class FantasyPlayerOfficialInfo
+    [Serializable]
+    public sealed class FantasyPlayerOfficialInfo
     {
         /// <summary>
         /// Player's name

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class StoreMetaDataDropdownPrefab
+    [Serializable]
+    public sealed class StoreMetaDataDropdownPrefab
     {
         public ulong Id { get; set; }
         public string Name { get; set; }

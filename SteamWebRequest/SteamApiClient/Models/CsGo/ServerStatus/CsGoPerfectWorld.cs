@@ -1,6 +1,9 @@
-﻿namespace SteamApi.Models.CsGo
+﻿using System;
+
+namespace SteamApi.Models.CsGo
 {
-    public class CsGoPerfectWorld
+    [Serializable]
+    public sealed class CsGoPerfectWorld
     {
         public PerfectWorldStatus Logon { get; set; }
         public PerfectWorldStatus Purchase { get; set; }

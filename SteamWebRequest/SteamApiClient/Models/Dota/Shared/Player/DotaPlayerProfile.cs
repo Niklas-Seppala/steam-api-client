@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
@@ -6,6 +7,7 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Dota 2 PLayers profile model
     /// </summary>
+    [Serializable]
     public class DotaPlayerProfile
     {
         /// <summary>
@@ -15,7 +17,7 @@ namespace SteamApi.Models.Dota
         public ulong TeamId { get; set; }
 
         /// <summary>
-        /// PLayer's name
+        /// PLayer's in game name
         /// </summary>
         public string Name { get; set; }
 

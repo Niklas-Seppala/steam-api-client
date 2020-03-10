@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.Dota
 {
-    public class DotaCosmeticRarity
+    [Serializable]
+    public sealed class DotaCosmeticRarity
     {
         public string Name { get; set; }
         public uint Id { get; set; }

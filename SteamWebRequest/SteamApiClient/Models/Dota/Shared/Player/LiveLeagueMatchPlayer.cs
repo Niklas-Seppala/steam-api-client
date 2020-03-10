@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Specialized;
 
 namespace SteamApi.Models.Dota
@@ -6,7 +7,8 @@ namespace SteamApi.Models.Dota
     /// <summary>
     /// Live league match player model
     /// </summary>
-    public class LiveLeagueMatchPlayer
+    [Serializable]
+    public sealed class LiveLeagueMatchPlayer
     {
         /// <summary>
         /// Player's data about how they fit in their team.

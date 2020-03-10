@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
     /// <summary>
     /// Dota 2 tournament model
     /// </summary>
-    public class Tournament
+    [Serializable]
+    public sealed class Tournament
     {
         /// <summary>
         /// Tournament Id

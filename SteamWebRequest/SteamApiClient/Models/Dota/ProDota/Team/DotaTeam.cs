@@ -1,9 +1,14 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Models.Dota
 {
-    public class DotaTeam
+    /// <summary>
+    /// Dota 2 team. Can be pro or amateur.
+    /// </summary>
+    [Serializable]
+    public sealed class DotaTeam
     {
         /// <summary>
         /// Team id
@@ -52,7 +57,7 @@ namespace SteamApi.Models.Dota
         public ulong UGC_BaseLogo { get; set; }
 
         /// <summary>
-        /// Team URL
+        /// URL to team's website
         /// </summary>
         public string URL { get; set; }
 

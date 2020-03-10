@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace SteamApi.Models.CsGo
 {
     /// <summary>
     /// CS GO server matchmaking model
     /// </summary>
-    public class CsGoServerMatchmaking
+    [Serializable]
+    public sealed class CsGoServerMatchmaking
     {
         /// <summary>
         /// Scheduler
