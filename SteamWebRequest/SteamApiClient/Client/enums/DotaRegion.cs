@@ -7,7 +7,7 @@
     {
         Europe,
         America,
-        SEA,
+        SEA, // South East Asia
         China
     }
 }
