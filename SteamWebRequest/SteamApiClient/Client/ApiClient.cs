@@ -94,7 +94,7 @@ namespace SteamApi
             switch (resp.StatusCode)
             {
                 case HttpStatusCode.Unauthorized:
-                    throw new PrivateApiContentException($"Response status code: {code}. Unauthorized request")
+                    throw new ApiPrivateContentException($"Response status code: {code}. Unauthorized request")
                     {
                         URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
