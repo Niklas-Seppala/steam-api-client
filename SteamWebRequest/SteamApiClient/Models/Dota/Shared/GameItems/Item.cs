@@ -42,7 +42,7 @@ namespace SteamApi.Models.Dota
         /// </summary>
         [JsonProperty("cd")]
         [JsonConverter(typeof(BoolToIntConverter))]
-        public ushort Cooldown { get; set; }
+        public uint Cooldown { get; set; }
 
         /// <summary>
         /// Item description
