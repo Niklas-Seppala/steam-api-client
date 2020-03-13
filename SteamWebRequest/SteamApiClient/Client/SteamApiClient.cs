@@ -94,9 +94,8 @@ namespace SteamApi
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
         ///     var client = new SteamApiClient();
-        ///     var products = client.GetSteamProductsAsync(
+        ///     var products = await client.GetSteamProductsAsync(
         ///         IncludeProducts.DLC | IncludeProducts.Games,
         ///         callSize: 50000);
         /// </code>
@@ -177,8 +176,6 @@ namespace SteamApi
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
         ///     var news = await client.GetAppNewsAsync(570, count: 50);
         /// </code>
         /// </example>
@@ -223,9 +220,7 @@ namespace SteamApi
         /// <exception cref="HttpRequestException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
-        ///     var response = await client.GetSteamAccountsBansAsync(new ulong[] {
+        ///     var bans = await client.GetSteamAccountsBansAsync(new ulong[] {
         ///         76561198107435620,
         ///         76561198107435621,
         ///         76561198107435622})
@@ -258,9 +253,7 @@ namespace SteamApi
         /// <exception cref="HttpRequestException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
-        ///     var response = await client.GetSteamAccountBansAsync(76561198107435620);
+        ///     var ban = await client.GetSteamAccountBansAsync(76561198107435620);
         /// </code>
         /// </example>
         public async Task<AccountBans> GetSteamAccountBansAsync(ulong id64, string
@@ -293,8 +286,6 @@ namespace SteamApi
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
         ///     var accounts = await client.GetSteamAccountsAsync(76561198096280303, 76561198006693873,
         ///         version: "v2", cToken: CancellationToken.None);
         /// </code>
@@ -327,9 +318,7 @@ namespace SteamApi
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
-        ///     var accounts = await client.GetSteamAccountAsync(76561198006693873,
+        ///     var account = await client.GetSteamAccountAsync(76561198006693873,
         ///         version: "v2", cToken: CancellationToken.None);
         /// </code>
         /// </example>
@@ -363,8 +352,6 @@ namespace SteamApi
         /// <returns>List of Friend objects</returns>
         /// <example>
         /// <code>
-        ///     ApiClient.SetApiKey("api key here");
-        ///     var client = new SteamApiClient();
         ///     var response = await client.GetFriendslistAsync(76561198049624886,
         ///         version: "v1", cToken: CancellationToken.None);
         /// </code>
@@ -394,7 +381,6 @@ namespace SteamApi
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
         /// <code>
-        ///     var client = new SteamApiClient();
         ///     byte[] picBytes = await client.GetProfilePicBytesAsync("https://url.com/pic.png",
         ///         cToken: CancellationToken.None);
         /// </code>
