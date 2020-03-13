@@ -171,7 +171,7 @@ namespace SteamApi
         /// for steam application news.
         /// </summary>
         /// <returns>AppNewsCollection object</returns>
-        /// <exception cref="EmptyApiResultException{AppNewsCollection}"></exception>
+        /// <exception cref="ApiEmptyResultException{AppNewsCollection}"></exception>
         /// <exception cref="ApiException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
@@ -198,7 +198,7 @@ namespace SteamApi
             {
                 // API creators did really excellet job, invalid id results to Forbidden HTTP status code :)
                 if (apiEx.StatusCode == 403)
-                    throw new EmptyApiResultException<AppNewsCollection>($"App id is propably invalid: {appId}", apiEx);
+                    throw new ApiEmptyResultException<AppNewsCollection>($"App id is propably invalid: {appId}", apiEx);
                 else // rethrow
                     throw;
             }
@@ -248,7 +248,7 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Account ban model</returns>
-        /// <exception cref="EmptyApiResultException{AccountBans}"></exception>
+        /// <exception cref="ApiEmptyResultException{AccountBans}"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <example>
@@ -267,7 +267,7 @@ namespace SteamApi
                 .ConfigureAwait(false);
 
             if (response["players"].Count == 0)
-                throw new EmptyApiResultException<AccountBans>($"64-bit steam id: {id64}");
+                throw new ApiEmptyResultException<AccountBans>($"64-bit steam id: {id64}");
             else
                 return response["players"][0];
         }
@@ -313,7 +313,7 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Steam account object</returns>
-        /// <exception cref="EmptyApiResultException{SteamAccount}"></exception>
+        /// <exception cref="ApiEmptyResultException{SteamAccount}"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <example>
@@ -333,7 +333,7 @@ namespace SteamApi
                 .ConfigureAwait(false);
 
             if (response.Content.Accounts.Count == 0)
-                throw new EmptyApiResultException<SteamAccount>($"64-bit steam id: {id64}");                
+                throw new ApiEmptyResultException<SteamAccount>($"64-bit steam id: {id64}");                
             else
                 return response.Content.Accounts.ElementAt(0);
         }
@@ -346,7 +346,7 @@ namespace SteamApi
         /// <param name="id64">64-bit steam-id</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <exception cref="PrivateApiContentException"></exception>
+        /// <exception cref="ApiPrivateContentException"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <returns>List of Friend objects</returns>
