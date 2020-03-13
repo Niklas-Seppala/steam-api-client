@@ -48,7 +48,7 @@ namespace Client
     /// <summary>
     /// Base class for api client tests
     /// </summary>
-    public class SteamApiClientTests : IClassFixture<ClientFixture>
+    public class ApiTests : IClassFixture<ClientFixture>
     {
         protected DotaApiClient DotaApiClient { get; }
         protected SteamApiClient SteamApiClient { get; }
@@ -58,7 +58,7 @@ namespace Client
         /// Instatiates API client objects
         /// </summary>
         /// <param name="fixture"></param>
-        public SteamApiClientTests(ClientFixture fixture)
+        public ApiTests(ClientFixture fixture)
         {
             Fixture = fixture;
             DotaApiClient = new DotaApiClient();
