@@ -141,6 +141,7 @@ namespace SteamApi
         #endregion
 
         #region [Game Constant Data]
+
         /// <summary>
         /// Sends GET request for dota heroinfo. Request
         /// can be cancelled by providing cancellation token.
@@ -192,9 +193,9 @@ namespace SteamApi
         /// Sends GET request to dota2.com for Dota 2 iteminfo. Request
         /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, Item>> GetItemInfoDictAsync(CToken cToken = default)
+        public async Task<IReadOnlyDictionary<string, Item>> GetItemInfosAsync(CToken cToken = default)
         {
-            UrlBuilder.SetPath(DOTA_2_HOST)
+            UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("jsfeed", "itemdata");
 
             var response = await GetModelAsync<ItemDictionary>(cToken: cToken)
@@ -225,7 +226,7 @@ namespace SteamApi
         /// Sends GET request for dota 2 hero abilities.
         /// Request can be cancelled providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, Ability>> GetAbilitiesDictAsync(CToken cToken = default)
+        public async Task<IReadOnlyDictionary<string, Ability>> GetAbilitiesAsync(CToken cToken = default)
         {
             UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("jsfeed", "abilitydata");
@@ -235,9 +236,11 @@ namespace SteamApi
 
             return response.AbilityDict;
         }
+
         #endregion
 
         #region [Users]
+
         /// <summary>
         /// Sends GET request for unique user count. Request
         /// can be cancelled by providing cancellation token.
@@ -256,7 +259,7 @@ namespace SteamApi
         /// region. Request can be cancelled by providing cancellation token.
         /// </summary>
         public async Task<Leaderboard> GetLeaderboardAsync(DotaRegion region = default,
-            string version = "v1", CToken cToken = default)
+            string version = "v0001", CToken cToken = default)
         {
             UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("webapi", "ILeaderboard", "GetDivisionLeaderboard", version);
@@ -294,9 +297,11 @@ namespace SteamApi
             return await GetModelAsync<DotaPlayerProfile>(cToken: cToken)
                 .ConfigureAwait(false);
         }
+
         #endregion
 
         #region [Cosmetic Items]
+
         /// <summary>
         /// Sends GET request to api.steampowered.com for players equiped
         /// items for specified hero. Default api interface is IEconItems_570.
@@ -430,6 +435,7 @@ namespace SteamApi
 
             return result.Result.Rarities;
         }
+
         #endregion
 
         #region [Get Tournament Data]
