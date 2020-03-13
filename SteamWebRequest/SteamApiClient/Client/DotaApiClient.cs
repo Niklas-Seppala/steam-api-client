@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
+using System.Net.Http;
 
 namespace SteamApi
 {
@@ -287,15 +288,26 @@ namespace SteamApi
         /// Sends GET request for dota 2 player profile.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<DotaPlayerProfile> GetDotaPlayerProfileAsync(string id32,
+        /// <param name="id32">32-bit steam id</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <exception cref="ApiEmptyResultException{DotaPlayerProfile}"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public async Task<DotaPlayerProfile> GetPlayerProfileAsync(uint id32,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("webapi", "IDOTA2DPC", "GetPlayerInfo", version)
-                .AddQuery("account_id", id32);
+                .AddQuery("account_id", id32.ToString());
 
-            return await GetModelAsync<DotaPlayerProfile>(cToken: cToken)
+            var response = await GetModelAsync<DotaPlayerProfile>(cToken: cToken)
                 .ConfigureAwait(false);
+
+            if (response.Id32 != id32)
+                throw new ApiEmptyResultException<DotaPlayerProfile>("Requested profile is not visible to you");
+            else
+                return response;
         }
 
         #endregion
@@ -554,10 +566,14 @@ namespace SteamApi
         /// current timestamp. Request may be narrowed down specifying max
         /// and min tiers. Request can be cancelled providing cancellation token.
         /// </summary>
+        /// <param name="timestamp">Query startime as unix timestamp</param>
+        /// <param name="version">API method version</param>
+        /// <param name="minTier">min tier included</param>
+        /// <param name="cToken">Cancellation token</param>
         public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(long timestamp = -1,
-            string version = "v1", byte maxTier = 5, byte minTier = 1, CToken cToken = default)
+            string version = "v1", uint minTier = 1, CToken cToken = default)
         {
-            CreateUrlForTournamentInfo(version, ValidateTimestamp(timestamp), maxTier, minTier);
+            CreateUrlForTournamentInfo(version, ValidateTimestamp(timestamp), minTier);
 
             var response = await GetModelAsync<TournamentInfoCollection>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -570,10 +586,14 @@ namespace SteamApi
         /// from provided date.Request may be narrowed down specifying max
         /// and min tiers. Request can be cancelled providing cancellation token.
         /// </summary>
+        /// <param name="datetime">Query startime</param>
+        /// <param name="version">API method version</param>
+        /// <param name="minTier">min tier included</param>
+        /// <param name="cToken">Cancellation token</param>
         public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(DateTime datetime,
-            string version = "v1", byte maxTier = 5, byte minTier = 1, CToken cToken = default)
+            string version = "v1", uint minTier = 1, CToken cToken = default)
         {
-            CreateUrlForTournamentInfo(version, GetUnixTimestampFromDate(datetime), maxTier, minTier);
+            CreateUrlForTournamentInfo(version, GetUnixTimestampFromDate(datetime), minTier);
 
             var response = await GetModelAsync<TournamentInfoCollection>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -585,20 +605,21 @@ namespace SteamApi
         /// Creates url for GetTournamentInfoAsync() methods
         /// </summary>
         /// <param name="timestamp">unix timestamp</param>
+        /// <param name="minTier">min tier in query</param>
+        /// <param name="version">API method version</param>
         /// <returns>UrlBuilder object that contains the url.</returns>
-        private void CreateUrlForTournamentInfo(string version, ulong timestamp, byte maxTier, byte minTier)
+        private void CreateUrlForTournamentInfo(string version, ulong timestamp, uint minTier)
         {
-            if (minTier > maxTier)
+            if (minTier > 5)
             {
-                throw new ArgumentException("Minimum tier can't be larger than maximum tier");
+                throw new ArgumentException("Minimum tier can't be larger 5");
             }
             else
             {
                 UrlBuilder.SetHost(DOTA_2_HOST)
                     .SetPath("webapi", "IDOTA2DPC", "GetLeagueInfoList", version)
                     .AddQuery("start_timestamp", timestamp.ToString())
-                    .AddQuery("min_tier", minTier.ToString())
-                    .AddQuery("max_tier", maxTier.ToString());
+                    .AddQuery("min_tier", minTier.ToString());
             }
         }
 
@@ -606,6 +627,7 @@ namespace SteamApi
         /// Sends GET request for Internation pricepool.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
+        /// <param name="cToken">Cancellation token</param>
         public async Task<IReadOnlyDictionary<string, uint>> GetInternationalPrizePoolAsync(CToken cToken = default)
         {
             UrlBuilder.SetHost(DOTA_2_HOST)
@@ -633,12 +655,12 @@ namespace SteamApi
         /// can be included to request. Request can be cancelled by provding
         /// cancellation token.
         /// </summary>
-        public async Task<DotaTeam> GetDotaTeamAsync(string teamId, string version = "v1",
+        public async Task<DotaTeam> GetDotaTeamAsync(ulong teamId, string version = "v1",
             bool includeDCP = false, CToken cToken = default)
         {
             UrlBuilder.SetHost(DOTA_2_HOST)
                 .SetPath("webapi", "IDOTA2DPC", "GetSingleTeamInfo", version)
-                .AddQuery("team_id", teamId);
+                .AddQuery("team_id", teamId.ToString());
             if (includeDCP)
                 UrlBuilder.AddQuery("get_dpc_info", "1");
 
