@@ -31,7 +31,7 @@ namespace SteamApi.Models.Dota
         /// Player's account id
         /// </summary>
         [JsonProperty("account_id")]
-        public uint AccountId { get; set; }
+        public uint Id32 { get; set; }
 
         /// <summary>
         /// Player's fantasy role (TI)
