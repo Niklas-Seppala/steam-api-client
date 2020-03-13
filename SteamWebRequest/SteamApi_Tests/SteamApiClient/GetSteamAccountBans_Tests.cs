@@ -5,9 +5,9 @@ using SteamApi;
 using SteamApi.Models.Steam;
 using System.Linq;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetSteamAccountBans_Tests : SteamApiClientTests
+    public class GetSteamAccountBans_Tests : ApiTests
     {
         /// <summary>
         /// Setup
@@ -41,7 +41,7 @@ namespace Client
             {
                 var accountBans = SteamApiClient.GetSteamAccountBansAsync(0)
                .Result;
-            }).InnerException as EmptyApiResultException<AccountBans>;
+            }).InnerException as ApiEmptyResultException<AccountBans>;
             SleepAfterSendingRequest();
 
             Assert.NotNull(ex);

@@ -2,9 +2,9 @@
 using Xunit;
 using SteamApi;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetProfilePic_Tests : SteamApiClientTests
+    public class GetProfilePic_Tests : ApiTests
     {
         /// <summary>
         /// Setup

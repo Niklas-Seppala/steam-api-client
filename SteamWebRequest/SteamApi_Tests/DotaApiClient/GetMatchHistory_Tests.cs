@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Xunit;
 
-namespace Client
+namespace Client.Dota
 {
-    public class GetMatchHistory_Tests : SteamApiClientTests
+    public class GetMatchHistory_Tests : ApiTests
     {
         /// <summary>
         /// Setup

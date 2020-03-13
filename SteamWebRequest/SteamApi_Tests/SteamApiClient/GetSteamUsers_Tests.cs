@@ -4,12 +4,12 @@ using Xunit;
 using System;
 using System.Collections.Generic;
 
-namespace Client
+namespace Client.Steam
 {
     /// <summary>
     /// Unit test class for GetSteamAccount-methods.
     /// </summary>
-    public class GetSteamUsers_Tests : SteamApiClientTests
+    public class GetSteamUsers_Tests : ApiTests
     {
         /// <summary>
         /// Setup
@@ -45,7 +45,7 @@ namespace Client
             var exeption = Assert.Throws<AggregateException>(() => {
                 var profile = SteamApiClient.GetSteamAccountAsync(0)
                     .Result;
-            }).InnerException as EmptyApiResultException<SteamAccount>;
+            }).InnerException as ApiEmptyResultException<SteamAccount>;
 
             Assert.NotNull(exeption);
             Assert.Equal(typeof(SteamAccount), exeption.ResponseModelType);

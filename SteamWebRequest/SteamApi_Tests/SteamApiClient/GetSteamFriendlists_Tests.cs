@@ -3,9 +3,9 @@ using Xunit;
 using SteamApi;
 using System.Net.Http;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetSteamFriendlists_Tests : SteamApiClientTests
+    public class GetSteamFriendlists_Tests : ApiTests
     {
         /// <summary>
         /// Setup
@@ -59,7 +59,7 @@ namespace Client
             var ex = Assert.Throws<AggregateException>(() => {
                 var response = SteamApiClient.GetFriendslistAsync(76561198089305067)
                 .Result;
-            }).InnerException as PrivateApiContentException;
+            }).InnerException as ApiPrivateContentException;
             SleepAfterSendingRequest();
 
             Assert.NotNull(ex); // makes sure inner exception was the expected exception.

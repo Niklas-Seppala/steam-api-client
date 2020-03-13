@@ -3,9 +3,9 @@ using Xunit;
 using SteamApi;
 using SteamApi.Models.Steam;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetAppNews_Tests : SteamApiClientTests
+    public class GetAppNews_Tests : ApiTests
     {
         /// <summary>
         /// Setup
@@ -26,7 +26,7 @@ namespace Client
             {
                 var response = SteamApiClient.GetAppNewsAsync(0)
                     .Result;
-            }).InnerException as EmptyApiResultException<AppNewsCollection>;
+            }).InnerException as ApiEmptyResultException<AppNewsCollection>;
             SleepAfterSendingRequest();
 
             Assert.NotNull(ex);

@@ -1,8 +1,8 @@
 ﻿using Xunit;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetApiList_Tests : SteamApiClientTests
+    public class GetApiList_Tests : ApiTests
     {
         /// <summary>
         /// Setup

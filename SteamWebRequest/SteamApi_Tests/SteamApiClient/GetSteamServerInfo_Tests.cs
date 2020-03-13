@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
 
-namespace Client
+namespace Client.Steam
 {
-    public class GetSteamServerInfo_Tests : SteamApiClientTests
+    public class GetSteamServerInfo_Tests : ApiTests
     {
         /// <summary>
         /// Setup

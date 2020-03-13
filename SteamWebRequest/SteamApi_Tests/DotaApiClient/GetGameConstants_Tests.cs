@@ -1,8 +1,8 @@
 ﻿using Xunit;
 
-namespace Client
+namespace Client.Dota
 {
-    public class GetGameConstants_Tests : SteamApiClientTests
+    public class GetGameConstants_Tests : ApiTests
     {
         /// <summary>
         /// Setup

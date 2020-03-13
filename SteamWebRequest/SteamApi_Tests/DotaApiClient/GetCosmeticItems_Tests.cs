@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
 
-namespace Client
+namespace Client.Dota
 {
-    public class GetCosmeticItems_Tests : SteamApiClientTests
+    public class GetCosmeticItems_Tests : ApiTests
     {
         /// <summary>
         /// Setup
