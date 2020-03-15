@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
-using SteamApi.Utility;
 
 namespace SteamApi
 {
@@ -42,7 +41,7 @@ namespace SteamApi
         /// UrlBuilder that is responsible for creating urls for 
         /// API method calls.
         /// </summary>
-        protected private UrlBuilder UrlBuilder { get; }
+        protected private ApiUrlBuilder UrlBuilder { get; }
 
         /// <summary>
         /// Test url to some Steam API method. Used in constructor
@@ -68,9 +67,9 @@ namespace SteamApi
         /// <param name="schema">default: "https"</param>
         protected ApiClient(bool testConnection, string schema)
         {
-            UrlBuilder = new UrlBuilder().SetSchema(schema);
-            if (testConnection)
-                TestRequest().Wait();
+            UrlBuilder = new ApiUrlBuilder(schema);
+
+            if (testConnection) TestRequest().Wait();
         }
 
         /// <summary>
@@ -216,6 +215,8 @@ namespace SteamApi
         /// object.
         /// </summary>
         /// <returns>Model object</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         private T DeserializeJsonStream<T>(Stream stream)
         {
             if (stream.CanRead)
@@ -240,8 +241,10 @@ namespace SteamApi
         /// <param name="successAction">success function</param>
         private async Task<T> HandleResults<T>(HttpResponseMessage response, Func<HttpResponseMessage, Task<T>> successAction)
         {
-            if (response.IsSuccessStatusCode) return await successAction.Invoke(response).ConfigureAwait(false);
-            else ThrowFailedRequestException(response);
+            if (response.IsSuccessStatusCode) 
+                return await successAction.Invoke(response).ConfigureAwait(false);
+            else 
+                ThrowFailedRequestException(response);
             return default; // !! THIS LINE WILL NEVER RUN !!
         }
 
@@ -254,9 +257,12 @@ namespace SteamApi
         private HttpRequestMessage CreateRequest(HttpMethod method, string url)
         {
             string requestUrl;
-            if (string.IsNullOrEmpty(url))        // caller didnt specify url, 
-                requestUrl = UrlBuilder.PopUrl(); // so lets take it from UrlBuilder
-            else requestUrl = url;
+
+            if (string.IsNullOrEmpty(url))                    // caller didnt specify url, 
+                requestUrl = UrlBuilder.PopEncodedUrl(false); // so lets take it from UrlBuilder
+            else 
+                requestUrl = url;
+
             return new HttpRequestMessage(method, requestUrl);
         }
 

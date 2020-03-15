@@ -54,7 +54,8 @@ namespace SteamApi
         /// <returns>SteamServerInfo object.</returns>
         public async Task<SteamServerInfo> GetSteamServerInfoAsync(string version = "v1", CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_WEB_API, "GetServerInfo", version);
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_WEB_API, "GetServerInfo", version);
 
             return await GetModelAsync<SteamServerInfo>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -70,7 +71,8 @@ namespace SteamApi
         /// <returns>ReadOnlyCollection of ApiInterface objects</returns>
         public async Task<IReadOnlyList<ApiInterface>> GetApiListAsync(string version = "v1", CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_WEB_API, "GetSupportedAPIList", version);
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_WEB_API, "GetSupportedAPIList", version);
 
             var response = await GetModelAsync<ApiListResponse>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -112,13 +114,14 @@ namespace SteamApi
                 if (callAll)
                 {
                     SteamProductsContainer chunk;
-                    SteamProductsContainer allProducts = await GetModelAsync<SteamProductsContainer>(UrlBuilder.Url, cToken: cToken)
+                    SteamProductsContainer allProducts = await GetModelAsync<SteamProductsContainer>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
                         .ConfigureAwait(false);
 
                     while (allProducts.Content.MoreResults)
                     {
-                        UrlBuilder.AddQuery("last_appid", allProducts.Content.LastId.ToString());
-                        chunk = await GetModelAsync<SteamProductsContainer>(UrlBuilder.Url, cToken: cToken)
+                        UrlBuilder.AppendQuery("last_appid", allProducts.Content.LastId.ToString());
+                        //Url.AddQuery("last_appid", allProducts.Content.LastId.ToString());
+                        chunk = await GetModelAsync<SteamProductsContainer>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
                             .ConfigureAwait(false);
                         allProducts.Content.LastId = chunk.Content.LastId;
                         allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
@@ -142,14 +145,15 @@ namespace SteamApi
         /// <returns>UrlBuilder object</returns>
         private void CreateProductQueryString(IncludeProducts products, string count)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTORE_SERVICE, "GetAppList", "v1")
-                .AddQuery("key", ApiKey)
-                .AddQuery("max_results", count)
-                .AddQuery("include_games", products.HasFlag(IncludeProducts.Games) ? "1" : "0")
-                .AddQuery("include_dlc", products.HasFlag(IncludeProducts.DLC) ? "1" : "0")
-                .AddQuery("include_software", products.HasFlag(IncludeProducts.Software) ? "1" : "0")
-                .AddQuery("include_hardware", products.HasFlag(IncludeProducts.Harware) ? "1" : "0")
-                .AddQuery("include_videos", products.HasFlag(IncludeProducts.Videos) ? "1" : "0");
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTORE_SERVICE, "GetAppList", "v1");
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("max_results", count)
+                .AppendQuery("include_games", products.HasFlag(IncludeProducts.Games) ? "1" : "0")
+                .AppendQuery("include_dlc", products.HasFlag(IncludeProducts.DLC) ? "1" : "0")
+                .AppendQuery("include_software", products.HasFlag(IncludeProducts.Software) ? "1" : "0")
+                .AppendQuery("include_hardware", products.HasFlag(IncludeProducts.Harware) ? "1" : "0")
+                .AppendQuery("include_videos", products.HasFlag(IncludeProducts.Videos) ? "1" : "0");
         }
 
 
@@ -182,11 +186,12 @@ namespace SteamApi
         public async Task<AppNewsCollection> GetAppNewsAsync(uint appId, uint count = 20,
             long endDateTimestamp = -1, CToken cToken = default, params string[] tags)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_NEWS, "GetNewsForApp", "v2")
-                .AddQuery("appid", appId.ToString())
-                .AddQuery("count", count.ToString())
-                .AddQuery("enddate", ValidateTimestamp(endDateTimestamp).ToString())
-                .AddQuery("tags", string.Join(",", tags));
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_NEWS, "GetNewsForApp", "v2");
+            UrlBuilder.AppendQuery("appid", appId.ToString())
+                .AppendQuery("count", count.ToString())
+                .AppendQuery("enddate", ValidateTimestamp(endDateTimestamp).ToString())
+                .AppendQuery("tags", string.Join(",", tags));
             try
             {
                 var response = await GetModelAsync<AppNewsResponse>(cToken: cToken)
@@ -229,9 +234,10 @@ namespace SteamApi
         public async Task<IReadOnlyCollection<AccountBans>> GetSteamAccountsBansAsync(
             IEnumerable<ulong> id64s, string version = "v1", CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerBans", version)
-                .AddQuery("key", ApiKey)
-                .AddQuery("steamids", string.Join(",", id64s));
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_USER, "GetPlayerBans", version);
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("steamids", string.Join(",", id64s));
 
             var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -259,9 +265,10 @@ namespace SteamApi
         public async Task<AccountBans> GetSteamAccountBansAsync(ulong id64, string
             version = "v1", CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerBans", version)
-                .AddQuery("key", ApiKey)
-                .AddQuery("steamids", id64.ToString());
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_USER, "GetPlayerBans", version);
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("steamids", id64.ToString());
 
             var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyList<AccountBans>>>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -293,9 +300,10 @@ namespace SteamApi
         public async Task<IReadOnlyList<SteamAccount>> GetSteamAccountsAsync(IEnumerable<ulong> id64s, string version = "v2",
             CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", version)
-                .AddQuery("key", ApiKey)
-                .AddQuery("steamids", string.Join(",", id64s));
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_USER, "GetPlayerSummaries", version);
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("steamids", string.Join(",", id64s));
 
             var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -325,9 +333,10 @@ namespace SteamApi
         public async Task<SteamAccount> GetSteamAccountAsync(ulong id64, string version = "v2",
             CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetPlayerSummaries", version)
-                .AddQuery("key", ApiKey)
-                .AddQuery("steamids", id64.ToString());
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_USER, "GetPlayerSummaries", version);
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("steamids", id64.ToString());
 
             var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -359,9 +368,10 @@ namespace SteamApi
         public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(ulong id64,
             string version = "v1", CToken cToken = default)
         {
-            UrlBuilder.SetHost(HOST).SetPath(ISTEAM_USER, "GetFriendList", version)
-                .AddQuery("key", ApiKey)
-                .AddQuery("steamid", id64.ToString());
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath(ISTEAM_USER, "GetFriendList", version);
+            UrlBuilder.AppendQuery("key", ApiKey)
+                .AppendQuery("steamid", id64.ToString());
 
                 var response = await GetModelAsync<FriendslistResponse>(cToken: cToken)
                 .ConfigureAwait(false);

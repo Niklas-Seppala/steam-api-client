@@ -22,6 +22,7 @@ namespace SteamApi
         /// </summary>
         protected override string TestUrl => $"https://api.steampowered.com/ICSGOServers_730/GetGameServersStatus/v1/?key={ApiKey}";
 
+
         /// <summary>
         /// Sends http GET request to api.steampowered.com for
         /// CSGO server status info. Request can be cancelled by
@@ -33,9 +34,9 @@ namespace SteamApi
         public async Task<CsGoServerStatus> GetCsGoServerStatusAsync(string version = "v1",
             Ctoken cToken = default)
         {
-            UrlBuilder.SetHost(HOST)
-                .SetPath("ICSGOServers_730", "GetGameServersStatus", version)
-                .AddQuery("key", ApiKey);
+            UrlBuilder.Host = HOST;
+            UrlBuilder.AppendPath("ICSGOServers_730", "GetGameServersStatus", version);
+            UrlBuilder.AppendQuery("key", ApiKey);
 
             var response = await GetModelAsync<CsGoServerStatusResponse>(cToken: cToken)
                 .ConfigureAwait(false);
