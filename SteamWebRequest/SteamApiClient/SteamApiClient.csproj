@@ -3,7 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>SteamApi</RootNamespace>
-    <Copyright />
+    <Copyright>2020</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>SteamApiClient</PackageId>
+    <Description>Library to access Valve's web APIs.</Description>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageProjectUrl>https://github.com/NikkeArp/steam-api-dotnet</PackageProjectUrl>
+    <PackageTags>Steam Dota api web client</PackageTags>
+    <PackageReleaseNotes>This is the innitial release</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Niklas Seppälä</Authors>
+    <Company>RndSofta</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
