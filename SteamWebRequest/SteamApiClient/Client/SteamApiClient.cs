@@ -1,11 +1,12 @@
-﻿using SteamApi.Models.Steam;
-using SteamApi.Models.Steam.ResponseModels;
+﻿using SteamApi.Responses.Steam.ParentResponses;
+using SteamApi.Responses.Steam;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
+using SteamApi.Responses;
 
 namespace SteamApi
 {
@@ -52,13 +53,28 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>SteamServerInfo object.</returns>
-        public async Task<SteamServerInfo> GetSteamServerInfoAsync(string version = "v1", CToken cToken = default)
+        public async Task<SteamServerInfoResponse> GetSteamServerInfoAsync(string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
             UrlBuilder.AppendPath(ISTEAM_WEB_API, "GetServerInfo", version);
 
-            return await GetModelAsync<SteamServerInfo>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            SteamServerInfoResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<SteamServerInfo>(url, cToken)
+                    .ConfigureAwait(false);
+                result = new SteamServerInfoResponse()
+                {
+                    Contents = response
+                };
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -68,16 +84,29 @@ namespace SteamApi
         /// </summary>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <returns>ReadOnlyCollection of ApiInterface objects</returns>
-        public async Task<IReadOnlyList<ApiInterface>> GetApiListAsync(string version = "v1", CToken cToken = default)
+        /// <returns>ApiListResponse object</returns>
+        public async Task<ApiListResponse> GetApiListAsync(string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
             UrlBuilder.AppendPath(ISTEAM_WEB_API, "GetSupportedAPIList", version);
 
-            var response = await GetModelAsync<ApiListResponse>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.Apilist.Interfaces;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            ApiListResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<ApiListResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+                result = new ApiListResponse()
+                {
+                    Contents = response.Apilist.Interfaces
+                };
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
         #endregion
@@ -91,51 +120,107 @@ namespace SteamApi
         /// <param name="products">What products to include</param>
         /// <param name="callSize">Call size</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <returns>ReadOnlyCollection of SteamProduct objects</returns>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <example>
-        /// <code>
-        ///     var client = new SteamApiClient();
-        ///     var products = await client.GetSteamProductsAsync(
-        ///         IncludeProducts.DLC | IncludeProducts.Games,
-        ///         callSize: 50000);
-        /// </code>
-        /// </example>
-        public async Task<IReadOnlyList<SteamProduct>> GetSteamProductsAsync(IncludeProducts products,
+        /// <returns>SteamProductResponse object</returns>
+        public async Task<SteamProductsResponse> GetSteamProductsAsync(IncludeProducts products,
             ProductCallSize callSize = ProductCallSize.Default, CToken cToken = default)
         {
             if (products.Equals(IncludeProducts.None))
-                return new List<SteamProduct>();
+            {
+                return new SteamProductsResponse() { Successful = false };
+            }
             else
             {
                 bool callAll = CallSizeToString(callSize, out string size);
-                CreateProductQueryString(products, size);
+                CreateProductUrl(products, size);
+
+                string originalUrl = UrlBuilder.GetEncodedUrl();
+                SteamProductsResponse result = null;
+                Exception exception = null;
+
                 if (callAll)
                 {
-                    SteamProductsContainer chunk;
-                    SteamProductsContainer allProducts = await GetModelAsync<SteamProductsContainer>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
-                        .ConfigureAwait(false);
-
-                    while (allProducts.Content.MoreResults)
-                    {
-                        UrlBuilder.AppendQuery("last_appid", allProducts.Content.LastId.ToString());
-                        //Url.AddQuery("last_appid", allProducts.Content.LastId.ToString());
-                        chunk = await GetModelAsync<SteamProductsContainer>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
-                            .ConfigureAwait(false);
-                        allProducts.Content.LastId = chunk.Content.LastId;
-                        allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
-                        allProducts.Content.MoreResults = chunk.Content.MoreResults;
-                    }
-                    return allProducts.Content.ProductList;
+                    (result, exception) = await GetAllProducts(result, exception, cToken);
                 }
                 else
                 {
-                    var response = await GetModelAsync<SteamProductsContainer>(cToken: cToken)
-                        .ConfigureAwait(false);
-                    return response.Content.ProductList;
+                    (result, exception) = await GetProducts(result, exception, cToken);
                 }
+                return WrapResponse(result, originalUrl, exception);
             }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="thrown"></param>
+        /// <param name="cToken"></param>
+        /// <returns></returns>
+        private async Task<(SteamProductsResponse, Exception)> GetProducts(
+            SteamProductsResponse result, Exception thrown, CToken cToken)
+        {
+            try
+            {
+                var response = await GetModelAsync<SteamProductsResponseParent>(UrlBuilder.PopEncodedUrl(false), cToken)
+                    .ConfigureAwait(false);
+                result = new SteamProductsResponse()
+                {
+                    Contents = response.Content.ProductList,
+                    LastAppId = response.Content.LastId,
+                    MoreResults = response.Content.MoreResults
+                };
+            }
+            catch (Exception ex)
+            {
+                thrown = ex;
+            }
+            return (result, thrown);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="thrown"></param>
+        /// <param name="cToken"></param>
+        /// <returns></returns>
+        private async Task<(SteamProductsResponse, Exception)> GetAllProducts(
+            SteamProductsResponse result, Exception thrown,  CToken cToken)
+        {
+            try
+            {
+                SteamProductsResponseParent chunk = null;
+                SteamProductsResponseParent allProducts =
+                    await GetModelAsync<SteamProductsResponseParent>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
+                        .ConfigureAwait(false);
+
+                while (allProducts.Content.MoreResults)
+                {
+                    UrlBuilder.AppendQuery("last_appid", allProducts.Content.LastId.ToString());
+                    chunk = await GetModelAsync<SteamProductsResponseParent>(UrlBuilder.GetEncodedUrl(), cToken: cToken)
+                        .ConfigureAwait(false);
+                    allProducts.Content.LastId = chunk.Content.LastId;
+                    allProducts.Content.ProductList.AddRange(chunk.Content.ProductList);
+                    allProducts.Content.MoreResults = chunk.Content.MoreResults;
+                }
+                result = new SteamProductsResponse()
+                {
+                    Contents = allProducts.Content.ProductList,
+                    LastAppId = chunk.Content.LastId,
+                    MoreResults = chunk.Content.MoreResults
+                };
+            }
+            catch (Exception ex)
+            {
+                thrown = ex;
+            }
+            finally
+            {
+                UrlBuilder.PopEncodedUrl(false);
+            }
+            return (result, thrown);
         }
 
 
@@ -143,7 +228,7 @@ namespace SteamApi
         /// Creates URL for GetSteamProducts-method.
         /// </summary>
         /// <returns>UrlBuilder object</returns>
-        private void CreateProductQueryString(IncludeProducts products, string count)
+        private void CreateProductUrl(IncludeProducts products, string count)
         {
             UrlBuilder.Host = HOST;
             UrlBuilder.AppendPath(ISTORE_SERVICE, "GetAppList", "v1");
@@ -175,15 +260,7 @@ namespace SteamApi
         /// for steam application news.
         /// </summary>
         /// <returns>AppNewsCollection object</returns>
-        /// <exception cref="ApiEmptyResultException{AppNewsCollection}"></exception>
-        /// <exception cref="ApiException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <example>
-        /// <code>
-        ///     var news = await client.GetAppNewsAsync(570, count: 50);
-        /// </code>
-        /// </example>
-        public async Task<AppNewsCollection> GetAppNewsAsync(uint appId, uint count = 20,
+        public async Task<AppNewsResponse> GetAppNewsAsync(uint appId, uint count = 20,
             long endDateTimestamp = -1, CToken cToken = default, params string[] tags)
         {
             UrlBuilder.Host = HOST;
@@ -192,21 +269,32 @@ namespace SteamApi
                 .AppendQuery("count", count.ToString())
                 .AppendQuery("enddate", ValidateTimestamp(endDateTimestamp).ToString())
                 .AppendQuery("tags", string.Join(",", tags));
+
+            string url = UrlBuilder.PopEncodedUrl(false);
+            AppNewsResponse result = null;
+            Exception exception = null;
             try
             {
-                var response = await GetModelAsync<AppNewsResponse>(cToken: cToken)
+                var response = await GetModelAsync<AppNewsResponseParent>(url, cToken)
                     .ConfigureAwait(false);
-
-                return response.AppNews;
+                result = new AppNewsResponse()
+                {
+                    Contents = response.AppNews
+                };
             }
-            catch (ApiException apiEx)
+            catch (Exception ex)
             {
-                // API creators did really excellet job, invalid id results to Forbidden HTTP status code :)
-                if (apiEx.StatusCode == 403)
-                    throw new ApiEmptyResultException<AppNewsCollection>($"App id is propably invalid: {appId}", apiEx);
-                else // rethrow
-                    throw;
+                // API creators did really excellet job, invalid id results to Forbidden HTTP status code
+                if (ex is ApiException apiEx && apiEx.StatusCode == 403)
+                {
+                    exception = new ApiEmptyResultException($"App id is propably invalid: {appId}", apiEx);
+                }
+                else
+                {
+                    exception = ex;
+                }
             }
+            return WrapResponse(result, url, exception);
         }
 
         #endregion
@@ -221,17 +309,7 @@ namespace SteamApi
         /// <param name="cToken">Cancellation token</param>
         /// <param name="steamId64s">Array of 64-bit steam-ids</param>
         /// <returns>List of account bans</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <example>
-        /// <code>
-        ///     var bans = await client.GetSteamAccountsBansAsync(new ulong[] {
-        ///         76561198107435620,
-        ///         76561198107435621,
-        ///         76561198107435622})
-        /// </code>
-        /// </example>
-        public async Task<IReadOnlyCollection<AccountBans>> GetSteamAccountsBansAsync(
+        public async Task<MultipleAccountBansResponse> GetSteamAccountsBansAsync(
             IEnumerable<ulong> id64s, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
@@ -239,10 +317,31 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamids", string.Join(",", id64s));
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyCollection<AccountBans>>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            MultipleAccountBansResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyList<AccountBans>>>(url, cToken)
+                    .ConfigureAwait(false);
 
-            return response["players"];
+                if (response["players"].Count == 0)
+                {
+                    throw new ApiEmptyResultException("Players not found with provided ids");
+                }
+                else
+                {
+                    result = new MultipleAccountBansResponse()
+                    {
+                        Contents = response["players"]
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -254,15 +353,7 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Account ban model</returns>
-        /// <exception cref="ApiEmptyResultException{AccountBans}"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <example>
-        /// <code>
-        ///     var ban = await client.GetSteamAccountBansAsync(76561198107435620);
-        /// </code>
-        /// </example>
-        public async Task<AccountBans> GetSteamAccountBansAsync(ulong id64, string
+        public async Task<SteamAccountBansResponse> GetSteamAccountBansAsync(ulong id64, string
             version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
@@ -270,13 +361,31 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamids", id64.ToString());
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyList<AccountBans>>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            SteamAccountBansResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyList<AccountBans>>>(url, cToken)
+                    .ConfigureAwait(false);
 
-            if (response["players"].Count == 0)
-                throw new ApiEmptyResultException<AccountBans>($"64-bit steam id: {id64}");
-            else
-                return response["players"][0];
+                if (response["players"].Count == 0)
+                {
+                    throw new ApiEmptyResultException($"Player not found with provided id");
+                }
+                else
+                {
+                    result = new SteamAccountBansResponse()
+                    {
+                        Contents = response["players"][0]
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -289,15 +398,7 @@ namespace SteamApi
         /// <param name="cToken">Cancellation token</param>
         /// <param name="version">API method version</param>
         /// <returns>List of SteamAccounts</returns>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <example>
-        /// <code>
-        ///     var accounts = await client.GetSteamAccountsAsync(76561198096280303, 76561198006693873,
-        ///         version: "v2", cToken: CancellationToken.None);
-        /// </code>
-        /// </example>
-        public async Task<IReadOnlyList<SteamAccount>> GetSteamAccountsAsync(IEnumerable<ulong> id64s, string version = "v2",
+        public async Task<MultipleSteamAccountsResponse> GetSteamAccountsAsync(IEnumerable<ulong> id64s, string version = "v2",
             CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
@@ -305,10 +406,23 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamids", string.Join(",", id64s));
 
-            var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.Content.Accounts;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            MultipleSteamAccountsResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<AccountCollectionResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+                result = new MultipleSteamAccountsResponse()
+                {
+                    Contents = response.Content.Accounts
+                };
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -321,16 +435,7 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>Steam account object</returns>
-        /// <exception cref="ApiEmptyResultException{SteamAccount}"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <example>
-        /// <code>
-        ///     var account = await client.GetSteamAccountAsync(76561198006693873,
-        ///         version: "v2", cToken: CancellationToken.None);
-        /// </code>
-        /// </example>
-        public async Task<SteamAccount> GetSteamAccountAsync(ulong id64, string version = "v2",
+        public async Task<SteamAccountResponse> GetSteamAccountAsync(ulong id64, string version = "v2",
             CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
@@ -338,13 +443,31 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamids", id64.ToString());
 
-            var response = await GetModelAsync<AccountCollectionResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            SteamAccountResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<AccountCollectionResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
 
-            if (response.Content.Accounts.Count == 0)
-                throw new ApiEmptyResultException<SteamAccount>($"64-bit steam id: {id64}");                
-            else
-                return response.Content.Accounts.ElementAt(0);
+                if (response.Content.Accounts.Count == 0)
+                {
+                    throw new ApiEmptyResultException("Account not found");
+                }
+                else
+                {
+                    result = new SteamAccountResponse()
+                    {
+                        Contents = response.Content.Accounts.ElementAt(0)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -355,17 +478,8 @@ namespace SteamApi
         /// <param name="id64">64-bit steam-id</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <exception cref="ApiPrivateContentException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
         /// <returns>List of Friend objects</returns>
-        /// <example>
-        /// <code>
-        ///     var response = await client.GetFriendslistAsync(76561198049624886,
-        ///         version: "v1", cToken: CancellationToken.None);
-        /// </code>
-        /// </example>
-        public async Task<IReadOnlyList<Friend>> GetFriendslistAsync(ulong id64,
+        public async Task<FirendsListResponse> GetFriendslistAsync(ulong id64,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = HOST;
@@ -373,9 +487,24 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamid", id64.ToString());
 
-                var response = await GetModelAsync<FriendslistResponse>(cToken: cToken)
-                .ConfigureAwait(false);
-                return response.Content.Friends;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            FirendsListResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<FriendslistResponseParent>(url, cToken: cToken)
+                    .ConfigureAwait(false);
+
+                result = new FirendsListResponse() 
+                {
+                    Contents = response.Content.Friends
+                };
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
 
 
@@ -385,20 +514,22 @@ namespace SteamApi
         /// </summary>
         /// <param name="url">Profile picture url</param>
         /// <param name="cToken">Cancellation token</param>
-        /// <returns>Steam profile picture as bytes</returns>
-        /// <exception cref="ApiResourceNotFoundException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <example>
-        /// <code>
-        ///     byte[] picBytes = await client.GetProfilePicBytesAsync("https://url.com/pic.png",
-        ///         cToken: CancellationToken.None);
-        /// </code>
-        /// </example>
-        public async Task<byte[]> GetProfilePicBytesAsync(string url, CToken cToken = default)
+        /// <returns>Steam profile picture as bytes wrapped to ApiResponse</returns>
+        public async Task<ProfileAvatarResponse> GetProfilePicBytesAsync(string url, CToken cToken = default)
         {
-            return await GetBytesAsync(url, cToken)
-                .ConfigureAwait(false);
+            ProfileAvatarResponse result = null;
+            Exception exeption = null;
+            try
+            {
+                byte[] bytes = await GetBytesAsync(url, cToken)
+                    .ConfigureAwait(false);
+                result = new ProfileAvatarResponse { Contents = bytes };
+            }
+            catch (Exception ex)
+            {
+                exeption = ex;
+            }
+            return WrapResponse(result, url, exeption);
         }
 
         #endregion

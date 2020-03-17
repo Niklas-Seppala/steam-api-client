@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
-using SteamApi.Models.CsGo;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SteamApi.Responses;
+using SteamApi.Responses.CsGo;
 using Ctoken = System.Threading.CancellationToken;
 
 namespace SteamApi
@@ -31,17 +34,27 @@ namespace SteamApi
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
         /// <returns>CSGO server status model</returns>
-        public async Task<CsGoServerStatus> GetCsGoServerStatusAsync(string version = "v1",
+        public async Task<CsGoServerStatusResponse> GetCsGoServerStatusAsync(string version = "v1",
             Ctoken cToken = default)
         {
             UrlBuilder.Host = HOST;
             UrlBuilder.AppendPath("ICSGOServers_730", "GetGameServersStatus", version);
             UrlBuilder.AppendQuery("key", ApiKey);
 
-            var response = await GetModelAsync<CsGoServerStatusResponse>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.Result;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            CsGoServerStatusResponse result = null;
+            Exception exception = null;
+            try
+            {
+                var response = await GetModelAsync<CsGoServerStatusResponse>(url, cToken)
+                    .ConfigureAwait(false);
+                result = response;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            return WrapResponse(result, url, exception);
         }
     }
 }

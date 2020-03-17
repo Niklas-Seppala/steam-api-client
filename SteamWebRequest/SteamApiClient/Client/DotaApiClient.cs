@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
-using SteamApi.Models.Dota;
-using SteamApi.Models.Dota.ResponseModels;
+using SteamApi.Responses.Dota;
+using SteamApi.Responses.Dota.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

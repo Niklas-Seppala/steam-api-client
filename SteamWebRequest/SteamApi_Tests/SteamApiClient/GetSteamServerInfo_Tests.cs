@@ -13,7 +13,7 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case for normal conditions. Method should return
-        /// up to date server info.
+        /// up to date server info wrapped into ApiResponse object.
         /// </summary>
         [Fact]
         public void ValidRequest_ReturnsSteamServerInfo()
@@ -22,7 +22,7 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            var responseDate = DateTimeOffset.FromUnixTimeSeconds((long)response.ServerTime).Date;
+            var responseDate = DateTimeOffset.FromUnixTimeSeconds((long)response.Contents.ServerTime).Date;
 
             Assert.True(DateTime.Now.Date == responseDate);
         }

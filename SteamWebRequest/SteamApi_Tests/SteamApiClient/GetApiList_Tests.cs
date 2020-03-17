@@ -11,17 +11,19 @@ namespace Client.Steam
 
 
         /// <summary>
-        /// Test case for default parameters
+        /// Test case for default parameters. Method should
+        /// return Steam Apilist wrapped into ApiResponse object
         /// </summary>
         [Fact]
         public void DefaultConditions_ReturnsApiList()
         {
-            var response = SteamApiClient.GetApiListAsync()
+            var requestResult = SteamApiClient.GetApiListAsync()
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, resp => {
+            Assert.True(requestResult.Successful);
+            Assert.NotEmpty(requestResult.Contents);
+            Assert.All(requestResult.Contents, resp => {
 
                 Assert.NotNull(resp.Methods);
                 Assert.NotEmpty(resp.Methods);

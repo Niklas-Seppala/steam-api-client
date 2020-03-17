@@ -13,7 +13,7 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case for all products requested. Method should return all
-        /// products
+        /// products wrapped into ApiResponse object.
         /// </summary>
         [Fact]
         public void CallSizeAll_ReturnsNoProducts()
@@ -21,13 +21,14 @@ namespace Client.Steam
             var response = SteamApiClient.GetSteamProductsAsync(IncludeProducts.GameProducs, callSize: ProductCallSize.All)
                 .Result;
 
-            Assert.True(response.Count > (int)ProductCallSize.Max);
+            Assert.True(response.Contents.Count > (int)ProductCallSize.Max);
         }
 
 
         /// <summary>
         /// Test case where product call size is defined.
-        /// Mehtod should return correct amount of products.
+        /// Mehtod should return correct amount of products
+        /// wrapped into ApiResponse object.
         /// </summary>
         /// <param name="callSize">product call size</param>
         [Theory]
@@ -41,13 +42,13 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.True((int)callSize >= response.Count);
+            Assert.True((int)callSize >= response.Contents.Count);
         }
 
 
         /// <summary>
         /// Test case for IncludeProducts enum used as a set. Method should return
-        /// both DLCs and Games
+        /// both DLCs and Games wrapped into ApiResponse object.
         /// </summary>
         [Fact]
         public void ProductTypeUsedAsSet_ReturnsRequestedSteamProducts()
@@ -59,9 +60,9 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            for (int i = 0; i < response1.Count; i++)
+            for (int i = 0; i < response1.Contents.Count; i++)
             {
-                Assert.True(response1[i].AppId == response2[i].AppId);
+                Assert.True(response1.Contents[i].AppId == response2.Contents[i].AppId);
             }
 
         }
@@ -69,6 +70,8 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case for all multiple product types included in the reqeust.
+        /// Method should return requested products wrapped
+        /// into ApiResponse object.
         /// </summary>
         /// <param name="products">product type</param>
         [Theory]
@@ -81,8 +84,8 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, product => {
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, product => {
                 Assert.True(product.AppId != 0);
                 Assert.True(product.LastModified != 0);
             });
@@ -91,6 +94,8 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case for all single product types included in the reqeust.
+        /// Method should return all requested products wrapped into
+        /// ApiResponse object
         /// </summary>
         /// <param name="products">product type</param>
         [Theory]
@@ -105,8 +110,8 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, product => {
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, product => {
                 Assert.True(product.AppId != 0);
                 Assert.True(product.LastModified != 0);
             });

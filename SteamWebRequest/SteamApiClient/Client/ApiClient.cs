@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using SteamApi.Responses;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -95,7 +97,6 @@ namespace SteamApi
                 case HttpStatusCode.Unauthorized:
                     throw new ApiPrivateContentException($"Response status code: {code}. Unauthorized request")
                     {
-                        URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
                     };
                 case HttpStatusCode.BadGateway:
@@ -105,7 +106,6 @@ namespace SteamApi
                 case HttpStatusCode.Forbidden:
                     throw new ApiException($"Response status code: {code}. Developer key is invalid.")
                     {
-                        URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
                     };
                 case HttpStatusCode.GatewayTimeout:
@@ -119,19 +119,16 @@ namespace SteamApi
                 case HttpStatusCode.Gone:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Resource No Longer Available")
                     {
-                        URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
                     };
                 case HttpStatusCode.Moved:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Content Moved")
                     {
-                        URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
                     };
                 case HttpStatusCode.NotFound:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Not Found")
                     {
-                        URL = resp.RequestMessage.RequestUri.ToString(),
                         StatusCode = code
                     };
                 case HttpStatusCode.NotImplemented:
@@ -278,6 +275,36 @@ namespace SteamApi
             return await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cToken)
                 .ConfigureAwait(false);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="response"></param>
+        /// <param name="url"></param>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        protected virtual T WrapResponse<T>(T response, string url, Exception exception)
+            where T : IApiResponse, new()
+        {
+            if (response == null) // Request was a failure
+            {
+                return new T()
+                {
+                    Successful = false,
+                    ThrownException = exception,
+                    URL = url
+                };
+            }
+            else // Request was successful
+            {
+                response.Successful = true;
+                response.URL = url;
+                return response;
+            }
+        }
+
 
         /// <summary>
         /// Validates unix timestamp. If timestamp is invalid,

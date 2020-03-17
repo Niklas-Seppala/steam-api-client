@@ -13,49 +13,54 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case for invalid file name. Method should
-        /// throw ApiResourceNotFoundException
+        /// return null content wrapped into ApiResponseModel
         /// </summary>
         [Fact]
         public void InvalidFileName_ThrowsHttpRequestException()
         {
             var profile = SteamApiClient.GetSteamAccountAsync(76561197960321706)
                .Result;
+            SleepAfterSendingRequest();
 
             // Mess up the profile avatar URL
-            if (profile.AvatarFullURL.Contains("jpg"))
-                profile.AvatarFullURL = profile.AvatarFullURL.Replace("jpg", "png");
+            if (profile.Contents.AvatarFullURL.Contains("jpg"))
+                profile.Contents.AvatarFullURL = profile.Contents.AvatarFullURL.Replace("jpg", "png");
             else
-                profile.AvatarFullURL = profile.AvatarFullURL.Replace("png", "jpg");
+                profile.Contents.AvatarFullURL = profile.Contents.AvatarFullURL.Replace("png", "jpg");
 
-
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                byte[] smallBytes = SteamApiClient.GetProfilePicBytesAsync(profile.AvatarFullURL)
+            var response = SteamApiClient.GetProfilePicBytesAsync(profile.Contents.AvatarFullURL)
                    .Result;
-            }).InnerException as ApiResourceNotFoundException;
-            Assert.NotNull(ex);
-            Assert.True(ex.StatusCode == 404);
-            Assert.True(ex.URL == profile.AvatarFullURL);
+            SleepAfterSendingRequest();
+
+
+            Assert.False(response.Successful);
+            Assert.Null(response.Contents);
+            Assert.NotNull(response.ThrownException);
+            Assert.True(response.ThrownException is ApiResourceNotFoundException);
         }
 
 
         /// <summary>
         /// Test case for invalid url. Method should
-        /// throw exception.
+        /// return null content wrapped into ApiResponse model.
         /// </summary>
         [Fact]
         public void InvalidUrl_ThrowsEmptyResponseException()
         {
-            Assert.Throws<AggregateException>(() => {
-                byte[] smallBytes = SteamApiClient.GetProfilePicBytesAsync("www.liiba.laaba.com/pic.xD")
-                   .Result;
-            });
+            var response = SteamApiClient.GetProfilePicBytesAsync("https://www.liibalaaba.com/pic.xf")
+                .Result;
+            SleepAfterSendingRequest();
+
+            Assert.False(response.Successful);
+            Assert.Null(response.Contents);
+            Assert.NotNull(response.ThrownException);
         }
 
 
         /// <summary>
         /// Test case for valid steam profile avatar url.
-        /// Method should return correct image as byte array.
+        /// Method should return correct image as byte array
+        /// wrapped into ApiResponse object.
         /// </summary>
         /// <param name="id64">64-bit steam id</param>
         [Theory]
@@ -67,22 +72,23 @@ namespace Client.Steam
         {
             var profile = SteamApiClient.GetSteamAccountAsync(id64)
                 .Result;
+            SleepAfterSendingRequest();
 
-            byte[] smallPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.AvatarSmallURL)
+            var smallPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.Contents.AvatarSmallURL)
                 .Result;
-            SleepAfterSendingRequest(timeout: 100);
+            SleepAfterSendingRequest(timeout: 0);
 
-            byte[] mediumPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.AvatarMediumURL)
+            var mediumPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.Contents.AvatarMediumURL)
                 .Result;
-            SleepAfterSendingRequest(timeout: 100);
+            SleepAfterSendingRequest(timeout: 0);
 
-            byte[] fullPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.AvatarFullURL)
+            var fullPicBytes = SteamApiClient.GetProfilePicBytesAsync(profile.Contents.AvatarFullURL)
                 .Result;
-            SleepAfterSendingRequest(timeout: 100);
+            SleepAfterSendingRequest(timeout: 0);
 
-            Assert.NotEmpty(smallPicBytes);
-            Assert.NotEmpty(mediumPicBytes);
-            Assert.NotEmpty(fullPicBytes);
+            Assert.NotEmpty(smallPicBytes.Contents);
+            Assert.NotEmpty(mediumPicBytes.Contents);
+            Assert.NotEmpty(fullPicBytes.Contents);
         }
     }
 }

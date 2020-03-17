@@ -14,62 +14,62 @@ namespace Client.Steam
 
 
         /// <summary>
-        /// Test case for 32-bit steam id. Method should throw Exception
+        /// Test case for 32-bit steam id. Method should return
+        /// null content wrapped into failed ApiResponse object.
         /// </summary>
         [Fact]
         public void IdIs32Bit_ThrowsHttpRequestException()
         {
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                var response = SteamApiClient.GetFriendslistAsync(78123870)
-                    .Result;
-            }).InnerException as HttpRequestException; // steam api goes full internal server error. nice :)
-            SleepAfterSendingRequest();
+            var response = SteamApiClient.GetFriendslistAsync(78123870)
+                .Result;
 
-            Assert.NotNull(ex); // makes sure inner exception was the expected exception.
+            Assert.False(response.Successful);
+            Assert.Null(response.Contents);
+            Assert.NotNull(response.ThrownException);
+            Assert.True(response.ThrownException is HttpRequestException);
         }
 
 
         /// <summary>
-        /// Test case for invalid steam id. Method should throw HttpRequestException
-        /// because Steam side has an internal server error.
+        /// Test case for invalid steam id. Because Steam
+        /// side has an internal server error, returns null
+        /// content wrapped into failied ApiResponse object.
         /// </summary>
         [Fact]
         public void InvalidId_ThrowsHttpRequestException()
         {
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                var response = SteamApiClient.GetFriendslistAsync(0)
-                    .Result;
-            }).InnerException as HttpRequestException; // steam api goes full internal server error. nice :)
-            SleepAfterSendingRequest();
+            var response = SteamApiClient.GetFriendslistAsync(0)
+                .Result;
 
-            Assert.NotNull(ex); // makes sure inner exception was the expected exception.
+            Assert.False(response.Successful);
+            Assert.NotNull(response.ThrownException);
+            Assert.Null(response.Contents);
+            Assert.True(response.ThrownException is HttpRequestException);
         }
 
 
         /// <summary>
         /// Test case for steam profile that is not public. You can't
-        /// get private profile's friendslist, sot method should throw
-        /// exception informing about the situation.
+        /// get private profile's friendslist, so method returns
+        /// null content wrapped into failed ApiResponse object.
         /// </summary>
         [Fact]
         public void PrivateProfileId_ThrowsPrivateResponseException()
         {
-            var ex = Assert.Throws<AggregateException>(() => {
-                var response = SteamApiClient.GetFriendslistAsync(76561198089305067)
+            var response = SteamApiClient.GetFriendslistAsync(76561198089305067)
                 .Result;
-            }).InnerException as ApiPrivateContentException;
             SleepAfterSendingRequest();
 
-            Assert.NotNull(ex); // makes sure inner exception was the expected exception.
-            Assert.True(401 == ex.StatusCode); // Http status code should be 401 for unauthorized request
+            Assert.False(response.Successful);
+            Assert.NotNull(response.ThrownException);
+            Assert.Null(response.Contents);
+            Assert.True(response.ThrownException is ApiPrivateContentException);
         }
 
 
         /// <summary>
         /// Test case for valid and visible steam profiles. Method should return
-        /// profile's friendslist.
+        /// profile's friendslist wrapped into ApiResponse object.
         /// </summary>
         /// <param name="id64"></param>
         [Theory]
@@ -84,8 +84,8 @@ namespace Client.Steam
             SleepAfterSendingRequest();
 
             Assert.NotNull(response);
-            Assert.NotEmpty(response);
-            Assert.All(response, r => Assert.True(r.Id64 != 0));
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, r => Assert.True(r.Id64 != 0));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 using SteamApi;
-using SteamApi.Models.Steam;
+using SteamApi.Responses.Steam;
 
 namespace Client.Steam
 {
@@ -17,26 +17,25 @@ namespace Client.Steam
         /// Test case where provided app id is invalid. Because server
         /// response is nonsensical and returns reponse with Forbidden HTTP
         /// status code, method should internally handle that exception and
-        /// throw new EmptyApiResultException.
+        /// return failed ApiResponse object.
         /// </summary>
         [Fact]
         public void InvalidId_ThrowsEmptyApiResultException()
         {
-            var ex = Assert.Throws<AggregateException>(() =>
-            {
-                var response = SteamApiClient.GetAppNewsAsync(0)
-                    .Result;
-            }).InnerException as ApiEmptyResultException<AppNewsCollection>;
+            var requestResult = SteamApiClient.GetAppNewsAsync(0)
+                .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotNull(ex);
-            Assert.True(typeof(AppNewsCollection) == ex.ResponseModelType);
+            Assert.False(requestResult.Successful);
+            Assert.NotNull(requestResult.ThrownException);
+            Assert.True(requestResult.ThrownException is ApiEmptyResultException);
         }
 
 
         /// <summary>
         /// Test case where end date for news items is defined.
-        /// Method should return news up to defined end date.
+        /// Method should return news up to defined end date
+        /// wrapped into ApiResponse object
         /// </summary>
         /// <param name="appId">game app id</param>
         /// <param name="timestamp">unixtimestamp of end date</param>
@@ -47,11 +46,12 @@ namespace Client.Steam
         [InlineData(570, 1578495913)] // dota 2, 2020
         public void TimestampDefined_ReturnsNewsItemsWithCorrectTimetamp(uint appId, long timestamp)
         {
-            var response = SteamApiClient.GetAppNewsAsync(appId, endDateTimestamp: timestamp)
+            var requestResponse = SteamApiClient.GetAppNewsAsync(appId, endDateTimestamp: timestamp)
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.All(response.NewsItems, item => {
+            Assert.True(requestResponse.Successful);
+            Assert.All(requestResponse.Contents.NewsItems, item => {
                 Assert.True(timestamp >= (long)item.Date);
             });
         }
@@ -59,7 +59,8 @@ namespace Client.Steam
 
         /// <summary>
         /// Test case where news item count is defined. Method
-        /// should return correct amount of news items
+        /// should return correct amount of news items wrapped
+        /// into ApiResponse object
         /// </summary>
         /// <param name="appId">game app id</param>
         /// <param name="count">news item count</param>
@@ -73,13 +74,16 @@ namespace Client.Steam
         {
             var response = SteamApiClient.GetAppNewsAsync(appId, count: count)
                 .Result;
-            Assert.True(count == response.NewsItems.Count);
+            SleepAfterSendingRequest();
+
+            Assert.True(response.Successful);
+            Assert.True(count == response.Contents.NewsItems.Count);
         }
 
 
         /// <summary>
         /// Test case for Valve game. Method should return app news collection
-        /// about requested game.
+        /// about requested game wrapped into ApiResponse object.
         /// </summary>
         /// <param name="appId">Game's app id</param>
         [Theory]
@@ -93,9 +97,10 @@ namespace Client.Steam
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.Equal(appId, response.AppId);
-            Assert.NotEmpty(response.NewsItems);
-            Assert.True(response.TotalCount > 0);
+            Assert.True(response.Successful);
+            Assert.Equal(appId, response.Contents.AppId);
+            Assert.NotEmpty(response.Contents.NewsItems);
+            Assert.True(response.Contents.TotalCount > 0);
         }
     }
 }

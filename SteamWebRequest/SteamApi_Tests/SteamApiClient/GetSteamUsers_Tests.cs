@@ -1,7 +1,5 @@
-using SteamApi.Models.Steam;
 using SteamApi;
 using Xunit;
-using System;
 using System.Collections.Generic;
 
 namespace Client.Steam
@@ -19,19 +17,18 @@ namespace Client.Steam
 
         /// <summary>
         /// Tests Steam api client's method that requests for multiple steam profiles
-        /// using faulty 64-bit steam ids
+        /// using faulty 64-bit steam ids.
         /// </summary>
         [Fact]
         public void MultipleFaultyIds_ReturnsEmptyAccountCollection()
         {
             ulong[] ids = new ulong[] { 0, 0, 0 };
 
-            var profiles = SteamApiClient.GetSteamAccountsAsync(ids)
+            var response = SteamApiClient.GetSteamAccountsAsync(ids)
                 .Result;
-
             SleepAfterSendingRequest();
 
-            Assert.Empty(profiles);
+            Assert.Empty(response.Contents);
         }
 
 
@@ -42,15 +39,14 @@ namespace Client.Steam
         [Fact]
         public void SingleFaultyId_ThrowsEmptyApiResponseException()
         {
-            var exeption = Assert.Throws<AggregateException>(() => {
-                var profile = SteamApiClient.GetSteamAccountAsync(0)
-                    .Result;
-            }).InnerException as ApiEmptyResultException<SteamAccount>;
-
-            Assert.NotNull(exeption);
-            Assert.Equal(typeof(SteamAccount), exeption.ResponseModelType);
-            
+            var response = SteamApiClient.GetSteamAccountAsync(0)
+                .Result;
             SleepAfterSendingRequest();
+
+            Assert.False(response.Successful);
+            Assert.NotNull(response.ThrownException);
+            Assert.True(response.ThrownException is ApiEmptyResultException);
+            Assert.Null(response.Contents);
         }
 
 
@@ -61,15 +57,15 @@ namespace Client.Steam
         [Fact]
         public void SingleId_ReturnsRequestedProfile()
         {
-            var profile = SteamApiClient.GetSteamAccountAsync(76561197960321706)
+            var response = SteamApiClient.GetSteamAccountAsync(76561197960321706)
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.True(profile.Id64 == 76561197960321706);
-            Assert.NotEmpty(profile.PersonaName);
-            Assert.NotEmpty(profile.AvatarMediumURL);
-            Assert.NotEmpty(profile.AvatarFullURL);
-            Assert.NotEmpty(profile.AvatarSmallURL);
+            Assert.True(response.Contents.Id64 == 76561197960321706);
+            Assert.NotEmpty(response.Contents.PersonaName);
+            Assert.NotEmpty(response.Contents.AvatarMediumURL);
+            Assert.NotEmpty(response.Contents.AvatarFullURL);
+            Assert.NotEmpty(response.Contents.AvatarSmallURL);
         }
 
 
@@ -87,13 +83,13 @@ namespace Client.Steam
         [InlineData(new ulong[] { 76561198089305067, 76561198000860315, 76561198016178791, 76561198067725818 }, 4)]
         public void MultipleIds_ReturnsAllRequestedProfiles(IEnumerable<ulong> id64s, int count)
         {
-            var profiles = SteamApiClient.GetSteamAccountsAsync(id64s)
+            var response = SteamApiClient.GetSteamAccountsAsync(id64s)
                 .Result;
 
             SleepAfterSendingRequest();
 
-            Assert.True(profiles.Count == count);
-            Assert.All(profiles, p =>
+            Assert.True(response.Contents.Count == count);
+            Assert.All(response.Contents, p =>
             {
                 Assert.Contains(id64s, id => id == p.Id64);
                 Assert.NotEmpty(p.AvatarMediumURL);
