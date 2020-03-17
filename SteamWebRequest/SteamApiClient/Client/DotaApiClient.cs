@@ -52,11 +52,10 @@ namespace SteamApi
         #region [Matches]
 
         /// <summary>
-        /// Sends GET request to api.steampowered.com for match history
+        /// Sends GET request to https://api.steampowered.com for match history
         /// by sequence number. Returns list of MatchDetails unlike other
         /// match history methods. Request can be cancelled by providing
-        /// cancellation token. Token will be checked before and during
-        /// web request, after that method can't be cancelled.
+        /// cancellation token.
         /// </summary>
         public async Task<MatchHistoryBySeqResponse> GetMatchHistoryBySequenceNumAsync(
             ulong seqNum, string apiInterface = IDOTA2_MATCH, string version = "v1",
@@ -73,27 +72,24 @@ namespace SteamApi
             Exception thrownException = null;
             try
             {
-                // Check cancellation token
                 cToken.ThrowIfCancellationRequested();
 
                 var webResponse = await GetModelAsync<MatchHistoryBySeqResponseParent>(url, cToken)
                     .ConfigureAwait(false);
                 response = webResponse.Result;   
             }
-            catch (Exception ex)
+            catch (Exception caughtException)
             {
-                thrownException = ex;
+                thrownException = caughtException;
             }
             return WrapResponse(response, url, thrownException);
         }
 
 
         /// <summary>
-        /// Sends GET request to api.steampowered.com for MatchHistory.
+        /// Sends GET request to https://api.steampowered.com for MatchHistory.
         /// Request can be specified by providing optional parameters
-        /// and can be cancelled by providing cancellation token. Token
-        /// will be checked before and during web request, after that method
-        /// can't be cancelled.
+        /// and can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="minPlayers">minimum number of human players.</param>
         /// <param name="skillLevel">Ignored if an account id is specified.</param>
@@ -128,7 +124,6 @@ namespace SteamApi
             Exception thrownException = null;
             try
             {
-                // Check cancellation token
                 cToken.ThrowIfCancellationRequested();
 
                 var webResponse = await GetModelAsync<MatchHistoryResponseParent>(url, cToken)
@@ -142,18 +137,24 @@ namespace SteamApi
                     match.SkillLevel = (int)skillLevel;
                 }
             }
-            catch (Exception ex)
+            catch (Exception caughtException)
             {
-                thrownException = ex;
+                thrownException = caughtException;
             }
             return WrapResponse(response, url, thrownException);
         }
 
+
         /// <summary>
-        /// Sends GET request for Dota 2 match details. Request can be
-        /// cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// Dota 2 match details. Request can be cancelled by
+        /// providing cancellation token.
         /// </summary>
-        public async Task<MatchDetails> GetMatchDetailsAsync(ulong matchId,
+        /// <param name="matchId">Dota 2 match id</param>
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellation token</param>
+        public async Task<MatchDetailsResponse> GetMatchDetailsAsync(ulong matchId,
             string apiInterface = IDOTA2_MATCH, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -162,11 +163,23 @@ namespace SteamApi
                 .AppendQuery("match_id", matchId.ToString())
                 .AppendQuery("include_persona_names", "1");
 
-            var response = await GetModelAsync<MatchDetailsContainer>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            MatchDetailsResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Details;
+                response = await GetModelAsync<MatchDetailsResponse>(url, cToken)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
+
 
         /// <summary>
         /// Sends GET request for current top live games.

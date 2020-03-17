@@ -139,13 +139,13 @@ namespace Client.Dota
             var response = DotaApiClient.GetMatchHistoryAsync(leagueId: leagueId)
                 .Result;
             SleepAfterSendingRequest();
-            var details = DotaApiClient.GetMatchDetailsAsync(
+            var detailsResponse = DotaApiClient.GetMatchDetailsAsync(
                 response.Contents.ElementAt(0).Id).Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
-            Assert.Equal(leagueId, details.LeagueId);
+            Assert.Equal(leagueId, detailsResponse.Contents.LeagueId);
         }
 
 
