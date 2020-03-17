@@ -68,12 +68,6 @@ namespace SteamApi
                 .AppendQuery("start_at_match_seq_num", seqNum.ToString())
                 .AppendQuery("matches_requested", count.ToString());
 
-            //Url.SetHost(STEAM_HOST)
-            //    .SetPath(apiInterface, "GetMatchHistoryBySequenceNum", version)
-            //    .AddQuery("key", ApiKey)
-            //    .AddQuery("start_at_match_seq_num", seqNum.ToString())
-            //    .AddQuery("matches_requested", count.ToString());
-
             var response = await GetModelAsync<MatchHistoryBySeqResponse>(cToken: cToken)
                 .ConfigureAwait(false);
 
@@ -102,17 +96,6 @@ namespace SteamApi
                 .AppendQuery("start_at_match_id", startAtId.ToString())
                 .AppendQuery("skill", skillLevel.ToString());
 
-            //Url.SetHost(STEAM_HOST)
-            //    .SetPath(apiInterface, "GetMatchHistory", version)
-            //    .AddQuery("key", ApiKey)
-            //    .AddQuery("account_id", playerId32.ToString())
-            //    .AddQuery("matches_requested", count.ToString())
-            //    .AddQuery("hero_id", heroId.ToString())
-            //    .AddQuery("min_players", minPlayers.ToString())
-            //    .AddQuery("league_id", leagueId.ToString())
-            //    .AddQuery("start_at_match_id", startAtId.ToString())
-            //    .AddQuery("skill", skillLevel.ToString());
-
             var response = await GetModelAsync<MatchHistoryContainer>(cToken: cToken)
                 .ConfigureAwait(false);
 
@@ -131,11 +114,6 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("match_id", matchId.ToString())
                 .AppendQuery("include_persona_names", "1");
-
-            //Url.SetHost(STEAM_HOST).SetPath(apiInterface, "GetMatchDetails", version)
-            //   .AddQuery("key", ApiKey)
-            //   .AddQuery("match_id", matchId.ToString())
-            //   .AddQuery("include_persona_names", "1");
 
             var response = await GetModelAsync<MatchDetailsContainer>(cToken: cToken)
                 .ConfigureAwait(false);
@@ -314,7 +292,7 @@ namespace SteamApi
         /// <param name="id32">32-bit steam id</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <exception cref="ApiEmptyResultException{DotaPlayerProfile}"></exception>
+        /// <exception cref="ApiEmptyResultException"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<DotaPlayerProfile> GetPlayerProfileAsync(uint id32,
@@ -328,7 +306,7 @@ namespace SteamApi
                 .ConfigureAwait(false);
 
             if (response.Id32 != id32)
-                throw new ApiEmptyResultException<DotaPlayerProfile>("Requested profile is not visible to you");
+                throw new ApiEmptyResultException("Requested profile is not visible to you");
             else
                 return response;
         }
