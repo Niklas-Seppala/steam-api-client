@@ -9,11 +9,12 @@
     <Description>Library to access Valve's web APIs.</Description>
     <RepositoryUrl></RepositoryUrl>
     <PackageProjectUrl>https://github.com/NikkeArp/steam-api-dotnet</PackageProjectUrl>
-    <PackageTags>Steam Dota api web client</PackageTags>
-    <PackageReleaseNotes>This is the innitial release</PackageReleaseNotes>
+    <PackageTags>Steam Dota dota2 api web client</PackageTags>
+    <PackageReleaseNotes>Simplified internal url building</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Niklas Seppälä</Authors>
-    <Company>RndSofta</Company>
+    <Company>Niklas Seppälä</Company>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,7 +25,6 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>
 
 </Project>
