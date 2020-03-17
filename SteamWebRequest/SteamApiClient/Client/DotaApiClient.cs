@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using SteamApi.Responses.Dota;
-using SteamApi.Responses.Dota.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -54,11 +53,12 @@ namespace SteamApi
 
         /// <summary>
         /// Sends GET request to api.steampowered.com for match history
-        /// by sequence number. Default interface is IDOTA2Match_570.
-        /// Returns list of ! MatchDetails ! unlike other match history methods.
-        /// Request can be cancelled providing cancellation token.
+        /// by sequence number. Returns list of MatchDetails unlike other
+        /// match history methods. Request can be cancelled by providing
+        /// cancellation token. Token will be checked before and during
+        /// web request, after that method can't be cancelled.
         /// </summary>
-        public async Task<IReadOnlyList<MatchDetails>> GetMatchHistoryBySequenceNumAsync(
+        public async Task<MatchHistoryBySeqResponse> GetMatchHistoryBySequenceNumAsync(
             ulong seqNum, string apiInterface = IDOTA2_MATCH, string version = "v1",
             uint count = 50, CToken cToken = default)
         {
@@ -68,10 +68,21 @@ namespace SteamApi
                 .AppendQuery("start_at_match_seq_num", seqNum.ToString())
                 .AppendQuery("matches_requested", count.ToString());
 
-            var response = await GetModelAsync<MatchHistoryBySeqResponse>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.Result.Matches;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            MatchHistoryBySeqResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+                var webResponse = await GetModelAsync<MatchHistoryBySeqResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+                response = webResponse.Result;   
+            }
+            catch (Exception ex)
+            {
+                thrownException = ex;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         /// <summary>

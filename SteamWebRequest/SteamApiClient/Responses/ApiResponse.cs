@@ -11,6 +11,11 @@ namespace SteamApi.Responses
         /// Was request successful
         /// </summary>
         public bool Successful { get; set; }
+
+        /// <summary>
+        /// Was request cancelled
+        /// </summary>
+        public bool WasCancelled { get; set; }
  
         /// <summary>
         /// To which URL request was sent.

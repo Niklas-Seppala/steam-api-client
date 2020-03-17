@@ -6,6 +6,8 @@ namespace SteamApi.Responses
     {
         bool Successful { get; set; }
 
+        bool WasCancelled { get; set; }
+
         string URL { get; set; }
 
         Exception ThrownException { get; set; }

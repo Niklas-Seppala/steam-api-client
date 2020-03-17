@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
-namespace SteamApi.Responses.Dota.ResponseModels
+namespace SteamApi.Responses.Dota
 {
     /// <summary>
     /// This is a JSON response container class that is never supposed
@@ -159,19 +160,9 @@ namespace SteamApi.Responses.Dota.ResponseModels
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class MatchHistoryBySeqResponse
+    internal sealed class MatchHistoryBySeqResponseParent
     {
-        public MatchHistoryBySeqContainer Result { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class MatchHistoryBySeqContainer
-    {
-        public uint Status { get; set; }
-        public IReadOnlyList<MatchDetails> Matches { get; set; }
+        public MatchHistoryBySeqResponse Result { get; set; }
     }
 
     /// <summary>

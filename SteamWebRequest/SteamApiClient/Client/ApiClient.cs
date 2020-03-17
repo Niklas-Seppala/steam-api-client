@@ -292,6 +292,7 @@ namespace SteamApi
             {
                 return new T()
                 {
+                    WasCancelled = exception is OperationCanceledException ? true : false,
                     Successful = false,
                     ThrownException = exception,
                     URL = url
