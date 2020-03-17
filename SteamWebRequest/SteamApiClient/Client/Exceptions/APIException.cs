@@ -11,19 +11,9 @@ namespace SteamApi
     public class ApiException : Exception
     {
         /// <summary>
-        /// Server response content
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
         /// Server response status code
         /// </summary>
         public int StatusCode { get; set; }
-
-        /// <summary>
-        /// URL that the API call targeted
-        /// </summary>
-        public string URL { get; set; }
 
         public ApiException() { }
         public ApiException(string message) : base(message) { }
