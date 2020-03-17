@@ -80,7 +80,7 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(topGames);
+            Assert.NotEmpty(topGames.Contents);
         }
 
 

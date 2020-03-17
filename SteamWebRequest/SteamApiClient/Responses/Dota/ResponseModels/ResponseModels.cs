@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace SteamApi.Responses.Dota
@@ -161,16 +162,6 @@ namespace SteamApi.Responses.Dota
     internal sealed class MatchHistoryResponseParent
     {
         public MatchHistoryResponse Result { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class TopLiveGames
-    {
-        [JsonProperty("game_list")]
-        public IReadOnlyList<LiveMatch> Games { get; set; }
     }
 
     /// <summary>

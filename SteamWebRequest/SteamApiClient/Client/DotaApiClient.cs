@@ -185,19 +185,38 @@ namespace SteamApi
         /// Sends GET request for current top live games.
         /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        /// <param name="partner">partner id</param>
-        public async Task<IReadOnlyList<LiveMatch>> GetTopLiveGamesAsync(string apiInterface = IDOTA2_MATCH,
-            string version = "v1", int partner = 1, CToken cToken = default)
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <param name="partner">Partner id. Usually 0-3 works.</param>
+        public async Task<TopLiveGamesResponse> GetTopLiveGamesAsync(string apiInterface = IDOTA2_MATCH,
+            string version = "v1", uint partner = 0, CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetTopLiveGame", version);
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("partner", partner.ToString());
 
-            var response = await GetModelAsync<TopLiveGames>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            TopLiveGamesResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Games;
+                var webResponse = await GetModelAsync<TopLiveGamesResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Contents == null)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         #endregion
@@ -205,16 +224,32 @@ namespace SteamApi
         #region [Game Constant Data]
 
         /// <summary>
-        /// Sends GET request for dota heroinfo. Request
+        /// Sends GET request to https://dota2.com for dota heroinfo. Request
         /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, HeroInfo>> GetHeroInfosAsync(CToken cToken = default)
+        /// <param name="cToken">Cancellation token</param>
+        public async Task<HeroInfoResponse> GetHeroInfosAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "heropickerdata");
 
-            return await GetModelAsync<IReadOnlyDictionary<string, HeroInfo>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            HeroInfoResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                var webResponse = await GetModelAsync<IReadOnlyDictionary<string, HeroInfo>>(url, cToken)
+                    .ConfigureAwait(false);
+                if (webResponse.Count == 0)
+                    throw new ApiEmptyResultException("Web API response was empty");
+                else
+                    response = new HeroInfoResponse() { Contents = webResponse };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         /// <summary>
@@ -948,10 +983,10 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("partner", partner.ToString());
 
-            var response = await GetModelAsync<TopLiveGames>(cToken: cToken)
+            var response = await GetModelAsync<TopLiveGamesResponse>(cToken: cToken)
                 .ConfigureAwait(false);
 
-            return response.Games;
+            return response.Contents;
         }
 
         /// <summary>
