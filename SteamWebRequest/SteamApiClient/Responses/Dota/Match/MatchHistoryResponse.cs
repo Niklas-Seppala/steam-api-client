@@ -8,7 +8,7 @@ namespace SteamApi.Responses.Dota
     /// Match history API response model
     /// </summary>
     [Serializable]
-    public sealed class MatchHistoryResponse
+    public sealed class MatchHistoryResponse : ApiResponse
     {
         /// <summary>
         /// Number of total results
@@ -35,6 +35,7 @@ namespace SteamApi.Responses.Dota
         /// <summary>
         /// List of the requested matches
         /// </summary>
-        public IReadOnlyList<MatchShort> Matches { get; set; }
+        [JsonProperty("matches")]
+        public IReadOnlyList<MatchShort> Contents { get; set; }
     }
 }

@@ -169,10 +169,9 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class MatchHistoryContainer
+    internal sealed class MatchHistoryResponseParent
     {
-        [JsonProperty("result")]
-        public MatchHistoryResponse History { get; set; }
+        public MatchHistoryResponse Result { get; set; }
     }
 
     /// <summary>

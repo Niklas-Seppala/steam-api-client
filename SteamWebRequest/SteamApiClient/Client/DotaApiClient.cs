@@ -73,7 +73,9 @@ namespace SteamApi
             Exception thrownException = null;
             try
             {
+                // Check cancellation token
                 cToken.ThrowIfCancellationRequested();
+
                 var webResponse = await GetModelAsync<MatchHistoryBySeqResponseParent>(url, cToken)
                     .ConfigureAwait(false);
                 response = webResponse.Result;   
@@ -85,32 +87,66 @@ namespace SteamApi
             return WrapResponse(response, url, thrownException);
         }
 
+
         /// <summary>
-        /// Gets match history model. Request can be specified by providing optional parameters
-        /// and can be cancelled by providing CancellationToken.
+        /// Sends GET request to api.steampowered.com for MatchHistory.
+        /// Request can be specified by providing optional parameters
+        /// and can be cancelled by providing cancellation token. Token
+        /// will be checked before and during web request, after that method
+        /// can't be cancelled.
         /// </summary>
-        /// <param name="minPlayers">minimum number of human players</param>
-        /// <param name="skillLevel"> the average skill range of the match, these can be 1-3.
-        /// Ignored if an account id is specified</param>
-        public async Task<MatchHistoryResponse> GetMatchHistoryAsync(uint playerId32 = 0, uint heroId = 0,
-            uint minPlayers = 0, uint leagueId = 0, ulong startAtId = 0, uint count = 25,
-            string apiInterface = IDOTA2_MATCH, string version = "v1", uint skillLevel = 0, CToken cToken = default)
+        /// <param name="minPlayers">minimum number of human players.</param>
+        /// <param name="skillLevel">Ignored if an account id is specified.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="count">Call size match count.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <param name="heroId">Include only match with this hero.</param>
+        /// <param name="leagueId">League id. Method returns only matches
+        ///  from this league. Only for pro dota.</param>
+        /// <param name="id32">Player 32-bit id</param>
+        /// <param name="startAtMatchId">Match id where to start</param>
+        /// <param name="version">API method version</param>
+        /// <returns>MatchHistoryResponse object</returns>
+        public async Task<MatchHistoryResponse> GetMatchHistoryAsync(uint id32 = 0, uint heroId = 0,
+            uint minPlayers = 0, uint leagueId = 0, ulong startAtMatchId = 0, uint count = 25,
+            string apiInterface = IDOTA2_MATCH, string version = "v1",
+            DotaSkillLevel skillLevel = DotaSkillLevel.Any, CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetMatchHistory", version);
             UrlBuilder.AppendQuery("key", ApiKey)
-                .AppendQuery("account_id", playerId32.ToString())
+                .AppendQuery("account_id", id32.ToString())
                 .AppendQuery("matches_requested", count.ToString())
                 .AppendQuery("hero_id", heroId.ToString())
                 .AppendQuery("min_players", minPlayers.ToString())
                 .AppendQuery("league_id", leagueId.ToString())
-                .AppendQuery("start_at_match_id", startAtId.ToString())
-                .AppendQuery("skill", skillLevel.ToString());
+                .AppendQuery("start_at_match_id", startAtMatchId.ToString())
+                .AppendQuery("skill", ((int)skillLevel).ToString());
 
-            var response = await GetModelAsync<MatchHistoryContainer>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            MatchHistoryResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                // Check cancellation token
+                cToken.ThrowIfCancellationRequested();
 
-            return response.History;
+                var webResponse = await GetModelAsync<MatchHistoryResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                response = webResponse.Result;
+
+                // Set skill level to each match model
+                foreach (var match in response.Contents)
+                {
+                    match.SkillLevel = (int)skillLevel;
+                }
+            }
+            catch (Exception ex)
+            {
+                thrownException = ex;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         /// <summary>

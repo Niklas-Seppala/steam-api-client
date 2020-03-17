@@ -37,9 +37,7 @@ namespace Client.Dota
             var response = await task;
             SleepAfterSendingRequest();
 
-            Assert.False(response.Successful);
-            Assert.True(response.WasCancelled);
-            Assert.NotNull(response.ThrownException);
+            AssertRequestWasCancelled(response);
             Assert.Null(response.Contents);
         }
 
@@ -56,9 +54,7 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.False(response.Successful);
-            Assert.False(response.WasCancelled);
-            Assert.NotNull(response.ThrownException);
+            AssertRequestFailed(response);
             Assert.Null(response.Contents);
         }
 
@@ -75,9 +71,7 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.False(response.Successful);
-            Assert.False(response.WasCancelled);
-            Assert.NotNull(response.ThrownException);
+            AssertRequestFailed(response);
             Assert.Null(response.Contents);
         }
 
@@ -101,9 +95,7 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.True(response.Successful);
-            Assert.False(response.WasCancelled);
-            Assert.Null(response.ThrownException);
+            AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
             Assert.Equal(resultSeqNum, response.Contents.ElementAt(0).MatchSequenceNum);
         }
@@ -121,17 +113,14 @@ namespace Client.Dota
         [InlineData(200, 100)]
         [InlineData(60, 60)]
         [InlineData(1, 1)]
-        public void CountDefined_ReturnsCorrectAmountOfGames(
-            byte count, byte resultCount)
+        public void CountDefined_ReturnsCorrectAmountOfGames(uint count, byte resultCount)
         {
             ulong seqNum = 55555050;
             var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.True(response.Successful);
-            Assert.False(response.WasCancelled);
-            Assert.Null(response.ThrownException);
+            AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
             Assert.Equal(resultCount, response.Contents.Count);
         }

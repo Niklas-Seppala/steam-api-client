@@ -11,10 +11,20 @@ namespace SteamApi.Responses.Dota
     public sealed class MatchShort
     {
         /// <summary>
+        /// Skill bracket for the match.
+        /// (-1) ->  Not defined
+        /// 0    ->  Any
+        /// 1    ->  Normal
+        /// 2    ->  High
+        /// 3    ->  Very High
+        /// </summary>
+        public int SkillLevel { get; set; } = -1;
+
+        /// <summary>
         /// Match Id
         /// </summary>
         [JsonProperty("match_id")]
-        public ulong MatchId { get; set; }
+        public ulong Id { get; set; }
 
         /// <summary>
         /// Match sequence number

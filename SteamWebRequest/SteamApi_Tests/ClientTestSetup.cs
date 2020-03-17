@@ -1,4 +1,5 @@
 ﻿using SteamApi;
+using SteamApi.Responses;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -88,6 +89,43 @@ namespace Client
             {
                 Thread.Sleep(timeout);
             }
+        }
+
+
+        /// <summary>
+        /// Asserts that request failed.
+        /// </summary>
+        /// <param name="response">API response object</param>
+        public static void AssertRequestFailed(IApiResponse response)
+        {
+            Assert.False(response.Successful);
+            Assert.False(response.WasCancelled);
+            Assert.NotNull(response.ThrownException);
+        }
+
+
+        /// <summary>
+        /// Asserts that request was successful.
+        /// </summary>
+        /// <param name="response">API response object</param>
+        public static void AssertRequestWasSuccessful(IApiResponse response)
+        {
+            Assert.True(response.Successful);
+            Assert.False(response.WasCancelled);
+            Assert.Null(response.ThrownException);
+        }
+
+
+        /// <summary>
+        /// Asserts that request was cancelled.
+        /// </summary>
+        /// <param name="response">API response object</param>
+        public static void AssertRequestWasCancelled(IApiResponse response)
+        {
+            Assert.False(response.Successful);
+            Assert.True(response.WasCancelled);
+            Assert.NotNull(response.ThrownException);
+            Assert.True(response.ThrownException is OperationCanceledException);
         }
     }
 }
