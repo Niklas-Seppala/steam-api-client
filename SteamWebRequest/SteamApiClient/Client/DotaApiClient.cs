@@ -289,10 +289,15 @@ namespace SteamApi
 
 
         /// <summary>
-        /// Sends GET request for dota 2 heroes. Request
-        /// can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com
+        /// for dota 2 heroes. Request can be cancelled by
+        /// providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyList<Hero>> GetHeroesAsync(string lang = "en",
+        /// <param name="lang">Language</param>
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellation token</param>
+        public async Task<HeroesResponse> GetHeroesAsync(string lang = "en",
             string apiInterface = IECONDOTA, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -300,11 +305,28 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("language", lang);
 
-            var response = await GetModelAsync<HeroesResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            Exception thrownException = null;
+            HeroesResponse response = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Content.Heroes;
+                var webResponse = await GetModelAsync<HeroesResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Content.Contents.Count == 0)
+                    throw new ApiEmptyResultException("Web response didn't return any values");
+                else
+                    response = webResponse.Content;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
+
 
         /// <summary>
         /// Sends GET request to dota2.com for Dota 2 iteminfo. Request
@@ -314,6 +336,8 @@ namespace SteamApi
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "itemdata");
+
+
 
             var response = await GetModelAsync<ItemDictionary>(cToken: cToken)
                 .ConfigureAwait(false);

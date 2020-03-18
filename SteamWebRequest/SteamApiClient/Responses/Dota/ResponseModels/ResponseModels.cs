@@ -65,19 +65,10 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class HeroesResponse
+    internal sealed class HeroesResponseParent
     {
         [JsonProperty("result")]
-        public HeroesContent Content { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class HeroesContent
-    {
-        public IReadOnlyList<Hero> Heroes { get; set; }
+        public HeroesResponse Content { get; set; }
     }
 
     /// <summary>

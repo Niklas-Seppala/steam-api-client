@@ -24,22 +24,5 @@ namespace Client.Dota
                 Assert.NotEqual((uint)0, item.Id);
             });
         }
-
-
-        [Fact]
-        public void GetHeroes_DefaultParams_ReturnsHeroes()
-        {
-            var heroes = DotaApiClient.GetHeroesAsync()
-                .Result;
-            SleepAfterSendingRequest();
-
-            Assert.NotEmpty(heroes);
-            Assert.All(heroes, hero =>
-            {
-                Assert.NotEmpty(hero.LocalizedName);
-                Assert.NotEmpty(hero.Name);
-                Assert.NotEqual((uint)0, hero.Id);
-            });
-        }
     }
 }
