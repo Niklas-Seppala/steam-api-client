@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Client.Dota
@@ -17,6 +16,33 @@ namespace Client.Dota
 
 
         /// <summary>
+        /// Test case for request method being cancelled by CancellationToken.
+        /// Method should return failed ApiResponse object that contains thrown
+        /// cancellation exception.
+        /// </summary>
+        [Fact]
+        public async Task MethodGotCancelled_RequestFails()
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+
+            // Start task to be cancelled
+            var task = Task.Run(async () =>
+            {
+                return await DotaApiClient.GetTopLiveGamesAsync(cToken: source.Token);
+            });
+
+            // Cancel method
+            source.Cancel();
+
+            var response = await task;
+            SleepAfterSendingRequest();
+
+            AssertRequestWasCancelled(response);
+            Assert.Null(response.Contents);
+        }
+
+
+        /// <summary>
         /// Tests that method returns filled
         /// dictionary of herostats.
         /// </summary>
@@ -28,10 +54,9 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotNull(response);
-            Assert.NotEmpty(response);
-
-            Assert.All(response, stats =>
+            AssertRequestWasSuccessful(response);
+            Assert.NotNull(response.Contents);
+            Assert.All(response.Contents, stats =>
             {
                 Assert.NotEmpty(stats.Value.Name);
                 Assert.NotNull(stats.Value.Attributes);
@@ -39,6 +64,5 @@ namespace Client.Dota
                 Assert.NotEmpty(stats.Value.PrimaryAttribute);
             });
         }
-
     }
 }

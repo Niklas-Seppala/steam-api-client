@@ -84,16 +84,6 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class HeroStatsContainer
-    {
-        [JsonProperty("herodata")]
-        public IReadOnlyDictionary<string, HeroStats> HeroStats { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
     internal sealed class ItemCreators
     {
         public IReadOnlyList<uint> Contributors { get; set; }

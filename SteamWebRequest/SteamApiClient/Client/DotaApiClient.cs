@@ -252,21 +252,41 @@ namespace SteamApi
             return WrapResponse(response, url, thrownException);
         }
 
+
         /// <summary>
-        /// Sends GET request for dota 2 hero stats. Requst
-        /// can be cancelled by providing cancellation token.
+        /// Sends GET request to https://dota2.com for dota 2
+        /// hero stats. Request can be cancelled by providing
+        /// cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, HeroStats>> GetHeroStatsAsync(CToken cToken = default)
+        /// <param name="cToken">Cancellation token</param>
+        public async Task<HeroStatsResponse> GetHeroStatsAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "heropediadata");
             UrlBuilder.AppendQuery("feeds", "herodata");
 
-            var response = await GetModelAsync<HeroStatsContainer>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            HeroStatsResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.HeroStats;
+                var webResponse = await GetModelAsync<HeroStatsResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Contents.Count == 0)
+                    throw new ApiEmptyResultException("Web response didn't return any values");
+                else 
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
+
 
         /// <summary>
         /// Sends GET request for dota 2 heroes. Request
