@@ -8,7 +8,7 @@ namespace SteamApi.Responses.Dota
     /// Dota 2 PLayers profile model
     /// </summary>
     [Serializable]
-    public class DotaPlayerProfile
+    public sealed class DotaPlayerProfile
     {
         /// <summary>
         /// Player's team id

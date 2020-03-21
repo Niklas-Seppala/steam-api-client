@@ -76,6 +76,24 @@ namespace Client.Dota
 
 
         /// <summary>
+        /// Test case where request match count
+        /// is set to zero. Method throws ApiEmptyResponse
+        /// Exception and fails. Method should return failed
+        /// ApiResponse object.
+        /// </summary>
+        [Fact]
+        public void CountSetToZero_RequestFails()
+        {
+            var response = DotaApiClient.GetMatchHistoryAsync(count: 0)
+                .Result;
+            SleepAfterSendingRequest();
+
+            AssertRequestFailed(response);
+            Assert.Null(response.Contents);
+        }
+
+
+        /// <summary>
         /// Test case where count is specified. Method should
         /// return only specified amount of matches.
         /// </summary>
@@ -85,16 +103,16 @@ namespace Client.Dota
         [InlineData(50, 50)]
         [InlineData(100, 100)]
         [InlineData(200, 100)]
+        [InlineData(500, 100)]
         [InlineData(5, 5)]
         [InlineData(1, 1)]
-        [InlineData(0, 0)]
-        public void CountParamDefined_ReturnsSpecifiedAmount(byte count, byte resultCount)
+        public void CountParamDefined_ReturnsSpecifiedAmount(uint count, uint resultCount)
         {
             var response = DotaApiClient.GetMatchHistoryAsync(count: count)
                 .Result;
             SleepAfterSendingRequest();
 
-            ApiTests.AssertRequestWasSuccessful(response);
+            AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
             Assert.True(response.Contents.Count == resultCount);
         }
@@ -161,7 +179,7 @@ namespace Client.Dota
         [InlineData(10)]
         [InlineData(15)]
         [InlineData(20)]
-        public void MinPlayersSpecified_ReturnsMatchesWithMinimumPLayerCount(byte minPlayerCount)
+        public void MinPlayersSpecified_ReturnsMatchesWithMinimumPLayerCount(uint minPlayerCount)
         {
             var response = DotaApiClient.GetMatchHistoryAsync(minPlayers: minPlayerCount)
                 .Result;
@@ -186,7 +204,7 @@ namespace Client.Dota
         [InlineData(36)]
         [InlineData(1)]
         [InlineData(66)]
-        public void HeroSpecified_ReturnsOnlyGamesWithSpecifiedHero(ushort heroId)
+        public void HeroSpecified_ReturnsOnlyGamesWithSpecifiedHero(uint heroId)
         {
             var response = DotaApiClient.GetMatchHistoryAsync(heroId: heroId, count: 2)
                 .Result;

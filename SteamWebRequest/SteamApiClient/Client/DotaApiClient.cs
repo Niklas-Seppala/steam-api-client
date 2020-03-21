@@ -82,7 +82,11 @@ namespace SteamApi
 
                 var webResponse = await GetModelAsync<MatchHistoryBySeqResponseParent>(url, cToken)
                     .ConfigureAwait(false);
-                response = webResponse.Result;   
+
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse.Result;   
             }
             catch (Exception caughtException)
             {
@@ -135,12 +139,15 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<MatchHistoryResponseParent>(url, cToken)
                     .ConfigureAwait(false);
 
-                response = webResponse.Result;
-
-                // Set skill level to each match model
-                foreach (var match in response.Contents)
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
                 {
-                    match.SkillLevel = (int)skillLevel;
+                    response = webResponse.Result;
+
+                    // Set skill level to each match model
+                    foreach (var match in response.Contents)
+                        match.SkillLevel = (int)skillLevel;
                 }
             }
             catch (Exception caughtException)
@@ -177,8 +184,13 @@ namespace SteamApi
             {
                 cToken.ThrowIfCancellationRequested();
 
-                response = await GetModelAsync<MatchDetailsResponse>(url, cToken)
+                var webResponse = await GetModelAsync<MatchDetailsResponse>(url, cToken)
                     .ConfigureAwait(false);
+
+                if (webResponse.Contents == null)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
             }
             catch (Exception caughtException)
             {
@@ -215,7 +227,7 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<TopLiveGamesResponse>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Contents == null)
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
                     throw new ApiEmptyResultException("API response was empty");
                 else
                     response = webResponse;
@@ -247,9 +259,12 @@ namespace SteamApi
             Exception thrownException = null;
             try
             {
+                cToken.ThrowIfCancellationRequested();
+
                 var webResponse = await GetModelAsync<IReadOnlyDictionary<string, HeroInfo>>(url, cToken)
                     .ConfigureAwait(false);
-                if (webResponse.Count == 0)
+
+                if (webResponse == null || webResponse.Count == 0)
                     throw new ApiEmptyResultException("Web API response was empty");
                 else
                     response = new HeroInfoResponse() { Contents = webResponse };
@@ -285,9 +300,9 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<HeroStatsResponse>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Contents.Count == 0)
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
                     throw new ApiEmptyResultException("Web response didn't return any values");
-                else 
+                else
                     response = webResponse;
             }
             catch (Exception caughtException)
@@ -326,14 +341,10 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<HeroesResponseParent>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Content.Contents.Count == 0)
-                {
+                if (webResponse.Content.Contents == null || webResponse.Content.Contents.Count == 0)
                     throw new ApiEmptyResultException("Web response didn't return any values");
-                }
                 else
-                {
                     response = webResponse.Content;
-                }
             }
             catch (Exception caughtException)
             {
@@ -364,14 +375,10 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<ItemsInfoResponse>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Contents.Count == 0)
-                {
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
                     throw new ApiEmptyResultException("Web response didn't return any values");
-                }
                 else
-                {
                     response = webResponse;
-                }
             }
             catch (Exception thrownException)
             {
@@ -407,14 +414,10 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<ItemsResponseParent>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Result.Contents.Count > 0)
-                {
-                    response = webResponse.Result;
-                }
-                else
-                {
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
                     throw new ApiEmptyResultException("API response was empty");
-                }
+                else
+                    response = webResponse.Result;
             }
             catch (Exception thrownException)
             {
@@ -444,14 +447,10 @@ namespace SteamApi
                 var webResponse = await GetModelAsync<AbilitiesResponse>(url, cToken)
                     .ConfigureAwait(false);
 
-                if (webResponse.Contents.Count > 0)
-                {
-                    response = webResponse;
-                }
-                else
-                {
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
                     throw new ApiEmptyResultException("API response was empty");
-                }
+                else
+                    response = webResponse;
             }
             catch (Exception thrownException)
             {
@@ -483,14 +482,11 @@ namespace SteamApi
 
                 var webResponse = await GetModelAsync<Dictionary<string, uint>>(url, cToken)
                     .ConfigureAwait(false);
-                if (webResponse.Count > 0)
-                {
-                    response = new UniqueUsersResponse() { Contents = webResponse };
-                }
-                else
-                {
+
+                if (webResponse == null || webResponse.Count == 0)
                     throw new ApiEmptyResultException("API response was empty");
-                }
+                else
+                    response = new UniqueUsersResponse() { Contents = webResponse };
             }
             catch (Exception caughtException)
             {
@@ -500,15 +496,20 @@ namespace SteamApi
         }
 
         /// <summary>
-        /// Sends GET request for dota 2 leaderboards. Specify
-        /// region. Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://www.dota2.com for dota 2
+        /// leaderboards. Specify region. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
-        public async Task<Leaderboard> GetLeaderboardAsync(DotaRegion region = default,
-            string version = "v0001", CToken cToken = default)
+        /// <param name="region">Dota 2 region.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Dota 2 regional leaderboard wrapped into ApiResponse object.</returns>
+        public async Task<LeaderboardResponse> GetLeaderboardAsync(DotaRegion region = default,
+            string apiInterface = "ILeaderboard", string version = "v0001", CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
-            UrlBuilder.AppendPath("webapi", "ILeaderboard", "GetDivisionLeaderboard", version);
-
+            UrlBuilder.AppendPath("webapi", apiInterface, "GetDivisionLeaderboard", version);
             switch (region)
             {
                 case DotaRegion.Europe:
@@ -524,34 +525,69 @@ namespace SteamApi
                     UrlBuilder.AppendQuery("division", "china");
                     break;
             }
-            return await GetModelAsync<Leaderboard>(cToken: cToken)
-                .ConfigureAwait(false);
+
+            string url = UrlBuilder.PopEncodedUrl(false);
+            LeaderboardResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<Leaderboard>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Players == null || webResponse.Players.Count == 0)
+                    throw new ApiEmptyResultException("");
+                else
+                    response = new LeaderboardResponse() { Contents = webResponse };
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request for dota 2 player profile.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://www.dota2.com for
+        /// dota 2 player profile. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
-        /// <param name="id32">32-bit steam id</param>
-        /// <param name="version">API method version</param>
+        /// <param name="id32">32-bit steam id.</param>
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <exception cref="ApiEmptyResultException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        public async Task<DotaPlayerProfile> GetPlayerProfileAsync(uint id32,
-            string version = "v1", CToken cToken = default)
+        /// <returns>DotaPlayerProfile wrapped into ApiResponse object.</returns>
+        public async Task<DotaPlayerProfileResponse> GetPlayerProfileAsync(uint id32,
+            string apiInterface = "IDOTA2DPC", string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
-            UrlBuilder.AppendPath("webapi", "IDOTA2DPC", "GetPlayerInfo", version);
+            UrlBuilder.AppendPath("webapi", apiInterface, "GetPlayerInfo", version);
             UrlBuilder.AppendQuery("account_id", id32.ToString());
 
-            var response = await GetModelAsync<DotaPlayerProfile>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            DotaPlayerProfileResponse response = null;
+            Exception caughtException = null;
 
-            if (response.Id32 != id32)
-                throw new ApiEmptyResultException("Requested profile is not visible to you");
-            else
-                return response;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<DotaPlayerProfile>(url, cToken)
+                    .ConfigureAwait(false);
+                if (string.IsNullOrEmpty(webResponse.Name))
+                    throw new ApiEmptyResultException("API response was empty.");
+                else if (webResponse.Id32 != id32)
+                    throw new ApiEmptyResultException("Requested profile is not visible to you.");
+                else
+                    response = new DotaPlayerProfileResponse() { Contents = webResponse };
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
         #endregion
