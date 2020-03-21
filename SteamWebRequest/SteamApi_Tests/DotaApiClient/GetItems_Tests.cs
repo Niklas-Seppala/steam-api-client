@@ -5,15 +5,14 @@ using Xunit;
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetHeroStats method
+    /// Test class for dota 2 api client's GetItems method
     /// </summary>
-    public class GetHeroStats_Tests : ApiTests
+    public class GetItems_Tests : ApiTests
     {
         /// <summary>
         /// Setup
         /// </summary>
-        public GetHeroStats_Tests(ClientFixture fixture) : base(fixture) { }
-
+        public GetItems_Tests(ClientFixture fixture) : base(fixture) { }
 
         /// <summary>
         /// Test case for request method being cancelled by CancellationToken.
@@ -41,7 +40,6 @@ namespace Client.Dota
             Assert.Null(response.Contents);
         }
 
-
         /// <summary>
         /// Test case for invalid API interface being provided.
         /// Method should return failed ApiResponse object where exception
@@ -50,7 +48,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroes")
+            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Items")
                 .Result;
             SleepAfterSendingRequest();
 
@@ -75,27 +73,25 @@ namespace Client.Dota
             Assert.Null(response.Contents);
         }
 
-
         /// <summary>
-        /// Tests that method returns filled
-        /// dictionary of herostats.
+        /// Test case for default parameters. Method should
+        /// return List of items wrapped into ApiResponse object
         /// </summary>
-        /// <param name="heroName">name of the hero</param>
         [Fact]
-        public void DefaultParams_ReturnsHeroStats()
+        public void DefaultParams_ReturnsGameItems()
         {
-            var response = DotaApiClient.GetHeroStatsAsync()
+            var response = DotaApiClient.GetItemsAsync()
                 .Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
-            Assert.All(response.Contents, stats =>
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, item =>
             {
-                Assert.NotEmpty(stats.Value.Name);
-                Assert.NotNull(stats.Value.Attributes);
-                Assert.NotEmpty(stats.Value.LocalizedName);
-                Assert.NotEmpty(stats.Value.PrimaryAttribute);
+                Assert.NotEmpty(item.LocalizedName);
+                Assert.NotEmpty(item.Name);
+                Assert.NotEqual((uint)0, item.Id);
             });
         }
     }

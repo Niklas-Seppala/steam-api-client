@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Client.Dota
 {
@@ -12,14 +14,49 @@ namespace Client.Dota
         /// </summary>
         public GetUniqueUsers_Tests(ClientFixture fixture) : base(fixture) { }
 
+
+        /// <summary>
+        /// Test case for request method being cancelled by CancellationToken.
+        /// Method should return failed ApiResponse object that contains thrown
+        /// cancellation exception.
+        /// </summary>
+        [Fact]
+        public async Task MethodGotCancelled_RequestFails()
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+
+            // Start task to be cancelled
+            var task = Task.Run(async () =>
+            {
+                return await DotaApiClient.GetTopLiveGamesAsync(cToken: source.Token);
+            });
+
+            // Cancel method
+            source.Cancel();
+
+            var response = await task;
+            SleepAfterSendingRequest();
+
+            AssertRequestWasCancelled(response);
+            Assert.Null(response.Contents);
+        }
+
+
+        /// <summary>
+        /// Test case for default parameters. Method should
+        /// return Dictionary containig unique dota 2 player count
+        /// wrapped into ApiResponse object.
+        /// </summary>
         [Fact]
         public void DefaultParams_ReturnsUniqueUserCount()
         {
             var response = DotaApiClient.GetUniqueUsersAsync()
-                .Result["users_last_month"];
+                .Result;
             SleepAfterSendingRequest();
 
-            Assert.True(response != 0);
+            AssertRequestWasSuccessful(response);
+            Assert.NotNull(response.Contents);
+            Assert.NotEmpty(response.Contents);
         }
     }
 }

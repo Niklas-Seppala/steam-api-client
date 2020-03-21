@@ -8,16 +8,6 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class AbilitiesResponse
-    {
-        [JsonProperty("abilitydata")]
-        public IReadOnlyDictionary<string, Ability> AbilityDict { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
     internal sealed class DotaCosmeticRaritiesResult
     {
         [JsonProperty("result")]
@@ -78,16 +68,6 @@ namespace SteamApi.Responses.Dota
     internal sealed class ItemCreators
     {
         public IReadOnlyList<uint> Contributors { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class ItemDictionary
-    {
-        [JsonProperty("itemdata")]
-        public IReadOnlyDictionary<string, Item> ItemDict { get; set; }
     }
 
     /// <summary>
@@ -167,19 +147,9 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class GameItems
+    internal sealed class ItemsResponseParent
     {
         [JsonProperty("result")]
-        public ItemsContent Content { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal class ItemsContent
-    {
-        [JsonProperty("items")]
-        public IReadOnlyList<Item> Items { get; set; }
+        public ItemsResponse Result { get; set; }
     }
 }

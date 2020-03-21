@@ -57,6 +57,12 @@ namespace SteamApi
         /// match history methods. Request can be cancelled by providing
         /// cancellation token.
         /// </summary>
+        /// <param name="seqNum">Match sequence number where to start,</param>
+        /// <param name="count">Match count.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>List of dota 2 match details wrapped into ApiResponse object.</returns>
         public async Task<MatchHistoryBySeqResponse> GetMatchHistoryBySequenceNumAsync(
             ulong seqNum, string apiInterface = IDOTA2_MATCH, string version = "v1",
             uint count = 50, CToken cToken = default)
@@ -102,7 +108,7 @@ namespace SteamApi
         /// <param name="id32">Player 32-bit id</param>
         /// <param name="startAtMatchId">Match id where to start</param>
         /// <param name="version">API method version</param>
-        /// <returns>MatchHistoryResponse object</returns>
+        /// <returns>List of Dota 2 matches wrapped into ApiResponse object.</returns>
         public async Task<MatchHistoryResponse> GetMatchHistoryAsync(uint id32 = 0, uint heroId = 0,
             uint minPlayers = 0, uint leagueId = 0, ulong startAtMatchId = 0, uint count = 25,
             string apiInterface = IDOTA2_MATCH, string version = "v1",
@@ -154,6 +160,7 @@ namespace SteamApi
         /// <param name="apiInterface">API interface</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dota 2 match details wrapped into ApiResponse object.</returns>
         public async Task<MatchDetailsResponse> GetMatchDetailsAsync(ulong matchId,
             string apiInterface = IDOTA2_MATCH, string version = "v1", CToken cToken = default)
         {
@@ -189,6 +196,7 @@ namespace SteamApi
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
         /// <param name="partner">Partner id. Usually 0-3 works.</param>
+        /// <returns>List of top live dota 2 games wrapped into ApiResponse object.</returns>
         public async Task<TopLiveGamesResponse> GetTopLiveGamesAsync(string apiInterface = IDOTA2_MATCH,
             string version = "v1", uint partner = 0, CToken cToken = default)
         {
@@ -228,6 +236,7 @@ namespace SteamApi
         /// can be cancelled by providing cancellation token.
         /// </summary>
         /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dota 2 hero info dictionary wrapped into ApiResponse object.</returns>
         public async Task<HeroInfoResponse> GetHeroInfosAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
@@ -259,6 +268,7 @@ namespace SteamApi
         /// cancellation token.
         /// </summary>
         /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dota 2 hero stats dictionary wrapped into ApiResponse object</returns>
         public async Task<HeroStatsResponse> GetHeroStatsAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
@@ -297,6 +307,7 @@ namespace SteamApi
         /// <param name="apiInterface">API interface</param>
         /// <param name="version">API method version</param>
         /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dota 2 heroes list wrapped into ApiResponse object.</returns>
         public async Task<HeroesResponse> GetHeroesAsync(string lang = "en",
             string apiInterface = IECONDOTA, string version = "v1", CToken cToken = default)
         {
@@ -316,9 +327,13 @@ namespace SteamApi
                     .ConfigureAwait(false);
 
                 if (webResponse.Content.Contents.Count == 0)
+                {
                     throw new ApiEmptyResultException("Web response didn't return any values");
+                }
                 else
+                {
                     response = webResponse.Content;
+                }
             }
             catch (Exception caughtException)
             {
@@ -329,27 +344,52 @@ namespace SteamApi
 
 
         /// <summary>
-        /// Sends GET request to dota2.com for Dota 2 iteminfo. Request
-        /// can be cancelled by providing cancellation token.
+        /// Sends GET request to https://dota2.com for Dota 2 iteminfo.
+        /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, Item>> GetItemInfosAsync(CToken cToken = default)
+        /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dictionary of dota 2 items wrapped into ApiResponse object</returns>
+        public async Task<ItemsInfoResponse> GetItemInfosAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "itemdata");
 
+            string url = UrlBuilder.PopEncodedUrl(false);
+            ItemsInfoResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
+                var webResponse = await GetModelAsync<ItemsInfoResponse>(url, cToken)
+                    .ConfigureAwait(false);
 
-            var response = await GetModelAsync<ItemDictionary>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.ItemDict;
+                if (webResponse.Contents.Count == 0)
+                {
+                    throw new ApiEmptyResultException("Web response didn't return any values");
+                }
+                else
+                {
+                    response = webResponse;
+                }
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
         /// <summary>
-        /// Sends GET request to api.steampowered.com for dota 2 items. Request
-        /// can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for dota 2 items.
+        /// Request can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyList<Item>> GetGameItemsAsync(string lang = "en",
+        /// <param name="lang">Language.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>List of dota 2 items wrapped into ApiResponse object</returns>
+        public async Task<ItemsResponse> GetItemsAsync(string lang = "en",
             string apiInterface = IECONDOTA, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -357,25 +397,67 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("language", lang);
 
-            var response = await GetModelAsync<GameItems>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            ItemsResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Content.Items;
+                var webResponse = await GetModelAsync<ItemsResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Result.Contents.Count > 0)
+                {
+                    response = webResponse.Result;
+                }
+                else
+                {
+                    throw new ApiEmptyResultException("API response was empty");
+                }
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
         /// <summary>
-        /// Sends GET request for dota 2 hero abilities.
+        /// Sends GET request to https://dota2.com for dota 2 hero abilities.
         /// Request can be cancelled providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, Ability>> GetAbilitiesAsync(CToken cToken = default)
+        /// <param name="cToken">Cancellation token</param>
+        /// <returns>Dictionary of abilities wrapped into ApiResponse object</returns>
+        public async Task<AbilitiesResponse> GetAbilitiesAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "abilitydata");
 
-            var response = await GetModelAsync<AbilitiesResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            AbilitiesResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.AbilityDict;
+                var webResponse = await GetModelAsync<AbilitiesResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Contents.Count > 0)
+                {
+                    response = webResponse;
+                }
+                else
+                {
+                    throw new ApiEmptyResultException("API response was empty");
+                }
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
         #endregion
@@ -386,13 +468,35 @@ namespace SteamApi
         /// Sends GET request for unique user count. Request
         /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyDictionary<string, uint>> GetUniqueUsersAsync(CToken cToken = default)
+        /// <param name="cToken">Cancellation token</param>
+        public async Task<UniqueUsersResponse> GetUniqueUsersAsync(CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "uniqueusers");
 
-            return await GetModelAsync<Dictionary<string, uint>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            UniqueUsersResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<Dictionary<string, uint>>(url, cToken)
+                    .ConfigureAwait(false);
+                if (webResponse.Count > 0)
+                {
+                    response = new UniqueUsersResponse() { Contents = webResponse };
+                }
+                else
+                {
+                    throw new ApiEmptyResultException("API response was empty");
+                }
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         /// <summary>
