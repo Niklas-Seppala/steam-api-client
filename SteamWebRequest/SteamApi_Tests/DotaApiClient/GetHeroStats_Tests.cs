@@ -28,7 +28,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetTopLiveGamesAsync(cToken: source.Token);
+                return await DotaApiClient.GetHeroStatsAsync(cToken: source.Token);
             });
 
             // Cancel method
@@ -38,40 +38,6 @@ namespace Client.Dota
             SleepAfterSendingRequest();
 
             AssertRequestWasCancelled(response);
-            Assert.Null(response.Contents);
-        }
-
-
-        /// <summary>
-        /// Test case for invalid API interface being provided.
-        /// Method should return failed ApiResponse object where exception
-        /// that caused failure is stored.
-        /// </summary>
-        [Fact]
-        public void InvalidApiInterface_RequestFails()
-        {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroes")
-                .Result;
-            SleepAfterSendingRequest();
-
-            AssertRequestFailed(response);
-            Assert.Null(response.Contents);
-        }
-
-
-        /// <summary>
-        /// Test case for invalid API method version being provided.
-        /// Method should return failed ApiResponse object where exception
-        /// that caused failure is stored.
-        /// </summary>
-        [Fact]
-        public void InvalidMethodVersion_RequestFails()
-        {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
-                .Result;
-            SleepAfterSendingRequest();
-
-            AssertRequestFailed(response);
             Assert.Null(response.Contents);
         }
 

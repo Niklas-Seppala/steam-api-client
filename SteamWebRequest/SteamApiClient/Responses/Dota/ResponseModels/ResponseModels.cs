@@ -8,19 +8,28 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class DotaCosmeticRaritiesResult
+    internal sealed class DotaSchemaUrlResponseParent
     {
-        [JsonProperty("result")]
-        public DotaCosmeticRaritiesContent Result { get; set; }
+        public SchemaUrlResponse Result { get; set; }
     }
 
     /// <summary>
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class DotaCosmeticRaritiesContent
+    internal sealed class DotaItemIconPathResponseParent
     {
-        public IReadOnlyList<DotaCosmeticRarity> Rarities { get; set; }
+        public ItemIconPathResponse Result { get; set; }
+    }
+
+    /// <summary>
+    /// This is a JSON response container class that is never supposed
+    /// to see sunlight during its brief lifetime.
+    /// </summary>
+    internal sealed class DotaCosmeticRaritiesResponseParent
+    {
+        [JsonProperty("result")]
+        public CosmeticRaritiesResponse Result { get; set; }
     }
 
     /// <summary>

@@ -29,7 +29,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetTopLiveGamesAsync(cToken: source.Token);
+                return await DotaApiClient.GetLeaderboardAsync(cToken: source.Token);
             });
 
             // Cancel method
@@ -51,7 +51,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Leaderboards")
+            var response = DotaApiClient.GetLeaderboardAsync(apiInterface: "IDota_2_Leaderboards")
                 .Result;
             SleepAfterSendingRequest();
 
@@ -68,7 +68,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
+            var response = DotaApiClient.GetLeaderboardAsync(version: "v1.2.3")
                 .Result;
             SleepAfterSendingRequest();
 

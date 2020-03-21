@@ -285,7 +285,7 @@ namespace SteamApi
             catch (Exception ex)
             {
                 // API creators did really excellet job, invalid id results to Forbidden HTTP status code
-                if (ex is ApiException apiEx && apiEx.StatusCode == 403)
+                if (ex is ApiException apiEx && apiEx.HttpStatusCode == 403)
                 {
                     exception = new ApiEmptyResultException($"App id is propably invalid: {appId}", apiEx);
                 }

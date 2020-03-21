@@ -6,11 +6,15 @@ using Xunit;
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetPlayerProfile method
+    /// Test class for dota 2 api client's GetStoreMetadata method.
     /// </summary>
-    public class GetPlayerProfile_Tests : ApiTests
+    public class GetStoreMetadata_Tests : ApiTests
     {
-        public GetPlayerProfile_Tests(ClientFixture fixture) : base(fixture) { }
+        /// <summary>
+        /// Setup.
+        /// </summary>
+        public GetStoreMetadata_Tests(ClientFixture fixture) : base(fixture) { }
+
 
         /// <summary>
         /// Test case for request method being cancelled by CancellationToken.
@@ -25,8 +29,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetPlayerProfileAsync(99765000,
-                    cToken: source.Token);
+                return await DotaApiClient.GetStoreMetadataAsync(cToken: source.Token);
             });
 
             // Cancel method
@@ -48,8 +51,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetPlayerProfileAsync(99765000,
-                apiInterface: "IDota_2_Players").Result;
+            var response = DotaApiClient.GetStoreMetadataAsync(apiInterface: "IDota_2_Heroe")
+                .Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -58,41 +61,37 @@ namespace Client.Dota
 
 
         /// <summary>
-        /// Test case for random API method version being provided.
-        /// Method should return successful ApiResponse object. ????
+        /// Test case for invalid API method version being provided.
+        /// Method should return failed ApiResponse object where exception
+        /// that caused failure is stored.
         /// </summary>
         [Fact]
-        public void RandomMethodVersion_RequestFails()
+        public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetPlayerProfileAsync(99765000,
-                version: "v1.99").Result;
+            var response = DotaApiClient.GetStoreMetadataAsync(version: "v1.2.3")
+                .Result;
             SleepAfterSendingRequest();
 
-            AssertRequestWasSuccessful(response);
-            Assert.NotNull(response.Contents);
+            AssertRequestFailed(response);
+            Assert.Null(response.Contents);
         }
 
 
-        /// <summary>
-        /// Test case where player id is valid. Method should return
-        /// player's dota 2 profile wrapped into ApiResponse object.
-        /// </summary>
-        /// <param name="id32">32-bit steam id</param>
-        [Theory]
-        [InlineData(99765000)]
-        [InlineData(147169892)]
-        [InlineData(43038812)]
-        [InlineData(169919187)]
-        [InlineData(150389604)]
-        public void PlayerIdDefined_ReturnsPlayerProfile(uint id32)
+        [Fact]
+        public void GetStoreMetadata_DefaultParams_ReturnsStoreMetaData()
         {
-            var response = DotaApiClient.GetPlayerProfileAsync(id32)
+            var response = DotaApiClient.GetStoreMetadataAsync()
                 .Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
-            Assert.Equal(response.Contents.Id32, id32);
+            Assert.NotNull(response.Contents.DropDownData);
+            Assert.NotNull(response.Contents.Filters);
+            Assert.NotNull(response.Contents.HomePageData);
+            Assert.NotNull(response.Contents.PlayerClassData);
+            Assert.NotNull(response.Contents.Sorting);
+            Assert.NotNull(response.Contents.Tabs);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace SteamApi
                 case HttpStatusCode.Unauthorized:
                     throw new ApiPrivateContentException($"Response status code: {code}. Unauthorized request")
                     {
-                        StatusCode = code
+                        HttpStatusCode = code
                     };
                 case HttpStatusCode.BadGateway:
                     throw new HttpRequestException($"Response status code: {code}. Bad Gateway");
@@ -106,7 +106,7 @@ namespace SteamApi
                 case HttpStatusCode.Forbidden:
                     throw new ApiException($"Response status code: {code}. Developer key is invalid.")
                     {
-                        StatusCode = code
+                        HttpStatusCode = code
                     };
                 case HttpStatusCode.GatewayTimeout:
                     throw new HttpRequestException($"Response status code: {code}. Gateway Timeout");
@@ -119,17 +119,17 @@ namespace SteamApi
                 case HttpStatusCode.Gone:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Resource No Longer Available")
                     {
-                        StatusCode = code
+                        HttpStatusCode = code
                     };
                 case HttpStatusCode.Moved:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Content Moved")
                     {
-                        StatusCode = code
+                        HttpStatusCode = code
                     };
                 case HttpStatusCode.NotFound:
                     throw new ApiResourceNotFoundException($"Response status code: {code}. Not Found")
                     {
-                        StatusCode = code
+                        HttpStatusCode = code
                     };
                 case HttpStatusCode.NotImplemented:
                     throw new HttpRequestException($"Response status code: {code}. Not Implemented");

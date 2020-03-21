@@ -3,6 +3,7 @@ using System;
 
 namespace SteamApi.Responses.Dota
 {
+
     /// <summary>
     /// Dota 2 cosmetic item model class
     /// </summary>

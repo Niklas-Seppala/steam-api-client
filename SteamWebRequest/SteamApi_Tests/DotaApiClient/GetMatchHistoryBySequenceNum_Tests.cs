@@ -28,7 +28,8 @@ namespace Client.Dota
 
             // Start task to be cancelled
             var task = Task.Run(async () => {
-                return await DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089, count: 1, cToken: source.Token);
+                return await DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089,
+                    count: 1, cToken: source.Token);
             });
 
             // Cancel method
@@ -50,8 +51,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089, count: 1, apiInterface: "IDota_2_matches")
-                .Result;
+            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089,
+                count: 1, apiInterface: "IDota_2_matches").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -67,8 +68,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089, count: 1, version: "v33")
-                .Result;
+            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(808089,
+                count: 1, version: "v33").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -91,8 +92,8 @@ namespace Client.Dota
         public void ValidSeqNum_ReturnsMatchesStartingFromSeqNum(
             ulong seqNum, ulong resultSeqNum)
         {
-            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum, count: 1)
-                .Result;
+            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum,
+                count: 1).Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
@@ -116,8 +117,8 @@ namespace Client.Dota
         public void CountDefined_ReturnsCorrectAmountOfGames(uint count, byte resultCount)
         {
             ulong seqNum = 55555050;
-            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum, count: count)
-                .Result;
+            var response = DotaApiClient.GetMatchHistoryBySequenceNumAsync(seqNum,
+                count: count).Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);

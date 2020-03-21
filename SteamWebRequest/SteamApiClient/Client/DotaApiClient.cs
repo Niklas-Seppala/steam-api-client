@@ -595,12 +595,18 @@ namespace SteamApi
         #region [Cosmetic Items]
 
         /// <summary>
-        /// Sends GET request to api.steampowered.com for players equiped
-        /// items for specified hero. Default api interface is IEconItems_570.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// players equiped items for specified hero. Request
+        /// can be cancelled by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyList<EquipedItem>> GetEquipedPlayerItemsAsync(ulong steamId64,
-            ushort heroClassId, string apiInterface = IECON_ITEMS, string version = "v1", CToken cToken = default)
+        /// <param name="steamId64">Player's 64-bit steam id.</param>
+        /// <param name="heroClassId">Id of the hero.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>List of equiped hero items wrapped into ApiResponse object.</returns>
+        public async Task<EquipedItemsResponse> GetEquipedPlayerItemsAsync(ulong steamId64,
+            uint heroClassId, string apiInterface = IECON_ITEMS, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetEquippedPlayerItems", version);
@@ -608,18 +614,45 @@ namespace SteamApi
                 .AppendQuery("steamid", steamId64.ToString())
                 .AppendQuery("class_id", heroClassId.ToString());
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, EquipedCosmeticItems>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            EquipedItemsResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response["result"].Items;
+                var webResponse = await GetModelAsync<IReadOnlyDictionary<string,
+                    EquipedCosmeticItems>>(url, cToken).ConfigureAwait(false);
+
+                if (webResponse.TryGetValue("result", out EquipedCosmeticItems items))
+                {
+                    if (items == null || items.Items.Count == 0)
+                        throw new ApiEmptyResultException("API response was empty.");
+                    else
+                        response = new EquipedItemsResponse() { Contents = items.Items };
+                }
+                else
+                    throw new ApiEmptyResultException("API response was empty.");
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for player's
-        /// item inventory. Request can be cancelled by providing
-        /// cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// player's item inventory. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
-        public async Task<PlayerInventory> GetPlayerItemsAsync(ulong steamid64,
+        /// <param name="steamid64">Player's 64-bit steam id.</param>
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Player's cosmetic items inventory wrapped into ApiResponse object</returns>
+        public async Task<PlayerInventoryResponse> GetPlayerItemsAsync(ulong steamid64,
             string apiInterface = IECON_ITEMS, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -627,19 +660,51 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("steamid", steamid64.ToString());
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, PlayerInventory>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            PlayerInventoryResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response["result"];
+                var webResponse = await GetModelAsync<IReadOnlyDictionary<string, PlayerInventory>>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.TryGetValue("result", out PlayerInventory contents))
+                {
+                    if (contents.Items == null || contents.Items.Count == 0)
+                        throw new ApiEmptyResultException("API response was empty")
+                        {
+                            ApiStatusCode = contents.Status
+                        };
+                    else
+                        response = new PlayerInventoryResponse() { Contents = contents };
+                }
+                else
+                    throw new ApiEmptyResultException("API response was empty")
+                    {
+                        ApiStatusCode = contents.Status
+                    };
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for
-        /// item icon path.
+        /// Sends GET request to https://api.steampowered.com for
+        /// item icon path. Request can be cancelled by providing
+        /// cancellation token.
         /// </summary>
-        /// <param name="iconName">the item icon name to get the CDN path of</param>
-        /// <param name="iconType">the type of image you want. 0 = normal, 1 = large, 2 = ingame</param>
-        public async Task<string> GetItemIconPathAsync(string iconName, byte iconType = 0,
+        /// <param name="iconName">the item icon name to get the from CDN path.</param>
+        /// <param name="iconType">the type of image you want. 0 = normal, 1 = large, 2 = ingame.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Item icon path wrapped into ApiResponse object.</returns>
+        public async Task<ItemIconPathResponse> GetItemIconPathAsync(string iconName, uint iconType = 0,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -648,55 +713,120 @@ namespace SteamApi
                 .AppendQuery("iconname", iconName)
                 .AppendQuery("icontype", iconType.ToString());
 
-            dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken)
-                .ConfigureAwait(false));
+            string url = UrlBuilder.PopEncodedUrl(false);
+            ItemIconPathResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.result.path;
+                var webResponse = await GetModelAsync<DotaItemIconPathResponseParent>(
+                    url, cToken).ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(webResponse.Result.Contents))
+                    throw new ApiEmptyResultException("API response was empty.");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
+
 
         /// <summary>
         /// Sends GET request to api.steampowered.com for item schema url.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="apiInterface">api interface</param>
-        public async Task<string> GetSchemaUrlAsync(string apiInterface = IECON_ITEMS,
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellation token</param>
+        /// <returns>Schema url string wrapped into ApiResponse object.</returns>
+        public async Task<SchemaUrlResponse> GetSchemaUrlAsync(string apiInterface = IECON_ITEMS,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetSchemaURL", version);
             UrlBuilder.AppendQuery("key", ApiKey);
 
-            dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken)
-                .ConfigureAwait(false));
+            string url = UrlBuilder.PopEncodedUrl(false);
+            SchemaUrlResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.result.items_game_url;
+                var webResponse = await GetModelAsync<DotaSchemaUrlResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(webResponse.Result.Contents))
+                    throw new ApiEmptyResultException("API response was empty.");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for strore metadata.
-        /// Default api interface is IEconItems_570.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// store metadata. Request can be cancelled by providing
+        /// cancellation token.
         /// </summary>
-        public async Task<StoreMetadata> GetStoreMetadataAsync(string apiInterface = IECON_ITEMS,
+        /// <param name="apiInterface">API interface</param>
+        /// <param name="version">API method version</param>
+        /// <param name="cToken">Cancellatio token</param>
+        /// <returns>StoreMetadata object wrapped into ApiResponse object</returns>
+        public async Task<StoreMetadataResponse> GetStoreMetadataAsync(string apiInterface = IECON_ITEMS,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetStoreMetaData", version);
             UrlBuilder.AppendQuery("key", ApiKey);
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, StoreMetadata>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            StoreMetadataResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response["result"];
+                var webResponse = await GetModelAsync<IReadOnlyDictionary<string, StoreMetadata>>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.TryGetValue("result", out StoreMetadata contents))
+                {
+                    if (contents == null)
+                        throw new ApiEmptyResultException("API response was empty.");
+                    else
+                        response = new StoreMetadataResponse() { Contents = contents };
+                }
+                else
+                    throw new ApiEmptyResultException("API response was empty.");
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request for item creator ids for
-        /// specified item. Request can be cancelled
-        /// by providing Cancellation token.
+        /// Sends GET request to https://api.steampowered.com
+        /// for item creator ids for specified item.
+        /// Request can be cancelled by providing Cancellation token.
         /// </summary>
-        /// <param name="itemDef">item id</param>
-        public async Task<IReadOnlyList<uint>> GetItemCreatorsAsync(uint itemDef,
+        /// <param name="itemDef">item id.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Item creator id list wrapped into ApiResponse object.</returns>
+        public async Task<ItemCreatorsResponse> GetItemCreatorsAsync(uint itemDef,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -704,17 +834,37 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("itemdef", itemDef.ToString());
 
-            var creators = await GetModelAsync<ItemCreators>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return creators.Contributors;
+            string url = UrlBuilder.PopEncodedUrl(false);
+            ItemCreatorsResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                var webResponse = await GetModelAsync<ItemCreatorsResponse>(url, cToken)
+                    .ConfigureAwait(false);
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
+
         /// <summary>
-        /// Sends GET request for Dota 2 cosmetic item rarities.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// Dota 2 cosmetic item rarities. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
-        public async Task<IReadOnlyList<DotaCosmeticRarity>> GetCosmeticRaritiesAsync(CToken cToken = default,
+        /// <param name="lang">Language.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>List of Cosmetic rarities wrapped into ApiResponse object.</returns>
+        public async Task<CosmeticRaritiesResponse> GetCosmeticRaritiesAsync(CToken cToken = default,
             string apiInterface = IECONDOTA, string version = "v1",  string lang = "en")
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -722,10 +872,26 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("language", lang);
 
-            var result = await GetModelAsync<DotaCosmeticRaritiesResult>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            CosmeticRaritiesResponse response = null;
+            Exception caughtException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return result.Result.Rarities;
+                var webResponse = await GetModelAsync<DotaCosmeticRaritiesResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception thrownException)
+            {
+                caughtException = thrownException;
+            }
+            return WrapResponse(response, url, caughtException);
         }
 
         #endregion
@@ -733,16 +899,24 @@ namespace SteamApi
         #region [Get Tournament Data]
 
         /// <summary>
-        /// Sends GET request to api.steampowered.com for players tournament
-        /// stats. Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// players tournament stats. Request can be cancelled by
+        /// providing cancellation token.
         /// </summary>
-        public async Task<TournamentPlayerStats> GetTournamentPlayerStatsAsync(uint accountId32, uint leagueId32,
+        /// <param name="id32">32-bit steam id.</param>
+        /// <param name="heroId">Dota 2 hero id.</param>
+        /// <param name="leagueId32">Dota 2 league id.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
+        public async Task<TournamentPlayerStats> GetTournamentPlayerStatsAsync(uint id32, uint leagueId32,
             string apiInterface = IDOTA2_MATCH, string version = "v2", ushort heroId = 0, CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetTournamentPlayerStats", version);
             UrlBuilder.AppendQuery("key", ApiKey)
-                .AppendQuery("account_id", accountId32.ToString())
+                .AppendQuery("account_id", id32.ToString())
                 .AppendQuery("league_id", leagueId32.ToString())
                 .AppendQuery("hero_id", heroId.ToString());
 
@@ -752,10 +926,16 @@ namespace SteamApi
             return response.Result;
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for real time match stats.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// real time match stats. Request can be cancelled by
+        /// providing cancellation token.
         /// </summary>
+        /// <param name="serverId">Steam server id.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<RealtimeMatchStats> GetRealtimeMatchStatsAsync(string serverId,
             string version = "v1", CToken cToken = default)
         {
@@ -768,11 +948,17 @@ namespace SteamApi
                 .ConfigureAwait(false);
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for live
-        /// league games. Request can be cancelled by providing
+        /// Sends GET request to https://api.steampowered.com for
+        /// live league games. Request can be cancelled by providing
         /// cancellation token.
         /// </summary>
+        /// <param name="matchId64">Dota 2 match id.</param>
+        /// <param name="leagueId32">Dota 2 league id.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<LiveLeagueMatch>> GetLiveLeagueMatchAsync(string version = "v1",
             ulong matchId64 = 0, uint leagueId32 = 0, CToken cToken = default)
         {
@@ -788,10 +974,15 @@ namespace SteamApi
             return response.Result.Games;
         }
 
+
         /// <summary>
-        /// Sends GET request to api.steampowered.com for leaguelistings.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// leaguelistings. Request can be cancelled by 
+        /// providing cancellation token.
         /// </summary>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<League>> GetLeagueListingAsync(string version = "v1",
             CToken cToken = default)
         {
@@ -805,10 +996,17 @@ namespace SteamApi
             return response.Result.Leagues;
         }
 
+
         /// <summary>
-        /// Sends GET request for dota 2 tournament prizepool.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://api.steampowered.com for
+        /// dota 2 tournament prizepool. Request can be cancelled
+        /// by providing cancellation token.
         /// </summary>
+        /// <param name="leagueId">Dota 2 league id.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyDictionary<string, uint>> GetTournamentPrizePoolAsync(uint leagueId,
             string apiInterface = IECONDOTA, string version = "v1", CToken cToken = default)
         {
@@ -817,17 +1015,23 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("leagueid", leagueId.ToString());
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string, IReadOnlyDictionary<string, uint>>>(cToken: cToken)
-                .ConfigureAwait(false);
+            var response = await GetModelAsync<IReadOnlyDictionary<string,
+                IReadOnlyDictionary<string, uint>>>(cToken: cToken).ConfigureAwait(false);
 
             return response["result"];
         }
 
+
         /// <summary>
-        /// Sends GET request for league node data.
-        /// Request can be cancelled by providing cancellation
-        /// token.
+        /// Sends GET request to https://www.dota2.com for league
+        /// node data. Request can be cancelled by providing
+        /// cancellation token.
         /// </summary>
+        /// <param name="leagueId">Dota 2 league id.</param>
+        /// <param name="nodeId">Dota 2 League node id.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<LeagueNode> GetLeagueNodeAsync(ulong leagueId, ulong nodeId,
             string version = "v1", CToken cToken = default)
         {
@@ -840,16 +1044,19 @@ namespace SteamApi
                 .ConfigureAwait(false);
         }
 
+
         /// <summary>
-        /// Sends GET request for tournament infos beginning from provided
-        /// Unix Timestamp. If Unix Timestamp is not provided request uses
-        /// current timestamp. Request may be narrowed down specifying max
-        /// and min tiers. Request can be cancelled providing cancellation token.
+        /// Sends GET request to https://www.dota2.com for tournament infos
+        /// beginning from provided Unix timestamp. If timestamp is not
+        /// provided request uses current timestamp. Request may be
+        /// narrowed down specifying min tier. Request can be cancelled
+        /// providing cancellation token.
         /// </summary>
-        /// <param name="timestamp">Query startime as unix timestamp</param>
-        /// <param name="version">API method version</param>
-        /// <param name="minTier">min tier included</param>
-        /// <param name="cToken">Cancellation token</param>
+        /// <param name="timestamp">Query startime as unix timestamp.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="minTier">min tier included.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(long timestamp = -1,
             string version = "v1", uint minTier = 1, CToken cToken = default)
         {
@@ -861,15 +1068,18 @@ namespace SteamApi
             return response.Infos;
         }
 
+
         /// <summary>
-        /// Sends GET request for tournament infos beginnning
-        /// from provided date.Request may be narrowed down specifying max
-        /// and min tiers. Request can be cancelled providing cancellation token.
+        /// Sends GET request to https://www.dota2.com for
+        /// tournament infos beginnning from provided date.
+        /// Request may be narrowed down specifying min tier.
+        /// Request can be cancelled providing cancellation token.
         /// </summary>
-        /// <param name="datetime">Query startime</param>
-        /// <param name="version">API method version</param>
-        /// <param name="minTier">min tier included</param>
-        /// <param name="cToken">Cancellation token</param>
+        /// <param name="datetime">Query startime.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="minTier">min tier included.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(DateTime datetime,
             string version = "v1", uint minTier = 1, CToken cToken = default)
         {
@@ -881,8 +1091,9 @@ namespace SteamApi
             return response.Infos;
         }
 
+
         /// <summary>
-        /// Creates url for GetTournamentInfoAsync() methods
+        /// Creates url for GetTournamentInfoAsync methods
         /// </summary>
         /// <param name="timestamp">unix timestamp</param>
         /// <param name="minTier">min tier in query</param>
@@ -903,12 +1114,16 @@ namespace SteamApi
             }
         }
 
+
         /// <summary>
-        /// Sends GET request for Internation pricepool.
-        /// Request can be cancelled by providing cancellation token.
+        /// Sends GET request to https://www.dota2.com for 
+        /// The International pricepool. Request can be
+        /// cancelled by providing cancellation token.
         /// </summary>
         /// <param name="cToken">Cancellation token</param>
-        public async Task<IReadOnlyDictionary<string, uint>> GetInternationalPrizePoolAsync(CToken cToken = default)
+        /// <returns></returns>
+        public async Task<IReadOnlyDictionary<string, uint>> GetInternationalPrizePoolAsync(
+            CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "intlprizepool");
@@ -917,12 +1132,17 @@ namespace SteamApi
                 .ConfigureAwait(false);
         }
 
+
         /// <summary>
-        /// Sends GET request for recent and upcoming DCP
-        /// events. Request can be cancelled by providing
+        /// Sends GET request to https://www.dota2.com for recent
+        /// and upcoming DCP events. Request can be cancelled by providing
         /// cancellation token.
         /// </summary>
-        public async Task<RecentDcpEvents> GetRecentDcpEventsAsync(string version = "v1", CToken cToken = default)
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
+        public async Task<RecentDcpEvents> GetRecentDcpEventsAsync(string version = "v1",
+            CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("webapi", "IDOTA2DPC", "GetRecentAndUpcomingMatches", version);
@@ -931,11 +1151,17 @@ namespace SteamApi
                 .ConfigureAwait(false);
         }
 
+
         /// <summary>
-        /// Sends GET request for dota 2 team info. DCP results
-        /// can be included to request. Request can be cancelled by provding
-        /// cancellation token.
+        /// Sends GET request to https://www.dota2.com for
+        /// dota 2 team info. DCP results can be included to request.
+        /// Request can be cancelled by provding cancellation token.
         /// </summary>
+        /// <param name="teamId">Dota 2 team id.</param>
+        /// <param name="includeDCP">Include dcp points.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<DotaTeam> GetDotaTeamAsync(ulong teamId, string version = "v1",
             bool includeDCP = false, CToken cToken = default)
         {
@@ -949,16 +1175,25 @@ namespace SteamApi
                 .ConfigureAwait(false);
         }
 
+
         /// <summary>
-        /// Sends GET request for DotaTeamInfos by providing start team
+        /// Sends GET request to https://api.steampowered.com for
+        /// DotaTeamInfos by providing start team
         /// id. Default request size is 100 teams. Request can be cancelled
         /// by providing cancellation token.
         /// </summary>
+        /// <param name="startId">Team id to start request.</param>
+        /// <param name="count">Size of the request.</param>
+        /// <param name="apiInterface">API interface.</param>
+        /// <param name="version">API method version.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<DotaTeamInfo>> GetDotaTeamInfosByIdAsync(ulong startId = 1,
-            uint count = 100, string apiInterface = IDOTA2_MATCH, CToken cToken = default)
+            uint count = 100, string apiInterface = IDOTA2_MATCH,
+            string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
-            UrlBuilder.AppendPath(apiInterface, "GetTeamInfoByTeamID", "v1");
+            UrlBuilder.AppendPath(apiInterface, "GetTeamInfoByTeamID", version);
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("start_at_team_id", startId.ToString())
                 .AppendQuery("teams_requested", count.ToString());

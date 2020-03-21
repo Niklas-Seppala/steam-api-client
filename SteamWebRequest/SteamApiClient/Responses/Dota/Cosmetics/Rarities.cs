@@ -7,7 +7,7 @@ namespace SteamApi.Responses.Dota
     /// Dota 2 cosmetic rarity model class
     /// </summary>
     [Serializable]
-    public sealed class DotaCosmeticRarity
+    public sealed class CosmeticRarity
     {
         /// <summary>
         /// Rarity name

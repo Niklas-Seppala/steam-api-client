@@ -11,9 +11,14 @@ namespace SteamApi
     public class ApiException : Exception
     {
         /// <summary>
+        /// Steam API status code
+        /// </summary>
+        public uint ApiStatusCode { get; set; }
+
+        /// <summary>
         /// Server response status code
         /// </summary>
-        public int StatusCode { get; set; }
+        public int HttpStatusCode { get; set; }
 
         public ApiException() { }
         public ApiException(string message) : base(message) { }

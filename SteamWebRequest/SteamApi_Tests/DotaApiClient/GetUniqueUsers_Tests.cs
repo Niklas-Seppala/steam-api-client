@@ -28,7 +28,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetTopLiveGamesAsync(cToken: source.Token);
+                return await DotaApiClient.GetUniqueUsersAsync(cToken: source.Token);
             });
 
             // Cancel method

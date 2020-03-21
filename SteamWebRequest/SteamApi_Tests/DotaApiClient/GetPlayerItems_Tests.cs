@@ -1,18 +1,19 @@
-﻿using System.Threading;
+﻿using SteamApi;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetHeroes method
+    /// Test class for dota 2 api client's GetPlayerItems method
     /// </summary>
-    public class GetHeroes_Tests : ApiTests
+    public class GetPlayerItems_Tests : ApiTests
     {
         /// <summary>
         /// Setup
         /// </summary>
-        public GetHeroes_Tests(ClientFixture fixture) : base(fixture) { }
+        public GetPlayerItems_Tests(ClientFixture fixture) : base(fixture) { }
 
 
         /// <summary>
@@ -28,7 +29,8 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetHeroesAsync(cToken: source.Token);
+                return await DotaApiClient.GetPlayerItemsAsync(76561198107435620,
+                    cToken: source.Token);
             });
 
             // Cancel method
@@ -50,8 +52,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroe")
-                .Result;
+            var response = DotaApiClient.GetPlayerItemsAsync(76561198107435620,
+                apiInterface: "IDota_2_Cosmetics").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -67,8 +69,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
-                .Result;
+            var response = DotaApiClient.GetPlayerItemsAsync(76561198107435620,
+                version: "v8.3").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -76,26 +78,41 @@ namespace Client.Dota
         }
 
 
-        /// <summary>
-        /// Test case for default parameters. Method should
-        /// return heroes using default language.
-        /// </summary>
-        [Fact]
-        public void DefaultParams_ReturnsHeroes()
+        [Theory]
+        [InlineData(76561198107435620)]
+        [InlineData(76561198038389598)]
+        public void ValidPlayerId_ReturnsPlayersItems(ulong id)
         {
-            var response = DotaApiClient.GetHeroesAsync()
+            var response = DotaApiClient.GetPlayerItemsAsync(id)
                 .Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
-            Assert.NotEmpty(response.Contents);
-            Assert.All(response.Contents, hero =>
+            Assert.NotEmpty(response.Contents.Items);
+
+            Assert.All(response.Contents.Items, item =>
             {
-                Assert.NotEmpty(hero.LocalizedName);
-                Assert.NotEmpty(hero.Name);
-                Assert.NotEqual((uint)0, hero.Id);
-            });
+                Assert.NotEqual((ulong)0, item.Id);
+            }); 
+        }
+
+
+        /// <summary>
+        /// Test case where requested player is not
+        /// visible to API key holder. Method should
+        /// return failed ApiResponse object.
+        /// </summary>
+        [Fact]
+        public void PrivateInventory_ReturnsWithStatus15()
+        {
+            var response = DotaApiClient.GetPlayerItemsAsync(76561198059119066)
+                .Result;
+            SleepAfterSendingRequest();
+
+            AssertRequestFailed(response);
+            var thrown = response.ThrownException as ApiException;
+            Assert.Equal((uint)15, thrown.ApiStatusCode);
         }
     }
 }
