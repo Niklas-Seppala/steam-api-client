@@ -5,14 +5,14 @@ using Xunit;
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetHeroes method
+    /// Test class for dota 2 api client's GetTournamentPrizePool method.
     /// </summary>
-    public class GetHeroes_Tests : ApiTests
+    public class GetTournamentPrizePool_Tests : ApiTests
     {
         /// <summary>
         /// Setup
         /// </summary>
-        public GetHeroes_Tests(ClientFixture fixture) : base(fixture) { }
+        public GetTournamentPrizePool_Tests(ClientFixture fixture) : base(fixture) { }
 
 
         /// <summary>
@@ -28,7 +28,8 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetHeroesAsync(cToken: source.Token);
+                return await DotaApiClient.GetTournamentPrizePoolAsync(11517,
+                    cToken: source.Token);
             });
 
             // Cancel method
@@ -50,8 +51,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroes")
-                .Result;
+            var response = DotaApiClient.GetTournamentPrizePoolAsync(11517,
+                apiInterface: "IProDota").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -67,8 +68,8 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
-                .Result;
+            var response = DotaApiClient.GetTournamentPrizePoolAsync(11517,
+                version: "v2.3").Result;
             SleepAfterSendingRequest();
 
             AssertRequestFailed(response);
@@ -77,25 +78,27 @@ namespace Client.Dota
 
 
         /// <summary>
-        /// Test case for default parameters. Method should
-        /// return heroes using default language.
+        /// Test case for league id specified. Method
+        /// should return TournamentPrizePool object wrapped into
+        /// ApiResponse object.
         /// </summary>
-        [Fact]
-        public void DefaultParams_ReturnsHeroes()
+        /// <param name="leagueId">Tournament id</param>
+        /// <param name="correctPrizePool">What prize pool should be</param>
+        [Theory]
+        [InlineData(9870, 25532177)]
+        [InlineData(11517, 1000000)]
+        [InlineData(10749, 34330068)]
+        public void GetTournamentPrizePool_LeagueIdProvided_ReturnsCorrectPrizepool(
+            uint leagueId, uint correctPrizePool)
         {
-            var response = DotaApiClient.GetHeroesAsync()
+            var response = DotaApiClient.GetTournamentPrizePoolAsync(leagueId)
                 .Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
-            Assert.NotEmpty(response.Contents);
-            Assert.All(response.Contents, hero =>
-            {
-                Assert.NotEmpty(hero.LocalizedName);
-                Assert.NotEmpty(hero.Name);
-                Assert.NotEqual((uint)0, hero.Id);
-            });
+            Assert.Equal(response.Contents.LeagueId, leagueId);
+            Assert.Equal(response.Contents.PrizePool, correctPrizePool);
         }
     }
 }

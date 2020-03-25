@@ -36,19 +36,9 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class DotaTeamInfosResponse
+    internal sealed class DotaTeamInfosResponseParent
     {
-        public DotaTeamInfosContent Result { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class DotaTeamInfosContent
-    {
-        public uint Status { get; set; }
-        public IReadOnlyList<DotaTeamInfo> Teams { get; set; }
+        public DotaTeamInfosResponse Result { get; set; }
     }
 
     /// <summary>
@@ -83,37 +73,18 @@ namespace SteamApi.Responses.Dota
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class LeagueListingResponse
+    internal sealed class LeagueListingResponseParent
     {
-        public LeagueListing Result { get; set; }
+        public LeagueListingResponse Result { get; set; }
     }
 
     /// <summary>
     /// This is a JSON response container class that is never supposed
     /// to see sunlight during its brief lifetime.
     /// </summary>
-    internal sealed class LeagueListing
+    internal sealed class LiveLeagueMatchesResponseParent
     {
-        public IReadOnlyList<League> Leagues { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class LiveLeagueMatchResponse
-    {
-        public LiveLeagueMatchContens Result { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class LiveLeagueMatchContens
-    {
-        public uint Status { get; set; }
-        public IReadOnlyList<LiveLeagueMatch> Games { get; set; }
+        public LiveLeagueMatchesResponse Result { get; set; }
     }
 
     /// <summary>
@@ -132,24 +103,6 @@ namespace SteamApi.Responses.Dota
     internal sealed class MatchHistoryResponseParent
     {
         public MatchHistoryResponse Result { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class TournamentInfoCollection
-    {
-        public IReadOnlyList<TournamentInfo> Infos { get; set; }
-    }
-
-    /// <summary>
-    /// This is a JSON response container class that is never supposed
-    /// to see sunlight during its brief lifetime.
-    /// </summary>
-    internal sealed class TournamentPlayerStatsResponse
-    {
-        public TournamentPlayerStats Result { get; set; }
     }
 
     /// <summary>

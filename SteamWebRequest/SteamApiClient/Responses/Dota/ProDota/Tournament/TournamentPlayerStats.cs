@@ -11,6 +11,11 @@ namespace SteamApi.Responses.Dota
     public sealed class TournamentPlayerStats
     {
         /// <summary>
+        /// Status information.
+        /// </summary>
+        public string StatusDetail { get; set; }
+
+        /// <summary>
         /// Status
         /// </summary>
         public uint Status { get; set; }
@@ -19,7 +24,7 @@ namespace SteamApi.Responses.Dota
         /// Player's account id
         /// </summary>
         [JsonProperty("account_id")]
-        public uint AccountId32 { get; set; }
+        public uint Id32 { get; set; }
 
         /// <summary>
         /// Player's nickname

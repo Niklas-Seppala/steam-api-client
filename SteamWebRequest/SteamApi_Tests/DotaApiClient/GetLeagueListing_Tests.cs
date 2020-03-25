@@ -5,14 +5,14 @@ using Xunit;
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetHeroes method
+    /// Test class for dota 2 api client's GetLeagueListing method.
     /// </summary>
-    public class GetHeroes_Tests : ApiTests
+    public class GetLeagueListing_Tests : ApiTests
     {
         /// <summary>
-        /// Setup
+        /// Setup.
         /// </summary>
-        public GetHeroes_Tests(ClientFixture fixture) : base(fixture) { }
+        public GetLeagueListing_Tests(ClientFixture fixture) : base(fixture) { }
 
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetHeroesAsync(cToken: source.Token);
+                return await DotaApiClient.GetLeagueListingAsync(cToken: source.Token);
             });
 
             // Cancel method
@@ -43,23 +43,6 @@ namespace Client.Dota
 
 
         /// <summary>
-        /// Test case for invalid API interface being provided.
-        /// Method should return failed ApiResponse object where exception
-        /// that caused failure is stored.
-        /// </summary>
-        [Fact]
-        public void InvalidApiInterface_RequestFails()
-        {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroes")
-                .Result;
-            SleepAfterSendingRequest();
-
-            AssertRequestFailed(response);
-            Assert.Null(response.Contents);
-        }
-
-
-        /// <summary>
         /// Test case for invalid API method version being provided.
         /// Method should return failed ApiResponse object where exception
         /// that caused failure is stored.
@@ -67,7 +50,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
+            var response = DotaApiClient.GetLeagueListingAsync(version: "v1.2.3")
                 .Result;
             SleepAfterSendingRequest();
 
@@ -77,25 +60,19 @@ namespace Client.Dota
 
 
         /// <summary>
-        /// Test case for default parameters. Method should
-        /// return heroes using default language.
+        /// Test case for default parameters. Method
+        /// should return list of leagues wrapped into
+        /// ApiResponse object.
         /// </summary>
         [Fact]
-        public void DefaultParams_ReturnsHeroes()
+        public void DefaultParams_ReturnsLeagueListing()
         {
-            var response = DotaApiClient.GetHeroesAsync()
+            var response = DotaApiClient.GetLeagueListingAsync()
                 .Result;
-            SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
             Assert.NotEmpty(response.Contents);
-            Assert.All(response.Contents, hero =>
-            {
-                Assert.NotEmpty(hero.LocalizedName);
-                Assert.NotEmpty(hero.Name);
-                Assert.NotEqual((uint)0, hero.Id);
-            });
         }
     }
 }

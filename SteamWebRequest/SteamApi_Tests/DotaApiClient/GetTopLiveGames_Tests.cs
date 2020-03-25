@@ -10,7 +10,7 @@ namespace Client.Dota
     public class GetTopLiveGames_Tests : ApiTests
     {
         /// <summary>
-        /// Setup
+        /// Setup.
         /// </summary>
         public GetTopLiveGames_Tests(ClientFixture fixture) : base(fixture) { }
 

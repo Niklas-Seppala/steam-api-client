@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CToken = System.Threading.CancellationToken;
-using System.Net.Http;
 
 namespace SteamApi
 {
@@ -909,9 +908,9 @@ namespace SteamApi
         /// <param name="apiInterface">API interface.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<TournamentPlayerStats> GetTournamentPlayerStatsAsync(uint id32, uint leagueId32,
-            string apiInterface = IDOTA2_MATCH, string version = "v2", ushort heroId = 0, CToken cToken = default)
+        /// <returns>TournamentPlayerStats object wrapped into ApiResponse object.</returns>
+        public async Task<TournamentPlayerStatsResponse> GetTournamentPlayerStatsAsync(uint id32, uint leagueId32,
+            string apiInterface = IDOTA2_MATCH, string version = "v2", uint heroId = 0, CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(apiInterface, "GetTournamentPlayerStats", version);
@@ -920,10 +919,38 @@ namespace SteamApi
                 .AppendQuery("league_id", leagueId32.ToString())
                 .AppendQuery("hero_id", heroId.ToString());
 
-            var response = await GetModelAsync<TournamentPlayerStatsResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            TournamentPlayerStatsResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Result;
+                var webResponse = await GetModelAsync<TournamentPlayerStatsResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                uint status = webResponse.Contents != null ? webResponse.Contents.Status : 0;
+
+                if (webResponse.Contents == null)
+                    throw new ApiEmptyResultException("API response was empty.");
+                else if (status != 0 && status != 1)
+                {
+                    response = webResponse;
+                    response.Status = response.Contents.Status;
+                    response.StatusDetail = response.Contents.StatusDetail;
+                    response.Contents = null;
+                    throw new ApiEmptyResultException(response.StatusDetail);
+                }
+                else if (webResponse.Contents.Id32 == 0)
+                    throw new ApiEmptyResultException("API response was empty."); 
+                else
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -935,17 +962,34 @@ namespace SteamApi
         /// <param name="serverId">Steam server id.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<RealtimeMatchStats> GetRealtimeMatchStatsAsync(string serverId,
+        /// <returns>RealtimeMatchStats wrapped into ApiResponse object.</returns>
+        public async Task<RealtimeMatchStatsResponse> GetRealtimeMatchStatsAsync(ulong serverId,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath(IDOTA2_MATCH_STATS, "GetRealtimeStats", version);
             UrlBuilder.AppendQuery("key", ApiKey)
-                .AppendQuery("server_steam_id", serverId);
+                .AppendQuery("server_steam_id", serverId.ToString());
 
-            return await GetModelAsync<RealtimeMatchStats>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            RealtimeMatchStatsResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<RealtimeMatchStats>(url, cToken)
+                    .ConfigureAwait(false);
+                if (webResponse == null || webResponse.Match.MatchId == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = new RealtimeMatchStatsResponse() { Contents = webResponse };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -958,8 +1002,8 @@ namespace SteamApi
         /// <param name="leagueId32">Dota 2 league id.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<IReadOnlyList<LiveLeagueMatch>> GetLiveLeagueMatchAsync(string version = "v1",
+        /// <returns>List of LiveLeagueMatches wrapped into ApiResponse object.</returns>
+        public async Task<LiveLeagueMatchesResponse> GetLiveLeagueGamesAsync(string version = "v1",
             ulong matchId64 = 0, uint leagueId32 = 0, CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -968,10 +1012,26 @@ namespace SteamApi
                 .AppendQuery("match_id", matchId64.ToString())
                 .AppendQuery("league_id", leagueId32.ToString());
 
-            var response = await GetModelAsync<LiveLeagueMatchResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            LiveLeagueMatchesResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Result.Games;
+                var webResponse = await GetModelAsync<LiveLeagueMatchesResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count  == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -982,18 +1042,33 @@ namespace SteamApi
         /// </summary>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<IReadOnlyList<League>> GetLeagueListingAsync(string version = "v1",
-            CToken cToken = default)
+        /// <returns>List of Leagues wrapped into ApiResponse object.</returns>
+        public async Task<LeagueListingResponse> GetLeagueListingAsync(string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
             UrlBuilder.AppendPath("IDOTA2Match_205790", "GetLeagueListing", version);
             UrlBuilder.AppendQuery("key", ApiKey);
 
-            var response = await GetModelAsync<LeagueListingResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            LeagueListingResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Result.Leagues;
+                var webResponse = await GetModelAsync<LeagueListingResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1006,8 +1081,8 @@ namespace SteamApi
         /// <param name="apiInterface">API interface.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<IReadOnlyDictionary<string, uint>> GetTournamentPrizePoolAsync(uint leagueId,
+        /// <returns>TournamentPrizePool wrapped into ApiResponse object.</returns>
+        public async Task<TournamentPrizePoolResponse> GetTournamentPrizePoolAsync(uint leagueId,
             string apiInterface = IECONDOTA, string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = STEAM_HOST;
@@ -1015,10 +1090,26 @@ namespace SteamApi
             UrlBuilder.AppendQuery("key", ApiKey)
                 .AppendQuery("leagueid", leagueId.ToString());
 
-            var response = await GetModelAsync<IReadOnlyDictionary<string,
-                IReadOnlyDictionary<string, uint>>>(cToken: cToken).ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            TournamentPrizePoolResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response["result"];
+                var webResponse = await GetModelAsync<TournamentPrizePoolResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Contents == null)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1031,8 +1122,8 @@ namespace SteamApi
         /// <param name="nodeId">Dota 2 League node id.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<LeagueNode> GetLeagueNodeAsync(ulong leagueId, ulong nodeId,
+        /// <returns>LeagueNode wrapped into ApiResponse object.</returns>
+        public async Task<LeagueNodeResponse> GetLeagueNodeAsync(uint leagueId, ulong nodeId,
             string version = "v1", CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
@@ -1040,8 +1131,25 @@ namespace SteamApi
             UrlBuilder.AppendQuery("league_id", leagueId.ToString())
                 .AppendQuery("node_id", nodeId.ToString());
 
-            return await GetModelAsync<LeagueNode>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            LeagueNodeResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<LeagueNode>(url, cToken)
+                    .ConfigureAwait(false);
+                if (webResponse == null || webResponse.NodeId == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = new LeagueNodeResponse() { Contents = webResponse };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1057,15 +1165,18 @@ namespace SteamApi
         /// <param name="minTier">min tier included.</param>
         /// <param name="cToken">Cancellation token.</param>
         /// <returns></returns>
-        public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(long timestamp = -1,
+        public async Task<TournamentInfoResponse> GetTournamentInfoAsync(long timestamp = -1,
             string version = "v1", uint minTier = 1, CToken cToken = default)
         {
-            CreateUrlForTournamentInfo(version, ValidateTimestamp(timestamp), minTier);
-
-            var response = await GetModelAsync<TournamentInfoCollection>(cToken: cToken)
-                .ConfigureAwait(false);
-
-            return response.Infos;
+            try
+            {
+                CreateUrlForTournamentInfo(version, ValidateTimestamp(timestamp), minTier);
+            }
+            catch (Exception ex)
+            {
+                return WrapResponse<TournamentInfoResponse>(null, string.Empty, ex);
+            }
+            return await GetTournamentInfo(cToken);
         }
 
 
@@ -1080,15 +1191,48 @@ namespace SteamApi
         /// <param name="minTier">min tier included.</param>
         /// <param name="cToken">Cancellation token.</param>
         /// <returns></returns>
-        public async Task<IReadOnlyList<TournamentInfo>> GetTournamentInfoAsync(DateTime datetime,
+        public async Task<TournamentInfoResponse> GetTournamentInfoAsync(DateTime datetime,
             string version = "v1", uint minTier = 1, CToken cToken = default)
         {
-            CreateUrlForTournamentInfo(version, GetUnixTimestampFromDate(datetime), minTier);
+            try
+            {
+                CreateUrlForTournamentInfo(version, GetUnixTimestampFromDate(datetime), minTier);
+            }
+            catch (Exception ex)
+            {
+                return WrapResponse<TournamentInfoResponse>(null, string.Empty, ex);
+            }
+            return await GetTournamentInfo(cToken);
+        }
 
-            var response = await GetModelAsync<TournamentInfoCollection>(cToken: cToken)
-                .ConfigureAwait(false);
 
-            return response.Infos;
+        /// <summary>
+        /// Get tournament info.
+        /// </summary>
+        /// <param name="cToken">Cancellation token</param>
+        /// <returns>TournamentInfo wrapped into ApiResponse object.</returns>
+        private async Task<TournamentInfoResponse> GetTournamentInfo(CToken cToken)
+        {
+            string url = UrlBuilder.PopEncodedUrl(false);
+            TournamentInfoResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<TournamentInfoResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Contents == null || webResponse.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1121,15 +1265,33 @@ namespace SteamApi
         /// cancelled by providing cancellation token.
         /// </summary>
         /// <param name="cToken">Cancellation token</param>
-        /// <returns></returns>
-        public async Task<IReadOnlyDictionary<string, uint>> GetInternationalPrizePoolAsync(
+        /// <returns>TI prize pool wrapped into API response object.</returns>
+        public async Task<InternationalPrizePoolResponse> GetInternationalPrizePoolAsync(
             CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("jsfeed", "intlprizepool");
 
-            return await GetModelAsync<IReadOnlyDictionary<string, uint>>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            InternationalPrizePoolResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<InternationalPrizePoolResponse>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (response.Contents == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1140,15 +1302,33 @@ namespace SteamApi
         /// </summary>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<RecentDcpEvents> GetRecentDcpEventsAsync(string version = "v1",
+        /// <returns>List of recent dcp events wrapped into ApiResponse object.</returns>
+        public async Task<RecentDcpEventsResponse> GetRecentDcpEventsAsync(string version = "v1",
             CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
             UrlBuilder.AppendPath("webapi", "IDOTA2DPC", "GetRecentAndUpcomingMatches", version);
 
-            return await GetModelAsync<RecentDcpEvents>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            RecentDcpEventsResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<RecentDcpEvents>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Tournaments == null || webResponse.Tournaments.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty.");
+                else
+                    response = new RecentDcpEventsResponse() { Contents = webResponse };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1161,8 +1341,8 @@ namespace SteamApi
         /// <param name="includeDCP">Include dcp points.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<DotaTeam> GetDotaTeamAsync(ulong teamId, string version = "v1",
+        /// <returns>Dota 2 Team wrapped into ApiResponse object.</returns>
+        public async Task<DotaTeamResponse> GetDotaTeamAsync(ulong teamId, string version = "v1",
             bool includeDCP = false, CToken cToken = default)
         {
             UrlBuilder.Host = DOTA_2_HOST;
@@ -1171,8 +1351,26 @@ namespace SteamApi
             if (includeDCP)
                 UrlBuilder.AppendQuery("get_dpc_info", "1");
 
-            return await GetModelAsync<DotaTeam>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            DotaTeamResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                var webResponse = await GetModelAsync<DotaTeam>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.TeamId == 0 || webResponse.Members.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = new DotaTeamResponse() { Contents = webResponse };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
 
@@ -1187,8 +1385,8 @@ namespace SteamApi
         /// <param name="apiInterface">API interface.</param>
         /// <param name="version">API method version.</param>
         /// <param name="cToken">Cancellation token.</param>
-        /// <returns></returns>
-        public async Task<IReadOnlyList<DotaTeamInfo>> GetDotaTeamInfosByIdAsync(ulong startId = 1,
+        /// <returns>List of DotaTeamInfos wrapped into ApiResponse object.</returns>
+        public async Task<DotaTeamInfosResponse> GetDotaTeamInfosByIdAsync(ulong startId = 1,
             uint count = 100, string apiInterface = IDOTA2_MATCH,
             string version = "v1", CToken cToken = default)
         {
@@ -1198,10 +1396,26 @@ namespace SteamApi
                 .AppendQuery("start_at_team_id", startId.ToString())
                 .AppendQuery("teams_requested", count.ToString());
 
-            var response = await GetModelAsync<DotaTeamInfosResponse>(cToken: cToken)
-                .ConfigureAwait(false);
+            string url = UrlBuilder.PopEncodedUrl(false);
+            DotaTeamInfosResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return response.Result.Teams;
+                var webResponse = await GetModelAsync<DotaTeamInfosResponseParent>(url, cToken)
+                    .ConfigureAwait(false);
+
+                if (webResponse.Result.Contents == null || webResponse.Result.Contents.Count == 0)
+                    throw new ApiEmptyResultException("API response was empty");
+                else
+                    response = webResponse.Result;
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         #endregion

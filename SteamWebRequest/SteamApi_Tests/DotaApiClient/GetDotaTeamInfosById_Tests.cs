@@ -1,18 +1,19 @@
-﻿using System.Threading;
+﻿using Xunit;
+using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace Client.Dota
 {
     /// <summary>
-    /// Test class for dota 2 api client's GetHeroes method
+    /// Test class for dota 2 api client's GetDotaTeamInfosById method.
     /// </summary>
-    public class GetHeroes_Tests : ApiTests
+    public class GetDotaTeamInfosById_Tests : ApiTests
     {
         /// <summary>
         /// Setup
         /// </summary>
-        public GetHeroes_Tests(ClientFixture fixture) : base(fixture) { }
+        /// <param name="fixture"></param>
+        public GetDotaTeamInfosById_Tests(ClientFixture fixture) : base(fixture) { }
 
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Client.Dota
             // Start task to be cancelled
             var task = Task.Run(async () =>
             {
-                return await DotaApiClient.GetHeroesAsync(cToken: source.Token);
+                return await DotaApiClient.GetDotaTeamInfosByIdAsync(cToken: source.Token);
             });
 
             // Cancel method
@@ -50,7 +51,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidApiInterface_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(apiInterface: "IDota_2_Heroes")
+            var response = DotaApiClient.GetDotaTeamInfosByIdAsync(apiInterface: "IProDota")
                 .Result;
             SleepAfterSendingRequest();
 
@@ -67,7 +68,7 @@ namespace Client.Dota
         [Fact]
         public void InvalidMethodVersion_RequestFails()
         {
-            var response = DotaApiClient.GetHeroesAsync(version: "v1.2.3")
+            var response = DotaApiClient.GetDotaTeamInfosByIdAsync(version: "v1.3")
                 .Result;
             SleepAfterSendingRequest();
 
@@ -76,26 +77,23 @@ namespace Client.Dota
         }
 
 
-        /// <summary>
-        /// Test case for default parameters. Method should
-        /// return heroes using default language.
-        /// </summary>
-        [Fact]
-        public void DefaultParams_ReturnsHeroes()
+        [Theory]
+        [InlineData(5, 5)]
+        [InlineData(20, 20)]
+        [InlineData(50, 50)]
+        [InlineData(150, 100)]
+        [InlineData(200, 100)]
+        public void GetDotaTeamInfosById_CountProvided_ReturnsCorrectAmount(
+            uint count, int resultCount)
         {
-            var response = DotaApiClient.GetHeroesAsync()
+            var response = DotaApiClient.GetDotaTeamInfosByIdAsync(count: count)
                 .Result;
             SleepAfterSendingRequest();
 
             AssertRequestWasSuccessful(response);
             Assert.NotNull(response.Contents);
             Assert.NotEmpty(response.Contents);
-            Assert.All(response.Contents, hero =>
-            {
-                Assert.NotEmpty(hero.LocalizedName);
-                Assert.NotEmpty(hero.Name);
-                Assert.NotEqual((uint)0, hero.Id);
-            });
+            Assert.Equal(resultCount, response.Contents.Count);
         }
     }
 }

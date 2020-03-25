@@ -1,18 +1,63 @@
 ﻿using System;
 using Xunit;
-using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Client.Dota
 {
     /// <summary>
     /// Test class for dota 2 api client's GetTournamentInfo method
     /// </summary>
-    public class GetTournamentInfoAsync : ApiTests
+    public class GetTournamentInfoAsync_Tests : ApiTests
     {
         /// <summary>
         /// Setup
         /// </summary>
-        public GetTournamentInfoAsync(ClientFixture fixture) : base(fixture) { }
+        public GetTournamentInfoAsync_Tests(ClientFixture fixture) : base(fixture) { }
+
+
+        /// <summary>
+        /// Test case for request method being cancelled by CancellationToken.
+        /// Method should return failed ApiResponse object that contains thrown
+        /// cancellation exception.
+        /// </summary>
+        [Fact]
+        public async Task MethodGotCancelled_RequestFails()
+        {
+            CancellationTokenSource source = new CancellationTokenSource();
+
+            // Start task to be cancelled
+            var task = Task.Run(async () =>
+            {
+                return await DotaApiClient.GetTournamentInfoAsync(cToken: source.Token);
+            });
+
+            // Cancel method
+            source.Cancel();
+
+            var response = await task;
+            SleepAfterSendingRequest();
+
+            AssertRequestWasCancelled(response);
+            Assert.Null(response.Contents);
+        }
+
+
+        /// <summary>
+        /// Test case for invalid API method version being provided.
+        /// Method should return failed ApiResponse object where exception
+        /// that caused failure is stored.
+        /// </summary>
+        [Fact(Skip = "arbitrary version doesn't matter??")]
+        public void InvalidMethodVersion_RequestFails()
+        {
+            var response = DotaApiClient.GetTournamentInfoAsync(version: "v1.3")
+                .Result;
+            SleepAfterSendingRequest();
+
+            AssertRequestFailed(response);
+            Assert.Null(response.Contents);
+        }
 
 
         /// <summary>
@@ -22,13 +67,13 @@ namespace Client.Dota
         [Fact]
         public void MinMaxTierParamsClash_ThrowsArgumentException()
         {
-            var ex = Assert.Throws<AggregateException>(() => {
-                var response = DotaApiClient.GetTournamentInfoAsync(minTier: 6)
-                    .Result;
-            });
+            var response = DotaApiClient.GetTournamentInfoAsync(minTier: 6)
+                .Result;
+            SleepAfterSendingRequest();
 
-            var inner = ex.InnerException as ArgumentException;
-            Assert.NotNull(inner);
+            AssertRequestFailed(response);
+            Assert.Null(response.Contents);
+            Assert.True(response.ThrownException is ArgumentException);
         }
 
 
@@ -43,10 +88,13 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, t => {
-                Assert.NotNull(t);
-                Assert.True(t.StartTimestamp > (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+            AssertRequestWasSuccessful(response);
+            Assert.NotNull(response);
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, tournament => {
+                Assert.NotNull(tournament);
+                Assert.True(tournament.StartTimestamp 
+                    > (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
             });
         }
 
@@ -69,10 +117,12 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, t => {
-                Assert.NotNull(t);
-                Assert.True(t.StartTimestamp > (ulong)timestamp);
+            AssertRequestWasSuccessful(response);
+            Assert.NotNull(response.Contents);
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, tournament => {
+                Assert.NotNull(tournament);
+                Assert.True(tournament.StartTimestamp > (ulong)timestamp);
             });
         }
 
@@ -98,10 +148,11 @@ namespace Client.Dota
                 .Result;
             SleepAfterSendingRequest();
 
-            Assert.NotEmpty(response);
-            Assert.All(response, t => {
-                Assert.NotNull(t);
-                Assert.True(t.StartTimestamp > (ulong)timestamp);
+            AssertRequestWasSuccessful(response);
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, tournament => {
+                Assert.NotNull(tournament);
+                Assert.True(tournament.StartTimestamp > (ulong)timestamp);
             });
         }
 
@@ -121,7 +172,11 @@ namespace Client.Dota
         {
             var response = DotaApiClient.GetTournamentInfoAsync(timestamp: 1489402851, minTier: minTier)
                 .Result;
-            Assert.All(response, tournament => {
+
+            AssertRequestWasSuccessful(response);
+            Assert.NotNull(response.Contents);
+            Assert.NotEmpty(response.Contents);
+            Assert.All(response.Contents, tournament => {
                 Assert.True(tournament.Tier >= minTier);
             });
         }

@@ -96,7 +96,7 @@ namespace Client
         /// Asserts that request failed.
         /// </summary>
         /// <param name="response">API response object</param>
-        public static void AssertRequestFailed(IApiResponse response)
+        protected static void AssertRequestFailed(IApiResponse response)
         {
             Assert.False(response.Successful);
             Assert.False(response.WasCancelled);
@@ -108,7 +108,7 @@ namespace Client
         /// Asserts that request was successful.
         /// </summary>
         /// <param name="response">API response object</param>
-        public static void AssertRequestWasSuccessful(IApiResponse response)
+        protected static void AssertRequestWasSuccessful(IApiResponse response)
         {
             Assert.True(response.Successful);
             Assert.False(response.WasCancelled);
@@ -120,7 +120,7 @@ namespace Client
         /// Asserts that request was cancelled.
         /// </summary>
         /// <param name="response">API response object</param>
-        public static void AssertRequestWasCancelled(IApiResponse response)
+        protected static void AssertRequestWasCancelled(IApiResponse response)
         {
             Assert.False(response.Successful);
             Assert.True(response.WasCancelled);

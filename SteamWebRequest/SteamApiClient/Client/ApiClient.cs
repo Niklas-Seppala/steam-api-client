@@ -288,15 +288,12 @@ namespace SteamApi
         protected virtual T WrapResponse<T>(T response, string url, Exception exception)
             where T : IApiResponse, new()
         {
-            if (response == null) // Request was a failure
+            if (exception != null || response == null) // Request was a failure
             {
-                return new T()
-                {
-                    WasCancelled = exception is OperationCanceledException ? true : false,
-                    Successful = false,
-                    ThrownException = exception,
-                    URL = url
-                };
+                if (response == null)
+                    return SetFailedResponseFields(new T(), exception, url);
+                else
+                    return SetFailedResponseFields(response, exception, url);
             }
             else // Request was successful
             {
@@ -304,6 +301,25 @@ namespace SteamApi
                 response.URL = url;
                 return response;
             }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="response"></param>
+        /// <param name="ex"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        protected virtual T SetFailedResponseFields<T>(T response, Exception ex, string url)
+            where T : IApiResponse
+        {
+            response.Successful = false;
+            response.WasCancelled = ex is OperationCanceledException ? true : false;
+            response.ThrownException = ex;
+            response.URL = url;
+            return response;
         }
 
 
