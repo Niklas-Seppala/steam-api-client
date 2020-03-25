@@ -1591,21 +1591,21 @@ namespace SteamApi
                 .ConfigureAwait(false))["result"];
         }
 
-        [Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccountAsync) Figure out response object model
-        public async Task<ushort> GetEventStatsForAccountAsync(uint steamId32, uint eventId,
-            string version = "v1", CToken cToken = default)
-        {
-            UrlBuilder.Host = STEAM_HOST;
-            UrlBuilder.AppendPath(IECONDOTA, "GetEventStatsForAccount", version);
-            UrlBuilder.AppendQuery("key", ApiKey)
-                .AppendQuery("accountid", steamId32.ToString())
-                .AppendQuery("eventid", eventId.ToString());
+        //[Obsolete("This method is incomplete")] // TODO: (GetEventStatsForAccountAsync) Figure out response object model
+        //public async Task<ushort> GetEventStatsForAccountAsync(uint steamId32, uint eventId,
+        //    string version = "v1", CToken cToken = default)
+        //{
+        //    UrlBuilder.Host = STEAM_HOST;
+        //    UrlBuilder.AppendPath(IECONDOTA, "GetEventStatsForAccount", version);
+        //    UrlBuilder.AppendQuery("key", ApiKey)
+        //        .AppendQuery("accountid", steamId32.ToString())
+        //        .AppendQuery("eventid", eventId.ToString());
 
-            dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken)
-                .ConfigureAwait(false));
+        //    dynamic response = JObject.Parse(await GetStringAsync(cToken: cToken)
+        //        .ConfigureAwait(false));
 
-            return response.result.event_points;
-        }
+        //    return response.result.event_points;
+        //}
 
         [Obsolete("This method is incomplete")] // TODO: (GetTopLiveEventGamesAsync) Figure out response object model
         public async Task<IReadOnlyList<LiveMatch>> GetTopLiveEventGamesAsync(string apiInterface = IDOTA2_MATCH,
