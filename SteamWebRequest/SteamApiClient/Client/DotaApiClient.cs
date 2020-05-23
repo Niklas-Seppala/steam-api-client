@@ -1423,10 +1423,18 @@ namespace SteamApi
         #region [Images]
 
         /// <summary>
-        /// Sends GET request for hero image.
+        /// Sends GET request to https://media.steampowered.com
+        /// for hero image. Request can be cancelled by providing
+        /// cancellation token.
         /// </summary>
-        public async Task<byte[]> GetHeroImageAsync(string heroName, HeroImageShape imgShape = HeroImageShape.Horizontal)
+        /// <param name="heroName">Dota 2 hero name.</param>
+        /// <param name="imgShape">Image shape.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Hero image as bytes wrapped into ApiResponse object.</returns>
+        public async Task<HeroImageResponse> GetHeroImageAsync(string heroName,
+            HeroImageShape imgShape = HeroImageShape.Horizontal, CToken cToken = default)
         {
+            UrlBuilder.Scheme = "http"; // using http for images, scheme needs to reset afterwards.
             UrlBuilder.Host = STEAM_MEDIA_HOST;
             switch (imgShape)
             {
@@ -1443,20 +1451,63 @@ namespace SteamApi
                     UrlBuilder.AppendPath("apps", "dota2", "images", "heroes", heroName + "_sb.png");
                     break;
             }
+            string url = UrlBuilder.PopEncodedUrl(resetScheme: true);
+            HeroImageResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
 
-            return await GetBytesAsync().ConfigureAwait(false);
+                byte[] bytes = await GetBytesAsync(url, cToken).ConfigureAwait(false);
+                if (bytes.Length == 0)
+                    throw new ApiEmptyResultException("Response was empty.");
+                else
+                    response = new HeroImageResponse() { Contents = bytes };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
-        /// <summary>
-        /// Sends GET request for item image.
-        /// </summary>
-        public async Task<byte[]> GetItemImageAsync(string imgName, CToken cToken = default)
-        {
-            UrlBuilder.Host = STEAM_MEDIA_HOST;
-            UrlBuilder.AppendPath("apps", "dota2", "images", "items", imgName);
 
-            return await GetBytesAsync(cToken: cToken)
-                .ConfigureAwait(false);
+        /// <summary>
+        /// Sends GET request to Sends GET request to https://media.steampowered.com
+        /// for item image. Request can be cancelled by providing
+        /// cancellation token.
+        /// </summary>
+        /// <param name="imgName">Item image name.</param>
+        /// <param name="cToken">Cancellation token.</param>
+        /// <returns>Dota 2 item image as bytes wrapped into ApiResponse object.</returns>
+        public async Task<ItemImageResponse> GetItemImageAsync(string imgName,
+            ItemImageShape shape, CToken cToken = default)
+        {
+            UrlBuilder.Scheme = "http"; // using http for images, scheme needs to reset afterwards.
+            UrlBuilder.Host = STEAM_MEDIA_HOST;
+            UrlBuilder.AppendPath("apps", "dota2", "images", "items");
+            string suffix = shape == ItemImageShape.Large ? "lg.png" : "eg.png";
+            UrlBuilder.AppendPath($"{imgName}_{suffix}");
+
+            string url = UrlBuilder.PopEncodedUrl(resetScheme: true);
+            ItemImageResponse response = null;
+            Exception thrownException = null;
+            try
+            {
+                cToken.ThrowIfCancellationRequested();
+
+                byte[] bytes = await GetBytesAsync(url, cToken)
+                    .ConfigureAwait(false);
+                if (bytes.Length == 0)
+                    throw new ApiEmptyResultException("response was empty");
+                else
+                    response = new ItemImageResponse() { Contents = bytes };
+            }
+            catch (Exception caughtException)
+            {
+                thrownException = caughtException;
+            }
+            return WrapResponse(response, url, thrownException);
         }
 
         #endregion
