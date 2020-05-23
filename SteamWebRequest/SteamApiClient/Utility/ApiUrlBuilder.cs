@@ -12,6 +12,8 @@ namespace SteamApi
     /// </summary>
     public class ApiUrlBuilder : UriBuilder
     {
+        private readonly string _defaultScheme;
+
         /// <summary>
         /// Instantiates ApiUrlBuilder object
         /// </summary>
@@ -19,6 +21,7 @@ namespace SteamApi
         public ApiUrlBuilder(string scheme = "https")
         {
             Scheme = scheme;
+            _defaultScheme = scheme;
         }
 
         /// <summary>
@@ -67,24 +70,24 @@ namespace SteamApi
         /// <summary>
         /// Returns encoded url and clears internal state
         /// </summary>
-        /// <param name="clearScheme"></param>
+        /// <param name="resetScheme"></param>
         /// <returns></returns>
-        public string PopEncodedUrl(bool clearScheme = true)
+        public string PopEncodedUrl(bool resetScheme = true)
         {
             string url = Uri.AbsoluteUri;
-            Clear(clearScheme);
+            Clear(resetScheme);
             return url;
         }
 
         /// <summary>
         /// Clears this object's internal state
         /// </summary>
-        /// <param name="clearScheme"></param>
-        public void Clear(bool clearScheme)
+        /// <param name="resetScheme"></param>
+        public void Clear(bool resetScheme)
         {
-            if (clearScheme)
+            if (resetScheme)
             {
-                Scheme = "";
+                Scheme = _defaultScheme;
                 Port = -1;
             }
             Host = "";
