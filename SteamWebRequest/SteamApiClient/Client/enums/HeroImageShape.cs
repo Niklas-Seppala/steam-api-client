@@ -1,7 +1,7 @@
 ﻿namespace SteamApi
 {
     /// <summary>
-    /// Shape of the hero image
+    /// Shape of the dota 2 hero image
     /// </summary>
     public enum HeroImageShape
     {
