@@ -47,12 +47,12 @@ var dotaClient = new DotaApiClient();
 var steamClient = new SteamApiClient();
 
 // Dota 2 players 32-bit Steam id.
-uint playerId = 321321644;
+uint playerId = 78123870;
 
-// Get the latest 50 Dota 2 matches from player 321321644,
-// where hero 32 was played and skill level was very high.
+// Get the latest 20 Dota 2 matches from player 78123870,
+// where hero with id of 32 was played and skill level was very high.
 var matchResponse = await dotaClient.GetMatchHistoryAsync(playerId,
-    count: 50,
+    count: 20,
     heroId: 32,
     skillLevel: DotaSkillLevel.VeryHigh);
 
@@ -66,6 +66,10 @@ foreach (var match in matchResponse.Contents)
     {
         // Get the Steam account for each player.
         var steamAccount = await steamClient.GetSteamAccountAsync(player.Id64);
+
+        // Download players Steam profile pic.
+        var picBytes = await steamClient.GetProfilePicBytesAsync(steamAccount.Contents.AvatarMediumURL);
+        await File.WriteAllBytesAsync($"{player.PersonaName}.png", picBytes.Contents);
 
         // Print the player name and link to Steam page.
         Console.WriteLine($"Player name: {player.PersonaName}");
