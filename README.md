@@ -1,9 +1,14 @@
 # steam-api-core
 This project provides methods for calling Valve's
 REST APIs and staticly typed response classes for all API calls.
+All GET methods are asynchronous and can be cancelled with `CancellationToken`.
+
+Methods have built in error checking system, so the user dont have to bother with making sense of weird and inconsistent return codes and values. ( They can be pretty wild sometines :slightly_smiling_face: ). 
+
 Targets netstandard 2.0
+
 Note: this is a hobby project!
-### Simple example
+### Quick example
 ```c#
 // Setup
 ApiClient.SetApiKey("YOUR DEV KEY HERE");
@@ -74,3 +79,7 @@ GetPlayerBans/v1                     IMPLEMENTED ✔️</pre>
 <pre>GetNewsForApp/v2                     IMPLEMENTED ✔️</pre>
 ###### IStoreService
 <pre>GetAppList/v1                        IMPLEMENTED ✔️</pre>
+
+### CsGo
+###### ICSGOServers_730
+<pre>GetGameServersStatus/v1              IMPLEMENTED ✔️</pre>
