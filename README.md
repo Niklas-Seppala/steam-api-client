@@ -61,3 +61,16 @@ GET GetTournamentPrizePool/v1        IMPLEMENTED ✔️</pre>
 GET GetPlayerItems/v1                IMPLEMENTED ✔️
 GET GetSchemaURL/v1                  IMPLEMENTED ✔️
 GET GetStoreMetaData/v1              IMPLEMENTED ✔️</pre>
+
+### Steam
+###### ISteamWebAPIUtil
+<pre>GetServerInfo/v1                     IMPLEMENTED ✔️
+GetSupportedAPIList/v1               IMPLEMENTED ✔️</pre>
+###### ISteamUser
+<pre>GetFriendList/v1                     IMPLEMENTED ✔️
+GetPlayerSummaries/v2                IMPLEMENTED ✔️
+GetPlayerBans/v1                     IMPLEMENTED ✔️</pre>
+###### ISteamUser
+<pre>GetNewsForApp/v2                     IMPLEMENTED ✔️</pre>
+###### IStoreService
+<pre>GetAppList/v1                        IMPLEMENTED ✔️</pre>
