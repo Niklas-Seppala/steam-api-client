@@ -8,7 +8,7 @@ Methods have built in error checking system, so the user dont have to bother wit
 Targets netstandard 2.0
 
 Note: this is a hobby project!
-### Quick example
+## Quick example
 ```c#
 // Setup
 ApiClient.SetApiKey("YOUR DEV KEY HERE");
@@ -28,11 +28,10 @@ if (matchesResp.Successful)
 
 
 
-# Supported API methods
+## Supported API methods
 
-## Dota 2
 <details>
-<summary></summary>
+<summary>Dota 2</summary>
 <br>
 IDOTA2Fantasy_205790
 <pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ✔️
@@ -76,9 +75,8 @@ GET GetSchemaURL/v1                  IMPLEMENTED ✔️
 GET GetStoreMetaData/v1              IMPLEMENTED ✔️</pre>
 </details>
 
-## Steam
 <details>
-<summary></summary>
+<summary>Steam</summary>
 <br>
 ISteamWebAPIUtil
 <pre>GetServerInfo/v1                     IMPLEMENTED ✔️
@@ -93,9 +91,9 @@ IStoreService
 <pre>GetAppList/v1                        IMPLEMENTED ✔️</pre>
 </details>
 
-## CsGo
+
 <details>
-<summary></summary>
+<summary>CsGo</summary>
 <br>
 ICSGOServers_730
 <pre>GetGameServersStatus/v1              IMPLEMENTED ✔️</pre>
