@@ -40,7 +40,8 @@ var csGoClient = new CsGoApiClient();
 ```
 
 ### Usage
-All clients are completely reuseable. Just start firing away.
+Most of the methods provide optional parameters, and you should use these
+to narrow down the requested data.
 
 ```c#
 var dotaClient = new DotaApiClient();
