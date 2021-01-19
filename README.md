@@ -78,6 +78,27 @@ foreach (var match in matchResponse.Contents)
 }
 ```
 
+### Working with Steam IDs
+Steam uses both 32 and 64 bit ids for users. Most of the API responses return only one
+version, and no, 32-bit id does not work as 64-bit id.
+
+Be aware of the this difference when working with methods that require id as a parameter.
+They won't work if 32-bit id is passed as 64-bit, and the IDE will not help with this, as it is syntactically no problem.
+
+Library provides utility class called `SteamIdConverter` that provides static functions to convert Steam ids.
+
+
+
+```c#
+uint playerId32 = 78123870;
+
+// Convert 32-bit id to 64-bit.
+ulong playerId64 = SteamIdConverter.SteamIdTo64(playerId32);
+
+// And back again.
+playerId32 = SteamIdConverter.SteamIdTo32(playerId64);
+```
+
 
 ### Error handling
 
