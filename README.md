@@ -1,7 +1,25 @@
 # steam-api-core
-This project provides libraries for calling Valve's
-REST APIs targeting netstandard 2.0. It focuses mostly on DOTA 2 API calls, since they are plentiful
-## API Methods
+This project provides methods for calling Valve's
+REST APIs and staticly typed response classes for all API calls.
+Targets netstandard 2.0
+Note: this is a hobby project!
+### Simple example
+```c#
+// Setup
+ApiClient.SetApiKey("YOUR DEV KEY HERE");
+var dotaClient = new DotaApiClient();
+
+var matchesResp = await dotaClient.GetMatchHistoryAsync();
+if (matchesResp.Successful)
+{
+    foreach (var match in matchesResp.Contents)
+    {
+        Console.WriteLine(match.Id);
+    }
+}
+```
+
+## Supported API methods
 ### Dota 2
 ###### IDOTA2Fantasy_205790
 <pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ✔️
