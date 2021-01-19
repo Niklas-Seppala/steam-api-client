@@ -11,11 +11,11 @@ namespace SteamApi
     /// Specialized HttpClient for making requests for Valve's CSGO
     /// APIs. Derived from ApiClient class.
     /// </summary>
-    public class CsGoClient : ApiClient
+    public class CsGoApiClient : ApiClient
     {
         private const string HOST = "api.steampowered.com";
 
-        public CsGoClient(bool testConnection = false, string schema = "https") : base(testConnection, schema)
+        public CsGoApiClient(bool testConnection = false, string schema = "https") : base(testConnection, schema)
         {
             // Initialization happens in parent class's constructor.
         }

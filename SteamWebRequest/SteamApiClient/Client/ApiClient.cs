@@ -225,7 +225,7 @@ namespace SteamApi
             else
             {
                 if (stream == null) throw new ArgumentNullException("stream is null");
-                else throw new ArgumentException("stream is writeonly");
+                else throw new ArgumentException("stream is write only");
             }
         }
 
