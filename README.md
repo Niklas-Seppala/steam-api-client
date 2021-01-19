@@ -1,5 +1,4 @@
 # steam-api-core
-## What is it?
 This project provides libraries for calling Valve's
 REST APIs targeting netstandard 2.0. It focuses mostly on DOTA 2 API calls, since they are plentiful
 ## API Methods
