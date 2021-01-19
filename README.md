@@ -1,11 +1,13 @@
-# steam-api-core
-This project provides methods for calling Valve's
-REST APIs and staticly typed response classes for all API calls.
+# Valve REST API Clients for .NET
+This project provides methods for calling Valve's REST APIs.
+Server responses are typically in JSON, and this library converts that date to statically typed C# objects.
+Methods for downloading hero/profile pictures are also provided.
+
 All GET methods are asynchronous and can be cancelled with `CancellationToken`.
 
-Methods have built in error checking system, so the user dont have to bother with making sense of weird and inconsistent return codes and values. ( They can be pretty wild sometines :slightly_smiling_face: ). 
+GET Methods have built in error checking system, so the user doesn't have to bother with making sense of weird and inconsistent return codes and values. ( They can be pretty wild sometines :slightly_smiling_face: ). 
 
-Targets netstandard 2.0
+**Targets netstandard 2.0**
 
 Note: this is a hobby project!
 ## Quick example
@@ -23,12 +25,84 @@ if (matchesResp.Successful)
     }
 }
 ```
+## General
+This library contains ApiClient classes for DOTA 2, Steam and CsGo APIs.
+They all use the same shared Steam developer key and `HttpClient`-object.
+
+### Setup
+* Set the developer key. This has to be done only once.
+```c#
+ApiClient.SetApiKey("Api key");
+```
+* Create client object that targets the API.
+```c#
+var dotaClient = new DotaApiClient();
+var steamClient = new SteamApiClient();
+var csGoClient = new CsGoApiClient();
+```
+
+### Usage
+All clients are completely reuseable. Just start firing away.
+
+```c#
+var dotaClient = new DotaApiClient();
+var steamClient = new SteamApiClient();
+
+// Dota 2 players 32-bit Steam id.
+uint playerId = 321321644;
+
+// Get the latest 50 Dota 2 matches from player 321321644,
+// where hero 32 was played and skill level was very high.
+var matchResponse = await dotaClient.GetMatchHistoryAsync(playerId,
+    count: 50,
+    heroId: 32,
+    skillLevel: DotaSkillLevel.VeryHigh);
+
+foreach (var match in matchResponse.Contents)
+{
+    // Get details for each match.
+    var detailsResponse = await dotaClient.GetMatchDetailsAsync(match.Id);
+
+    // Get all the players from each match.
+    foreach (var player in detailsResponse.Contents.Players)
+    {
+        // Get the Steam account for each player.
+        var steamAccount = await steamClient.GetSteamAccountAsync(player.Id64);
+
+        // Print the player name and link to Steam page.
+        Console.WriteLine($"Player name: {player.PersonaName}");
+        Console.WriteLine($"Player Steam profile: {steamAccount.Contents.ProfileURL}");
+    }
+}
+```
 
 
+### Error handling
 
+All response types inherit from common base class, that contains useful data
+about possible cases when request was not succesful. This makes it easier to debug and
+handle different types of exeptions.
+
+```c#
+if (!response.Successful)
+{
+    Console.WriteLine($"Request URL was: {response.URL}");
+    Exception ex = response.ThrownException;
+
+    if (response.WasCancelled)
+    {
+        Console.WriteLine("You requested cancellation");
+    }
+    else if (ex != null)
+    {
+        Console.WriteLine("An Exception was thrown and caught.");
+    }
+}
+```
 
 
 ## Supported API methods
+
 
 <details>
 <summary>Dota 2</summary>
