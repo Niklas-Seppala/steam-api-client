@@ -25,9 +25,7 @@ if (matchesResp.Successful)
     }
 }
 ```
-## General
-This library contains ApiClient classes for DOTA 2, Steam and CsGo APIs.
-They all use the same shared Steam developer key and `HttpClient`-object.
+## Guide
 
 ### Setup
 * Set the developer key. This has to be done only once.
