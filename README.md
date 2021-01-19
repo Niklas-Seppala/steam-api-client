@@ -24,17 +24,25 @@ if (matchesResp.Successful)
 }
 ```
 
-## Supported API methods
-### Dota 2
-###### IDOTA2Fantasy_205790
+
+
+
+
+# Supported API methods
+
+## Dota 2
+<details>
+<summary></summary>
+<br>
+IDOTA2Fantasy_205790
 <pre>GET GetFantasyPlayerStats/v1         IMPLEMENTED ✔️
 GET GetPlayerOfficialInfo/v1         IMPLEMENTED ✔️
 GET GetProPlayerList/v1              IMPLEMENTED ✔️</pre>
-###### IDOTA2MatchStats_570
+IDOTA2MatchStats_570
 <pre>GET GetRealtimeStats/v1              IMPLEMENTED ✔️</pre>
-###### IDOTA2Match_205790
+IDOTA2Match_205790
 <pre>GET GetLeagueListing/v1              IMPLEMENTED ✔️</pre>
-###### IDOTA2Match_570
+IDOTA2Match_570
 <pre>GET GetLiveLeagueGames/v1            IMPLEMENTED ✔️
 GET GetMatchDetails/v1               IMPLEMENTED ✔️
 GET GetMatchHistory/v1               IMPLEMENTED ✔️
@@ -44,42 +52,51 @@ GET GetTopLiveEventGame/v1           IMPLEMENTED ✔️
 GET GetTopLiveGame/v1                IMPLEMENTED ✔️
 GET GetTopWeekendTourneyGames/v1     IMPLEMENTED ✔️ 
 GET GetTournamentPlayerStats/v2      IMPLEMENTED ✔️</pre>
-###### IDOTA2StreamSystem_205790
+IDOTA2StreamSystem_205790
 <pre>GET GetBroadcasterInfo/v1            IMPLEMENTED ✔️</pre>
-###### IDOTA2StreamSystem_570
+IDOTA2StreamSystem_570
 <pre>GET GetBroadcasterInfo/v1            IMPLEMENTED ✔️</pre>
-###### IDOTA2Ticket_570
+IDOTA2Ticket_570
 <pre>GET ClaimBadgeReward/v1              IMPLEMENTED ❌
 GET GetSteamIDForBadgeID/v1          IMPLEMENTED ❌
 GET SteamAccountValidForBadgeType/v1 IMPLEMENTED ❌</pre>
-###### IEconDOTA2_205790
+IEconDOTA2_205790
 <pre>GET GetItemIconPath/v1               IMPLEMENTED ✔️</pre>
-###### IEconDOTA2_570
+IEconDOTA2_570
 <pre>GET GetEventStatsForAccount/v1       IMPLEMENTED ✔️
 GET GetGameItems/v1                  IMPLEMENTED ✔️
 GET GetHeroes/v1                     IMPLEMENTED ✔️
 GET GetItemCreators/v1               IMPLEMENTED ✔️
 GET GetRarities/v1                   IMPLEMENTED ✔️
 GET GetTournamentPrizePool/v1        IMPLEMENTED ✔️</pre>
-###### IEconItems_570
+IEconItems_570
 <pre>GET GetEquippedPlayerItems/v1        IMPLEMENTED ✔️
 GET GetPlayerItems/v1                IMPLEMENTED ✔️
 GET GetSchemaURL/v1                  IMPLEMENTED ✔️
 GET GetStoreMetaData/v1              IMPLEMENTED ✔️</pre>
+</details>
 
-### Steam
-###### ISteamWebAPIUtil
+## Steam
+<details>
+<summary></summary>
+<br>
+ISteamWebAPIUtil
 <pre>GetServerInfo/v1                     IMPLEMENTED ✔️
 GetSupportedAPIList/v1               IMPLEMENTED ✔️</pre>
-###### ISteamUser
+ISteamUser
 <pre>GetFriendList/v1                     IMPLEMENTED ✔️
 GetPlayerSummaries/v2                IMPLEMENTED ✔️
 GetPlayerBans/v1                     IMPLEMENTED ✔️</pre>
-###### ISteamUser
+ISteamUser
 <pre>GetNewsForApp/v2                     IMPLEMENTED ✔️</pre>
-###### IStoreService
+IStoreService
 <pre>GetAppList/v1                        IMPLEMENTED ✔️</pre>
+</details>
 
-### CsGo
-###### ICSGOServers_730
+## CsGo
+<details>
+<summary></summary>
+<br>
+ICSGOServers_730
 <pre>GetGameServersStatus/v1              IMPLEMENTED ✔️</pre>
+</details>
