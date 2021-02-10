@@ -5,7 +5,7 @@ Methods for downloading hero/profile pictures are also provided.
 
 All GET methods are asynchronous and can be cancelled with `CancellationToken`.
 
-GET Methods have built in error checking system, so the user doesn't have to bother with making sense of weird and inconsistent return codes and values. ( They can be pretty wild sometimes :slightly_smiling_face: ). 
+GET Methods have built in error checking system, so the user doesn't have to bother with making sense of weird and inconsistent return codes and values. 
 
 **Targets netstandard 2.0**
 
