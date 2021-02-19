@@ -9,7 +9,6 @@ GET Methods have built in error checking system, so the user doesn't have to bot
 
 **Targets netstandard 2.0**
 
-Note: this is a hobby project!
 ## Quick example
 ```c#
 // Setup
