@@ -124,7 +124,7 @@ if (!response.Successful)
 ```
 
 
-## Supported API methods
+## Supported API endpoints
 
 
 <details>
